@@ -2826,8 +2826,8 @@
     },
     "/shifts/{id}/transfer": {
       "put": {
-        "summary": "Transférer un shift.",
-        "description": "Transfère un shift à un membre et/ou une date spécifique. Peut également transférer une quart assigné à une quart ouvert en laissant member_id vide.",
+        "summary": "Transférer un quart.",
+        "description": "Transférer à un membre et/ou à une date spécifique. Peut aussi transférer un quart assigné en quart à combler en laissant le member_id vide.",
         "tags": [
           "Shifts"
         ],
@@ -3850,10 +3850,6 @@
             "type": "string",
             "description": "La clé de l'activité."
           },
-          "parameters": {
-            "type": "object",
-            "description": "Les paramètres de l'activité."
-          },
           "created_at": {
             "type": "string",
             "description": "Le moment de création de l'activité.",
@@ -3863,6 +3859,10 @@
             "type": "string",
             "description": "Le dernier moment de modification de l'activité.",
             "format": "date-time"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Les paramètres de l'activité."
           }
         }
       },
@@ -4703,10 +4703,6 @@
             "type": "string",
             "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
           },
-          "rate_type": {
-            "type": "string",
-            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)"
-          },
           "supervisor_position_ids": {
             "type": "array",
             "description": "Les identifiants uniques des positions supervisées par le membre dans la succursale.",
@@ -4720,6 +4716,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "rate_type": {
+            "type": "string",
+            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)"
           },
           "created_at": {
             "type": "string",
@@ -5150,21 +5150,6 @@
             "description": "La date à laquelle le membre a accepté l'invitation.",
             "format": "date-time"
           },
-          "created_at": {
-            "type": "string",
-            "description": "La date et l'heure de création.",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "La date et l'heure de la dernière modification.",
-            "format": "date-time"
-          },
-          "deleted_at": {
-            "type": "string",
-            "description": "La date à laquelle le membre a été archivé.",
-            "format": "date-time"
-          },
           "code": {
             "type": "string",
             "description": "Le code d'invitation du membre."
@@ -5216,12 +5201,27 @@
             "type": "boolean",
             "description": "Si le membre n'a pas besoin de pointer."
           },
-          "profile": {
-            "$ref": "#/components/schemas/Profile"
+          "updated_at": {
+            "type": "string",
+            "description": "La date et l'heure de la dernière modification.",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "La date et l'heure de création.",
+            "format": "date-time"
+          },
+          "deleted_at": {
+            "type": "string",
+            "description": "La date à laquelle le membre a été archivé.",
+            "format": "date-time"
           },
           "hr_data": {
             "type": "object",
             "description": "Le hr_data du membre."
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
           }
         }
       },
@@ -5874,21 +5874,6 @@
             "description": "Date et heure que les membres au confirmer le quart de travail.",
             "format": "date-time"
           },
-          "created_at": {
-            "type": "string",
-            "description": "La date et l'heure de création.",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "La date et l'heure de la dernière modification.",
-            "format": "date-time"
-          },
-          "deleted_at": {
-            "type": "string",
-            "description": "Date et heure d'archive du quart de travail.",
-            "format": "date-time"
-          },
           "open_quantity": {
             "type": "integer",
             "description": "Nombre de quart de travail disponible.",
@@ -5944,6 +5929,16 @@
             "description": "Duré total du quart de travail.",
             "format": "int32"
           },
+          "original_shift_id": {
+            "type": "string",
+            "description": "L'original shift id du quart.",
+            "format": "uuid"
+          },
+          "new_version_id": {
+            "type": "string",
+            "description": "Le new version shift id du quart.",
+            "format": "uuid"
+          },
           "rate_base": {
             "type": "number",
             "description": "Taux horaire régulier du membre.",
@@ -5961,20 +5956,26 @@
           },
           "resource_ids": {
             "type": "array",
-            "description": "Les resource IDs du quart de travail.",
+            "description": "The shift's resource ids.",
             "items": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           },
-          "original_shift_id": {
+          "created_at": {
             "type": "string",
-            "description": "L'ID du quart de travail original.",
-            "format": "uuid"
+            "description": "La date et l'heure de création.",
+            "format": "date-time"
           },
-          "new_version_id": {
+          "updated_at": {
             "type": "string",
-            "description": "L'ID de la nouvelle version du quart de travail.",
-            "format": "uuid"
+            "description": "La date et l'heure de la dernière modification.",
+            "format": "date-time"
+          },
+          "deleted_at": {
+            "type": "string",
+            "description": "Date et heure d'archive du quart de travail.",
+            "format": "date-time"
           }
         }
       },
@@ -6421,6 +6422,18 @@
             "type": "string",
             "description": "La date et l'heure auxquelles la publication a été publiée."
           },
+          "draft": {
+            "type": "boolean",
+            "description": "Si la publication est un brouillon."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Si la publication envoie une notification aux membres de l'organisation."
+          },
+          "sticky": {
+            "type": "boolean",
+            "description": "Si la publication est collante."
+          },
           "commentable": {
             "type": "boolean",
             "description": "Si la publication peut être commentée."
@@ -6428,18 +6441,6 @@
           "acknowledgeable": {
             "type": "boolean",
             "description": "Si la publication peut être confirmée par les membres concernés."
-          },
-          "draft": {
-            "type": "boolean",
-            "description": "Si la publication est un brouillon."
-          },
-          "sticky": {
-            "type": "boolean",
-            "description": "Si la publication est collante."
-          },
-          "notify": {
-            "type": "boolean",
-            "description": "Si la publication envoie une notification aux membres de l'organisation."
           },
           "site_ids": {
             "type": "array",
@@ -6497,6 +6498,18 @@
             "type": "string",
             "description": "La date et l'heure auxquelles la publication a été publiée."
           },
+          "draft": {
+            "type": "boolean",
+            "description": "Si la publication est un brouillon."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Si la publication envoie une notification aux membres de l'organisation."
+          },
+          "sticky": {
+            "type": "boolean",
+            "description": "Si la publication est collante."
+          },
           "commentable": {
             "type": "boolean",
             "description": "Si la publication peut être commentée."
@@ -6504,18 +6517,6 @@
           "acknowledgeable": {
             "type": "boolean",
             "description": "Si la publication peut être confirmée par les membres concernés."
-          },
-          "draft": {
-            "type": "boolean",
-            "description": "Si la publication est un brouillon."
-          },
-          "sticky": {
-            "type": "boolean",
-            "description": "Si la publication est collante."
-          },
-          "notify": {
-            "type": "boolean",
-            "description": "Si la publication envoie une notification aux membres de l'organisation."
           },
           "site_ids": {
             "type": "array",
@@ -6622,14 +6623,14 @@
             "type": "string",
             "description": "Le contenu du commentaire."
           },
+          "commentable_type": {
+            "type": "string",
+            "description": "Le type d'objet commenté -  quart, demande de congé, publication d'actualité, etc."
+          },
           "commentable_id": {
             "type": "string",
             "description": "L'identifiant de l'objet commenté.",
             "format": "uuid"
-          },
-          "commentable_type": {
-            "type": "string",
-            "description": "Le type d'objet commenté -  quart, demande de congé, publication d'actualité, etc."
           },
           "type": {
             "type": "string",
@@ -6645,14 +6646,14 @@
             "type": "string",
             "description": "Le contenu du commentaire."
           },
+          "commentable_type": {
+            "type": "string",
+            "description": "Le type d'objet commenté -  quart, demande de congé, publication d'actualité, etc."
+          },
           "commentable_id": {
             "type": "string",
             "description": "L'identifiant de l'objet commenté.",
             "format": "uuid"
-          },
-          "commentable_type": {
-            "type": "string",
-            "description": "Le type d'objet commenté -  quart, demande de congé, publication d'actualité, etc."
           },
           "type": {
             "type": "string",
@@ -6707,6 +6708,7 @@
             "description": "Le type du champ de ressources humaines."
           },
           "metadata": {
+            "type": "object",
             "description": "Les métadonnées selon le field_type du champ de ressources humaines."
           },
           "private_field": {
@@ -6716,6 +6718,10 @@
           "sortable": {
             "type": "boolean",
             "description": "Si le champ de ressources humaines est triable."
+          },
+          "filterable": {
+            "type": "boolean",
+            "description": "Si le champ de ressources humaines est filtrable."
           },
           "deleted_at": {
             "type": "string",
@@ -6744,10 +6750,15 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée d'une création de demande de congé.",
         "properties": {
-          "member_site_position_id": {
+          "start_at": {
             "type": "string",
-            "description": "L'identifiant de la position du site du demandeur.",
-            "format": "uuid"
+            "description": "Le moment auquel le congé demandé débute",
+            "format": "date-time"
+          },
+          "end_at": {
+            "type": "string",
+            "description": "Le moment auquel le congé demandé se termine.",
+            "format": "date-time"
           },
           "justification": {
             "type": "string",
@@ -6762,31 +6773,30 @@
             "type": "boolean",
             "description": "Si le congé demandé est payé."
           },
-          "start_at": {
-            "type": "string",
-            "description": "Le moment auquel le congé demandé débute",
-            "format": "date-time"
-          },
-          "end_at": {
-            "type": "string",
-            "description": "Le moment auquel le congé demandé se termine.",
-            "format": "date-time"
-          },
           "leave_type_id": {
             "type": "string",
-            "description": "L'identifiant du type de congé demandé."
+            "description": "L'identifiant du type de congé demandé.",
+            "format": "uuid"
           },
           "site_id": {
             "type": "string",
-            "description": "L'identifiant de la location liée au congé demandé."
+            "description": "L'identifiant de la location liée au congé demandé.",
+            "format": "uuid"
           },
           "position_id": {
             "type": "string",
-            "description": "L'identifiant de la position liée au congé demandé."
+            "description": "L'identifiant de la position liée au congé demandé.",
+            "format": "uuid"
+          },
+          "member_site_position_id": {
+            "type": "string",
+            "description": "L'identifiant de la position du site du demandeur.",
+            "format": "uuid"
           },
           "resource_id": {
             "type": "string",
-            "description": "L'identifiant de la resource liée au congé demandé."
+            "description": "L'identifiant de la resource liée au congé demandé.",
+            "format": "uuid"
           },
           "member_id": {
             "type": "string",
@@ -6822,10 +6832,15 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée d'une modification de demande de congé.",
         "properties": {
-          "member_site_position_id": {
+          "start_at": {
             "type": "string",
-            "description": "L'identifiant de la position du site du demandeur.",
-            "format": "uuid"
+            "description": "Le moment auquel le congé demandé débute",
+            "format": "date-time"
+          },
+          "end_at": {
+            "type": "string",
+            "description": "Le moment auquel le congé demandé se termine.",
+            "format": "date-time"
           },
           "justification": {
             "type": "string",
@@ -6840,31 +6855,30 @@
             "type": "boolean",
             "description": "Si le congé demandé est payé."
           },
-          "start_at": {
-            "type": "string",
-            "description": "Le moment auquel le congé demandé débute",
-            "format": "date-time"
-          },
-          "end_at": {
-            "type": "string",
-            "description": "Le moment auquel le congé demandé se termine.",
-            "format": "date-time"
-          },
           "leave_type_id": {
             "type": "string",
-            "description": "L'identifiant du type de congé demandé."
+            "description": "L'identifiant du type de congé demandé.",
+            "format": "uuid"
           },
           "site_id": {
             "type": "string",
-            "description": "L'identifiant de la location liée au congé demandé."
+            "description": "L'identifiant de la location liée au congé demandé.",
+            "format": "uuid"
           },
           "position_id": {
             "type": "string",
-            "description": "L'identifiant de la position liée au congé demandé."
+            "description": "L'identifiant de la position liée au congé demandé.",
+            "format": "uuid"
+          },
+          "member_site_position_id": {
+            "type": "string",
+            "description": "L'identifiant de la position du site du demandeur.",
+            "format": "uuid"
           },
           "resource_id": {
             "type": "string",
-            "description": "L'identifiant de la resource liée au congé demandé."
+            "description": "L'identifiant de la resource liée au congé demandé.",
+            "format": "uuid"
           },
           "time_off_payment_constraint_attributes": {
             "$ref": "#/components/schemas/TimeOffPaymentConstraintUpdateAttributes"
@@ -6879,6 +6893,10 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée d'une création de type de congé.",
         "properties": {
+          "keep_track_hours": {
+            "type": "boolean",
+            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
+          },
           "name": {
             "type": "string",
             "description": "Le nom du type de congé."
@@ -6886,10 +6904,6 @@
           "paid": {
             "type": "boolean",
             "description": "Si le type de congé est payé."
-          },
-          "keep_track_hours": {
-            "type": "boolean",
-            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
           }
         }
       },
@@ -6897,6 +6911,10 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée d'une modification de type de congé.",
         "properties": {
+          "keep_track_hours": {
+            "type": "boolean",
+            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
+          },
           "name": {
             "type": "string",
             "description": "Le nom du type de congé."
@@ -6904,10 +6922,6 @@
           "paid": {
             "type": "boolean",
             "description": "Si le type de congé est payé."
-          },
-          "keep_track_hours": {
-            "type": "boolean",
-            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
           }
         }
       },
@@ -7162,10 +7176,6 @@
             "type": "string",
             "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
           },
-          "rate_type": {
-            "type": "string",
-            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)."
-          },
           "rate_single_base": {
             "type": "number",
             "description": "Le taux horaire régulier du membre pour toutes ses positions dans la succursale.",
@@ -7180,6 +7190,10 @@
             "type": "number",
             "description": "Le taux horaire supplémentaire 2 du membre pour toutes ses positions dans la succursale, si activé.",
             "format": "float"
+          },
+          "rate_type": {
+            "type": "string",
+            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)."
           },
           "member_site_positions_attributes": {
             "type": "array",
@@ -7213,10 +7227,6 @@
             "type": "string",
             "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
           },
-          "rate_type": {
-            "type": "string",
-            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)."
-          },
           "rate_single_base": {
             "type": "number",
             "description": "Le taux horaire régulier du membre pour toutes ses positions dans la succursale.",
@@ -7231,6 +7241,10 @@
             "type": "number",
             "description": "Le taux horaire supplémentaire 2 du membre pour toutes ses positions dans la succursale, si activé.",
             "format": "float"
+          },
+          "rate_type": {
+            "type": "string",
+            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)."
           },
           "id": {
             "type": "string",
@@ -7280,6 +7294,11 @@
         "type": "object",
         "description": "Description détaillée des paramètres de création du profil.",
         "properties": {
+          "email": {
+            "type": "string",
+            "description": "L'adresse e-mail du profil.",
+            "format": "email"
+          },
           "first_name": {
             "type": "string",
             "description": "Le prénom du profil."
@@ -7287,11 +7306,6 @@
           "last_name": {
             "type": "string",
             "description": "Le nom de famille du profil."
-          },
-          "email": {
-            "type": "string",
-            "description": "L'adresse e-mail du profil.",
-            "format": "email"
           },
           "birthdate": {
             "type": "string",
@@ -7343,6 +7357,16 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée de la création d'un membre.",
         "properties": {
+          "seniority_date": {
+            "type": "string",
+            "description": "La date à laquelle le membre a commencé à travailler pour l'organisation.",
+            "format": "date"
+          },
+          "deletion_date": {
+            "type": "string",
+            "description": "La date à laquelle le membre sera archivée.",
+            "format": "date"
+          },
           "identification_number": {
             "type": "string",
             "description": "The member's identification number."
@@ -7351,28 +7375,6 @@
             "type": "string",
             "description": "Informations additionnelles sur le membre."
           },
-          "main_position_id": {
-            "type": "string",
-            "description": "L'identifiant unique de la position principale du membre.",
-            "format": "uuid"
-          },
-          "main_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du succursale principale du membre.",
-            "format": "uuid"
-          },
-          "admin": {
-            "type": "boolean",
-            "description": "Si le membre est un administrateur de l'organisation."
-          },
-          "hide_before_seniority_date": {
-            "type": "boolean",
-            "description": "Si le membre est exclu du planificateur et des feuilles de temps avant sa date d'embauche."
-          },
-          "visible": {
-            "type": "boolean",
-            "description": "Si le membre est exclu du planificateur et des feuilles de temps."
-          },
           "override_overtime": {
             "type": "boolean",
             "description": "Si le membre possède des seuils d'heures supplémentaires personalisés."
@@ -7380,6 +7382,10 @@
           "multi_level_overtime": {
             "type": "boolean",
             "description": "Si les heures supplémentaires multi-niveau sont activées pour le membre."
+          },
+          "override_spread_overtime": {
+            "type": "boolean",
+            "description": "Si le membre outrepasse les paramètres d'heures supplémentaires de l'organisation."
           },
           "overtime_day_threshold": {
             "type": "number",
@@ -7401,15 +7407,35 @@
             "description": "Le seuil d'heures supplémentaires de semaine personalisé 2 du membre, si les heures supplémentaires multi-niveau sont activées.",
             "format": "float"
           },
-          "seniority_date": {
-            "type": "string",
-            "description": "La date à laquelle le membre a commencé à travailler pour l'organisation.",
-            "format": "date"
+          "spread_overtime_enabled": {
+            "type": "boolean",
+            "description": "Si les heures supplémentaires du membre sont dispersées au travers plusieurs semaines."
           },
-          "deletion_date": {
+          "main_position_id": {
             "type": "string",
-            "description": "La date à laquelle le membre sera archivée.",
-            "format": "date"
+            "description": "L'identifiant unique de la position principale du membre.",
+            "format": "uuid"
+          },
+          "main_site_id": {
+            "type": "string",
+            "description": "L'identifiant unique du succursale principale du membre.",
+            "format": "uuid"
+          },
+          "admin": {
+            "type": "boolean",
+            "description": "Si le membre est un administrateur de l'organisation."
+          },
+          "invite": {
+            "type": "boolean",
+            "description": "Si le membre est invité à rejoindre l'organisation."
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Si le membre est exclu du planificateur et des feuilles de temps."
+          },
+          "hide_before_seniority_date": {
+            "type": "boolean",
+            "description": "Si le membre est exclu du planificateur et des feuilles de temps avant sa date d'embauche."
           },
           "time_clock_code": {
             "type": "string",
@@ -7419,10 +7445,6 @@
             "type": "boolean",
             "description": "Si le membre outrepasse les paramètres de pointage de l'organisation."
           },
-          "time_clock_must_be_scheduled": {
-            "type": "boolean",
-            "description": "Si le membre doit être à l'horaire pour pointer."
-          },
           "time_clock_transfer_next_call": {
             "type": "boolean",
             "description": "Si le prochain pointage par téléphone doit être transféré."
@@ -7430,6 +7452,10 @@
           "time_clock_transfer_next_call_number": {
             "type": "string",
             "description": "Le numéro auquel le prochain pointage par téléphone doit être transféré."
+          },
+          "time_clock_must_be_scheduled": {
+            "type": "boolean",
+            "description": "Si le membre doit être à l'horaire pour pointer."
           },
           "time_clock_window": {
             "type": "integer",
@@ -7453,18 +7479,6 @@
             "type": "boolean",
             "description": "Si le membre n'a pas besoin de pointer."
           },
-          "override_spread_overtime": {
-            "type": "boolean",
-            "description": "Si le membre outrepasse les paramètres d'heures supplémentaires de l'organisation."
-          },
-          "spread_overtime_enabled": {
-            "type": "boolean",
-            "description": "Si les heures supplémentaires du membre sont dispersées au travers plusieurs semaines."
-          },
-          "invite": {
-            "type": "boolean",
-            "description": "Si le membre est invité à rejoindre l'organisation."
-          },
           "profile_attributes": {
             "$ref": "#/components/schemas/ProfileCreateAttributes"
           },
@@ -7481,6 +7495,11 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour du profil.",
         "properties": {
+          "email": {
+            "type": "string",
+            "description": "L'adresse e-mail du profil.",
+            "format": "email"
+          },
           "first_name": {
             "type": "string",
             "description": "Le prénom du profil."
@@ -7488,11 +7507,6 @@
           "last_name": {
             "type": "string",
             "description": "Le nom de famille du profil."
-          },
-          "email": {
-            "type": "string",
-            "description": "L'adresse e-mail du profil.",
-            "format": "email"
           },
           "birthdate": {
             "type": "string",
@@ -7540,6 +7554,16 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée de la mise à jour d'un membre.",
         "properties": {
+          "seniority_date": {
+            "type": "string",
+            "description": "La date à laquelle le membre a commencé à travailler pour l'organisation.",
+            "format": "date"
+          },
+          "deletion_date": {
+            "type": "string",
+            "description": "La date à laquelle le membre sera archivée.",
+            "format": "date"
+          },
           "identification_number": {
             "type": "string",
             "description": "The member's identification number."
@@ -7548,28 +7572,6 @@
             "type": "string",
             "description": "Informations additionnelles sur le membre."
           },
-          "main_position_id": {
-            "type": "string",
-            "description": "L'identifiant unique de la position principale du membre.",
-            "format": "uuid"
-          },
-          "main_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du succursale principale du membre.",
-            "format": "uuid"
-          },
-          "admin": {
-            "type": "boolean",
-            "description": "Si le membre est un administrateur de l'organisation."
-          },
-          "hide_before_seniority_date": {
-            "type": "boolean",
-            "description": "Si le membre est exclu du planificateur et des feuilles de temps avant sa date d'embauche."
-          },
-          "visible": {
-            "type": "boolean",
-            "description": "Si le membre est exclu du planificateur et des feuilles de temps."
-          },
           "override_overtime": {
             "type": "boolean",
             "description": "Si le membre possède des seuils d'heures supplémentaires personalisés."
@@ -7577,6 +7579,10 @@
           "multi_level_overtime": {
             "type": "boolean",
             "description": "Si les heures supplémentaires multi-niveau sont activées pour le membre."
+          },
+          "override_spread_overtime": {
+            "type": "boolean",
+            "description": "Si le membre outrepasse les paramètres d'heures supplémentaires de l'organisation."
           },
           "overtime_day_threshold": {
             "type": "number",
@@ -7598,15 +7604,35 @@
             "description": "Le seuil d'heures supplémentaires de semaine personalisé 2 du membre, si les heures supplémentaires multi-niveau sont activées.",
             "format": "float"
           },
-          "seniority_date": {
-            "type": "string",
-            "description": "La date à laquelle le membre a commencé à travailler pour l'organisation.",
-            "format": "date"
+          "spread_overtime_enabled": {
+            "type": "boolean",
+            "description": "Si les heures supplémentaires du membre sont dispersées au travers plusieurs semaines."
           },
-          "deletion_date": {
+          "main_position_id": {
             "type": "string",
-            "description": "La date à laquelle le membre sera archivée.",
-            "format": "date"
+            "description": "L'identifiant unique de la position principale du membre.",
+            "format": "uuid"
+          },
+          "main_site_id": {
+            "type": "string",
+            "description": "L'identifiant unique du succursale principale du membre.",
+            "format": "uuid"
+          },
+          "admin": {
+            "type": "boolean",
+            "description": "Si le membre est un administrateur de l'organisation."
+          },
+          "invite": {
+            "type": "boolean",
+            "description": "Si le membre est invité à rejoindre l'organisation."
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Si le membre est exclu du planificateur et des feuilles de temps."
+          },
+          "hide_before_seniority_date": {
+            "type": "boolean",
+            "description": "Si le membre est exclu du planificateur et des feuilles de temps avant sa date d'embauche."
           },
           "time_clock_code": {
             "type": "string",
@@ -7616,10 +7642,6 @@
             "type": "boolean",
             "description": "Si le membre outrepasse les paramètres de pointage de l'organisation."
           },
-          "time_clock_must_be_scheduled": {
-            "type": "boolean",
-            "description": "Si le membre doit être à l'horaire pour pointer."
-          },
           "time_clock_transfer_next_call": {
             "type": "boolean",
             "description": "Si le prochain pointage par téléphone doit être transféré."
@@ -7627,6 +7649,10 @@
           "time_clock_transfer_next_call_number": {
             "type": "string",
             "description": "Le numéro auquel le prochain pointage par téléphone doit être transféré."
+          },
+          "time_clock_must_be_scheduled": {
+            "type": "boolean",
+            "description": "Si le membre doit être à l'horaire pour pointer."
           },
           "time_clock_window": {
             "type": "integer",
@@ -7649,18 +7675,6 @@
           "payroll_auto_update": {
             "type": "boolean",
             "description": "Si le membre n'a pas besoin de pointer."
-          },
-          "override_spread_overtime": {
-            "type": "boolean",
-            "description": "Si le membre outrepasse les paramètres d'heures supplémentaires de l'organisation."
-          },
-          "spread_overtime_enabled": {
-            "type": "boolean",
-            "description": "Si les heures supplémentaires du membre sont dispersées au travers plusieurs semaines."
-          },
-          "invite": {
-            "type": "boolean",
-            "description": "Si le membre est invité à rejoindre l'organisation."
           },
           "profile_attributes": {
             "$ref": "#/components/schemas/ProfileUpdateAttributes"
@@ -7844,7 +7858,8 @@
           },
           "parent_id": {
             "type": "string",
-            "description": "Identifiant unique de la position parent. Si cette valeur est présente, la position est une sous-position."
+            "description": "Identifiant unique de la position parent. Si cette valeur est présente, la position est une sous-position.",
+            "format": "uuid"
           }
         }
       },
@@ -7867,7 +7882,8 @@
           },
           "parent_id": {
             "type": "string",
-            "description": "Identifiant unique de la position parent. Si cette valeur est présente, la position est une sous-position."
+            "description": "Identifiant unique de la position parent. Si cette valeur est présente, la position est une sous-position.",
+            "format": "uuid"
           }
         }
       },
@@ -7883,14 +7899,14 @@
             "description": "Identifiant unique des primes.",
             "format": "uuid"
           },
+          "has_custom_value": {
+            "type": "boolean",
+            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
+          },
           "entry_minutes": {
             "type": "integer",
             "description": "Le nombre de minute que la prime s'applique.",
             "format": "int32"
-          },
-          "has_custom_value": {
-            "type": "boolean",
-            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
           }
         }
       },
@@ -7906,14 +7922,14 @@
             "description": "Identifiant unique des primes.",
             "format": "uuid"
           },
+          "has_custom_value": {
+            "type": "boolean",
+            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
+          },
           "entry_minutes": {
             "type": "integer",
             "description": "Le nombre de minute que la prime s'applique.",
             "format": "int32"
-          },
-          "has_custom_value": {
-            "type": "boolean",
-            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
           },
           "id": {
             "type": "string",
@@ -7970,21 +7986,21 @@
         "type": "object",
         "description": "Description détaillée des paramètres de créations d'une ressource.",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Nom de la ressource."
-          },
           "no": {
             "type": "string",
             "description": "L'identifiant unique raccourcit de la ressource."
           },
-          "description": {
+          "name": {
             "type": "string",
-            "description": "Description de la ressource."
+            "description": "Nom de la ressource."
           },
           "address": {
             "type": "string",
             "description": "L'adresse de la ressource."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description de la ressource."
           },
           "exclusive": {
             "type": "boolean",
@@ -7998,11 +8014,6 @@
             "type": "boolean",
             "description": "Si la ressource est un équipement."
           },
-          "minimum_paid_minutes_per_entry": {
-            "type": "integer",
-            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
-            "format": "int32"
-          },
           "week_hours_min": {
             "type": "number",
             "description": "L'objectif minimum du nombre d'heures planifiées par ressource.",
@@ -8012,6 +8023,11 @@
             "type": "number",
             "description": "L'objectif maximum du nombre d'heures planifiées par ressource.",
             "format": "float"
+          },
+          "minimum_paid_minutes_per_entry": {
+            "type": "integer",
+            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
+            "format": "int32"
           },
           "document_ids": {
             "type": "array",
@@ -8036,21 +8052,21 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour d'une ressource.",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Nom de la ressource."
-          },
           "no": {
             "type": "string",
             "description": "L'identifiant unique raccourcit de la ressource."
           },
-          "description": {
+          "name": {
             "type": "string",
-            "description": "Description de la ressource."
+            "description": "Nom de la ressource."
           },
           "address": {
             "type": "string",
             "description": "L'adresse de la ressource."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description de la ressource."
           },
           "exclusive": {
             "type": "boolean",
@@ -8064,11 +8080,6 @@
             "type": "boolean",
             "description": "Si la ressource est un équipement."
           },
-          "minimum_paid_minutes_per_entry": {
-            "type": "integer",
-            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
-            "format": "int32"
-          },
           "week_hours_min": {
             "type": "number",
             "description": "L'objectif minimum du nombre d'heures planifiées par ressource.",
@@ -8078,6 +8089,11 @@
             "type": "number",
             "description": "L'objectif maximum du nombre d'heures planifiées par ressource.",
             "format": "float"
+          },
+          "minimum_paid_minutes_per_entry": {
+            "type": "integer",
+            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
+            "format": "int32"
           },
           "document_ids": {
             "type": "array",
@@ -8113,14 +8129,14 @@
         "type": "object",
         "description": "Description détaillée des paramètres de création d'une prévision du planificateur d'horaires.",
         "properties": {
-          "hours": {
-            "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
-            "format": "float"
-          },
           "revenues": {
             "type": "number",
             "description": "Montant des revenus attendus.",
+            "format": "float"
+          },
+          "hours": {
+            "type": "number",
+            "description": "Nombre d'heures prévues à l'horaire.",
             "format": "float"
           },
           "site_id": {
@@ -8139,14 +8155,14 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour d'une prévision du planificateur d'horaires.",
         "properties": {
-          "hours": {
-            "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
-            "format": "float"
-          },
           "revenues": {
             "type": "number",
             "description": "Montant des revenus attendus.",
+            "format": "float"
+          },
+          "hours": {
+            "type": "number",
+            "description": "Nombre d'heures prévues à l'horaire.",
             "format": "float"
           }
         }
@@ -8159,14 +8175,14 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour de plusieurs prévisions du planificateur d'horaires.",
         "properties": {
-          "hours": {
-            "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
-            "format": "float"
-          },
           "revenues": {
             "type": "number",
             "description": "Montant des revenus attendus.",
+            "format": "float"
+          },
+          "hours": {
+            "type": "number",
+            "description": "Nombre d'heures prévues à l'horaire.",
             "format": "float"
           },
           "site_id": {
@@ -8208,6 +8224,26 @@
         "type": "object",
         "description": "Description détaillée des paramètres de création d'un quart de travail.",
         "properties": {
+          "site_id": {
+            "type": "string",
+            "description": "Identifiant unique de la succursale du quart de travail.",
+            "format": "uuid"
+          },
+          "position_id": {
+            "type": "string",
+            "description": "Identifiant unique de la position du quart de travail.",
+            "format": "uuid"
+          },
+          "sub_position_id": {
+            "type": "string",
+            "description": "Identifiant unique de la sous-position du quart de travail.",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date du du quart de travail.",
+            "format": "date"
+          },
           "start_at": {
             "type": "string",
             "description": "Date et heure de début du quart de travail shift's start date time.",
@@ -8236,46 +8272,17 @@
             "description": "Date de fin du quart de travail.",
             "format": "date"
           },
-          "date": {
-            "type": "string",
-            "description": "Date du du quart de travail.",
-            "format": "date"
-          },
-          "site_id": {
-            "type": "string",
-            "description": "Identifiant unique de la succursale du quart de travail.",
-            "format": "uuid"
-          },
-          "position_id": {
-            "type": "string",
-            "description": "Identifiant unique de la position du quart de travail.",
-            "format": "uuid"
-          },
-          "sub_position_id": {
-            "type": "string",
-            "description": "Identifiant unique de la sous-position du quart de travail.",
-            "format": "uuid"
-          },
-          "leave_type_id": {
-            "type": "string",
-            "description": "Identifiant unique du type de congé quart de travail.",
-            "format": "uuid"
-          },
-          "open": {
+          "on_call": {
             "type": "boolean",
-            "description": "Si le quart de travail est ouvert."
-          },
-          "recurring": {
-            "type": "boolean",
-            "description": "Si le quart de travail est recurrent."
+            "description": "Si le quart de travail est sur appel."
           },
           "time_off": {
             "type": "boolean",
             "description": "Si le quart de travail est un congé."
           },
-          "paid": {
+          "all_day": {
             "type": "boolean",
-            "description": "Si le quart de travail est est un congé payé."
+            "description": "Si le quart de travail est toute la journée."
           },
           "single_clock": {
             "type": "boolean",
@@ -8285,31 +8292,40 @@
             "type": "boolean",
             "description": "Si le quart de travail est pointe automatiquement l'employé."
           },
-          "on_call": {
+          "hide_end_at": {
             "type": "boolean",
-            "description": "Si le quart de travail est sur appel."
+            "description": "Si la fin du quart de travail est cachée aux membres."
           },
-          "all_day": {
+          "paid": {
             "type": "boolean",
-            "description": "Si le quart de travail est toute la journée."
+            "description": "Si le quart de travail est est un congé payé."
           },
-          "reminder": {
-            "type": "string",
-            "description": "Informations supplémentaires du quart de travail."
+          "recurring": {
+            "type": "boolean",
+            "description": "Si le quart de travail est recurrent."
+          },
+          "open": {
+            "type": "boolean",
+            "description": "Si le quart de travail est ouvert."
           },
           "open_quantity": {
             "type": "integer",
             "description": "Nombre de quart de travail disponible.",
             "format": "int32"
           },
-          "hide_end_at": {
-            "type": "boolean",
-            "description": "Si la fin du quart de travail est cachée aux membres."
+          "leave_type_id": {
+            "type": "string",
+            "description": "Identifiant unique du type de congé quart de travail.",
+            "format": "uuid"
           },
           "leave_value": {
             "type": "integer",
             "description": "Durée du congé.",
             "format": "int32"
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Informations supplémentaires du quart de travail."
           },
           "publish": {
             "type": "boolean",
@@ -8365,21 +8381,21 @@
       },
       "ShiftTransfer": {
         "type": "object",
-        "description": "Une description détaillée des paramètres d'entrée du transfert d'un quart.",
+        "description": "Une description détaillée des paramètres d'entrée de transfert d'un quart.",
         "properties": {
           "date": {
             "type": "string",
-            "description": "La date à laquelle le quart sera transféré.",
+            "description": "La date où le quart sera transféré.",
             "format": "date"
           },
           "member_id": {
             "type": "string",
-            "description": "L'ID du membre auquel le quart sera transféré. L'absence de valeur transferera le quart comme un quart ouvert.",
+            "description": "L'ID du membre auquel le quart sera transféré. Une valeur vide transférera ce quart en quart à combler.",
             "format": "uuid"
           },
           "publish": {
             "type": "boolean",
-            "description": "Si le quart doit être publié après avoir été transféré."
+            "description": "Si le quart devrait être publié après son transfert."
           }
         }
       },
@@ -8387,6 +8403,26 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour d'un quart de travail.",
         "properties": {
+          "site_id": {
+            "type": "string",
+            "description": "Identifiant unique de la succursale du quart de travail.",
+            "format": "uuid"
+          },
+          "position_id": {
+            "type": "string",
+            "description": "Identifiant unique de la position du quart de travail.",
+            "format": "uuid"
+          },
+          "sub_position_id": {
+            "type": "string",
+            "description": "Identifiant unique de la sous-position du quart de travail.",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date du du quart de travail.",
+            "format": "date"
+          },
           "start_at": {
             "type": "string",
             "description": "Date et heure de début du quart de travail shift's start date time.",
@@ -8415,46 +8451,17 @@
             "description": "Date de fin du quart de travail.",
             "format": "date"
           },
-          "date": {
-            "type": "string",
-            "description": "Date du du quart de travail.",
-            "format": "date"
-          },
-          "site_id": {
-            "type": "string",
-            "description": "Identifiant unique de la succursale du quart de travail.",
-            "format": "uuid"
-          },
-          "position_id": {
-            "type": "string",
-            "description": "Identifiant unique de la position du quart de travail.",
-            "format": "uuid"
-          },
-          "sub_position_id": {
-            "type": "string",
-            "description": "Identifiant unique de la sous-position du quart de travail.",
-            "format": "uuid"
-          },
-          "leave_type_id": {
-            "type": "string",
-            "description": "Identifiant unique du type de congé quart de travail.",
-            "format": "uuid"
-          },
-          "open": {
+          "on_call": {
             "type": "boolean",
-            "description": "Si le quart de travail est ouvert."
-          },
-          "recurring": {
-            "type": "boolean",
-            "description": "Si le quart de travail est recurrent."
+            "description": "Si le quart de travail est sur appel."
           },
           "time_off": {
             "type": "boolean",
             "description": "Si le quart de travail est un congé."
           },
-          "paid": {
+          "all_day": {
             "type": "boolean",
-            "description": "Si le quart de travail est est un congé payé."
+            "description": "Si le quart de travail est toute la journée."
           },
           "single_clock": {
             "type": "boolean",
@@ -8464,31 +8471,40 @@
             "type": "boolean",
             "description": "Si le quart de travail est pointe automatiquement l'employé."
           },
-          "on_call": {
+          "hide_end_at": {
             "type": "boolean",
-            "description": "Si le quart de travail est sur appel."
+            "description": "Si la fin du quart de travail est cachée aux membres."
           },
-          "all_day": {
+          "paid": {
             "type": "boolean",
-            "description": "Si le quart de travail est toute la journée."
+            "description": "Si le quart de travail est est un congé payé."
           },
-          "reminder": {
-            "type": "string",
-            "description": "Informations supplémentaires du quart de travail."
+          "recurring": {
+            "type": "boolean",
+            "description": "Si le quart de travail est recurrent."
+          },
+          "open": {
+            "type": "boolean",
+            "description": "Si le quart de travail est ouvert."
           },
           "open_quantity": {
             "type": "integer",
             "description": "Nombre de quart de travail disponible.",
             "format": "int32"
           },
-          "hide_end_at": {
-            "type": "boolean",
-            "description": "Si la fin du quart de travail est cachée aux membres."
+          "leave_type_id": {
+            "type": "string",
+            "description": "Identifiant unique du type de congé quart de travail.",
+            "format": "uuid"
           },
           "leave_value": {
             "type": "integer",
             "description": "Durée du congé.",
             "format": "int32"
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Informations supplémentaires du quart de travail."
           },
           "publish": {
             "type": "boolean",
@@ -8599,35 +8615,33 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée de création d'une entrée de temps.",
         "properties": {
-          "unpaid_break": {
-            "type": "integer",
-            "description": "Minutes de pause non payées.",
-            "format": "int32"
+          "start_at": {
+            "type": "string",
+            "description": "La date et l'heure du début de l'entrée de temps.",
+            "format": "date-time"
           },
-          "paid_break": {
-            "type": "integer",
-            "description": "Minutes de pause payées.",
-            "format": "int32"
+          "end_at": {
+            "type": "string",
+            "description": "La date et l'heure de la fin de l'entrée de temps.",
+            "format": "date-time"
+          },
+          "start_at_time": {
+            "type": "string",
+            "description": "Heure à laquelle l'entrée de temps commence."
+          },
+          "end_at_time": {
+            "type": "string",
+            "description": "Heure à laquelle l'entrée de temps termine."
           },
           "overwritten_length_minutes": {
             "type": "integer",
             "description": "La longueur personnalisée de l'entrée de temps.",
             "format": "int32"
           },
-          "position_id": {
+          "date": {
             "type": "string",
-            "description": "ID de position.",
-            "format": "uuid"
-          },
-          "site_id": {
-            "type": "string",
-            "description": "ID de la succursale.",
-            "format": "uuid"
-          },
-          "member_site_position_id": {
-            "type": "string",
-            "description": "ID du 'member_site_position'.",
-            "format": "uuid"
+            "description": "La date de l'entrée de temps.",
+            "format": "date"
           },
           "time_off": {
             "type": "boolean",
@@ -8647,20 +8661,39 @@
             "type": "boolean",
             "description": "Si le congé est payé."
           },
-          "date": {
+          "time_off_resource_id": {
             "type": "string",
-            "description": "La date de l'entrée de temps.",
-            "format": "date"
+            "description": "L'identifiant unique de la ressource associée.",
+            "format": "uuid"
           },
-          "start_at": {
-            "type": "string",
-            "description": "La date et l'heure du début de l'entrée de temps.",
-            "format": "date-time"
+          "unpaid_break": {
+            "type": "integer",
+            "description": "Minutes de pause non payées.",
+            "format": "int32"
           },
-          "end_at": {
+          "paid_break": {
+            "type": "integer",
+            "description": "Minutes de pause payées.",
+            "format": "int32"
+          },
+          "member_site_position_id": {
             "type": "string",
-            "description": "La date et l'heure de la fin de l'entrée de temps.",
-            "format": "date-time"
+            "description": "ID du 'member_site_position'.",
+            "format": "uuid"
+          },
+          "site_id": {
+            "type": "string",
+            "description": "ID de la succursale.",
+            "format": "uuid"
+          },
+          "position_id": {
+            "type": "string",
+            "description": "ID de position.",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Les notes d'entrée de temps."
           },
           "start_at_clock_notes": {
             "type": "string",
@@ -8670,10 +8703,15 @@
             "type": "string",
             "description": "Note laissée par l'employé lors du pointage de sortie."
           },
-          "break_started_at": {
+          "start_at_clock_job_site_id": {
             "type": "string",
-            "description": "La date et l'heure du début de la pause.",
-            "format": "date-time"
+            "description": "L'identifiant unique du lieu de travail où l'employé a pointé son entrée.",
+            "format": "uuid"
+          },
+          "end_at_clock_job_site_id": {
+            "type": "string",
+            "description": "L'identifiant unique du lieu de travail où l'employé a pointé sa sortie.",
+            "format": "uuid"
           },
           "rate_regular": {
             "type": "number",
@@ -8690,32 +8728,10 @@
             "description": "Le taux du temps supplémentaires 2 pour l'entrée de temps.",
             "format": "float"
           },
-          "notes": {
+          "break_started_at": {
             "type": "string",
-            "description": "Les notes d'entrée de temps."
-          },
-          "end_at_clock_job_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du lieu de travail où l'employé a pointé sa sortie.",
-            "format": "uuid"
-          },
-          "time_off_resource_id": {
-            "type": "string",
-            "description": "L'identifiant unique de la ressource associée.",
-            "format": "uuid"
-          },
-          "start_at_time": {
-            "type": "string",
-            "description": "Heure à laquelle l'entrée de temps commence."
-          },
-          "end_at_time": {
-            "type": "string",
-            "description": "Heure à laquelle l'entrée de temps termine."
-          },
-          "start_at_clock_job_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du lieu de travail où l'employé a pointé son entrée.",
-            "format": "uuid"
+            "description": "La date et l'heure du début de la pause.",
+            "format": "date-time"
           },
           "member_id": {
             "type": "string",
@@ -8728,35 +8744,33 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée de mise à jour d'une entrée de temps.",
         "properties": {
-          "unpaid_break": {
-            "type": "integer",
-            "description": "Minutes de pause non payées.",
-            "format": "int32"
+          "start_at": {
+            "type": "string",
+            "description": "La date et l'heure du début de l'entrée de temps.",
+            "format": "date-time"
           },
-          "paid_break": {
-            "type": "integer",
-            "description": "Minutes de pause payées.",
-            "format": "int32"
+          "end_at": {
+            "type": "string",
+            "description": "La date et l'heure de la fin de l'entrée de temps.",
+            "format": "date-time"
+          },
+          "start_at_time": {
+            "type": "string",
+            "description": "Heure à laquelle l'entrée de temps commence."
+          },
+          "end_at_time": {
+            "type": "string",
+            "description": "Heure à laquelle l'entrée de temps termine."
           },
           "overwritten_length_minutes": {
             "type": "integer",
             "description": "La longueur personnalisée de l'entrée de temps.",
             "format": "int32"
           },
-          "position_id": {
+          "date": {
             "type": "string",
-            "description": "ID de position.",
-            "format": "uuid"
-          },
-          "site_id": {
-            "type": "string",
-            "description": "ID de la succursale.",
-            "format": "uuid"
-          },
-          "member_site_position_id": {
-            "type": "string",
-            "description": "ID du 'member_site_position'.",
-            "format": "uuid"
+            "description": "La date de l'entrée de temps.",
+            "format": "date"
           },
           "time_off": {
             "type": "boolean",
@@ -8776,20 +8790,39 @@
             "type": "boolean",
             "description": "Si le congé est payé."
           },
-          "date": {
+          "time_off_resource_id": {
             "type": "string",
-            "description": "La date de l'entrée de temps.",
-            "format": "date"
+            "description": "L'identifiant unique de la ressource associée.",
+            "format": "uuid"
           },
-          "start_at": {
-            "type": "string",
-            "description": "La date et l'heure du début de l'entrée de temps.",
-            "format": "date-time"
+          "unpaid_break": {
+            "type": "integer",
+            "description": "Minutes de pause non payées.",
+            "format": "int32"
           },
-          "end_at": {
+          "paid_break": {
+            "type": "integer",
+            "description": "Minutes de pause payées.",
+            "format": "int32"
+          },
+          "member_site_position_id": {
             "type": "string",
-            "description": "La date et l'heure de la fin de l'entrée de temps.",
-            "format": "date-time"
+            "description": "ID du 'member_site_position'.",
+            "format": "uuid"
+          },
+          "site_id": {
+            "type": "string",
+            "description": "ID de la succursale.",
+            "format": "uuid"
+          },
+          "position_id": {
+            "type": "string",
+            "description": "ID de position.",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Les notes d'entrée de temps."
           },
           "start_at_clock_notes": {
             "type": "string",
@@ -8799,10 +8832,15 @@
             "type": "string",
             "description": "Note laissée par l'employé lors du pointage de sortie."
           },
-          "break_started_at": {
+          "start_at_clock_job_site_id": {
             "type": "string",
-            "description": "La date et l'heure du début de la pause.",
-            "format": "date-time"
+            "description": "L'identifiant unique du lieu de travail où l'employé a pointé son entrée.",
+            "format": "uuid"
+          },
+          "end_at_clock_job_site_id": {
+            "type": "string",
+            "description": "L'identifiant unique du lieu de travail où l'employé a pointé sa sortie.",
+            "format": "uuid"
           },
           "rate_regular": {
             "type": "number",
@@ -8819,32 +8857,10 @@
             "description": "Le taux du temps supplémentaires 2 pour l'entrée de temps.",
             "format": "float"
           },
-          "notes": {
+          "break_started_at": {
             "type": "string",
-            "description": "Les notes d'entrée de temps."
-          },
-          "end_at_clock_job_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du lieu de travail où l'employé a pointé sa sortie.",
-            "format": "uuid"
-          },
-          "time_off_resource_id": {
-            "type": "string",
-            "description": "L'identifiant unique de la ressource associée.",
-            "format": "uuid"
-          },
-          "start_at_time": {
-            "type": "string",
-            "description": "Heure à laquelle l'entrée de temps commence."
-          },
-          "end_at_time": {
-            "type": "string",
-            "description": "Heure à laquelle l'entrée de temps termine."
-          },
-          "start_at_clock_job_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du lieu de travail où l'employé a pointé son entrée.",
-            "format": "uuid"
+            "description": "La date et l'heure du début de la pause.",
+            "format": "date-time"
           }
         }
       },
@@ -8852,14 +8868,30 @@
         "type": "object",
         "description": "Description détaillée des paramètres d'entrée de mise à jour d'un utilisateur.",
         "properties": {
+          "locale": {
+            "type": "string",
+            "description": "La langue de l'utilisateur."
+          },
+          "time_format": {
+            "type": "integer",
+            "description": "Le format d'heure de l'utilisateur, 12 ou 24.",
+            "format": "int32"
+          },
+          "time_zone_name": {
+            "type": "string",
+            "description": "Le fuseau horaire de l'utilisateur."
+          },
           "email": {
             "type": "string",
             "description": "Courriel de l'utilisateur.",
             "format": "email"
           },
-          "email_notifications": {
-            "type": "boolean",
-            "description": "Si l'utilisateur reçoit des notifications par e-mail."
+          "disabled_notifications": {
+            "type": "array",
+            "description": "Une liste des notifications que cet utilisateur a désactivées.",
+            "items": {
+              "type": "string"
+            }
           },
           "sms_notifications": {
             "type": "boolean",
@@ -8873,30 +8905,14 @@
             "type": "string",
             "description": "Le numéro de téléphone auquel l'utilisateur reçoit les notifications par SMS."
           },
-          "disabled_notifications": {
-            "type": "array",
-            "description": "Une liste des notifications que cet utilisateur a désactivées.",
-            "items": {
-              "type": "string"
-            }
+          "email_notifications": {
+            "type": "boolean",
+            "description": "Si l'utilisateur reçoit des notifications par e-mail."
           },
           "shift_reminder_time": {
             "type": "integer",
             "description": "Lorsque l'utilisateur reçoit un rappel d'un quart de travail à venir, en minutes.",
             "format": "int32"
-          },
-          "locale": {
-            "type": "string",
-            "description": "La langue de l'utilisateur."
-          },
-          "time_format": {
-            "type": "integer",
-            "description": "Le format d'heure de l'utilisateur, 12 ou 24.",
-            "format": "int32"
-          },
-          "time_zone_name": {
-            "type": "string",
-            "description": "Le fuseau horaire de l'utilisateur."
           },
           "profile_attributes": {
             "$ref": "#/components/schemas/ProfileUpdateAttributes"
@@ -8953,113 +8969,6 @@
       }
     },
     "responses": {
-      "HRPrivateDataSuccessOne": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "EmptySuccess": {
-        "description": "Succès",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object"
-            }
-          }
-        }
-      },
-      "NotFoundFailure": {
-        "description": "Erreur - Introuvable",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Errors"
-            }
-          }
-        }
-      },
-      "InputParamsFailure": {
-        "description": "Erreur - Paramètres d'entrée invalides",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Errors"
-            }
-          }
-        }
-      },
-      "QueryParamFailure": {
-        "description": "Erreur - Paramètres de requête invalides",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Errors"
-            }
-          }
-        }
-      },
-      "PathParamFailure": {
-        "description": "Erreur - Chemin d'accès invalide",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Errors"
-            }
-          }
-        }
-      },
-      "ActivitySuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Activity"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
-                }
-              }
-            }
-          }
-        }
-      },
-      "AvailabilitySuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Availability"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
-                }
-              }
-            }
-          }
-        }
-      },
       "AvailabilityListRequestSuccessMany": {
         "description": "Success",
         "content": {
@@ -9090,42 +8999,6 @@
               "properties": {
                 "data": {
                   "$ref": "#/components/schemas/AvailabilityListRequest"
-                }
-              }
-            }
-          }
-        }
-      },
-      "AvailabilityListSuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AvailabilityList"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
-                }
-              }
-            }
-          }
-        }
-      },
-      "AvailabilityListSuccessOne": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "$ref": "#/components/schemas/AvailabilityList"
                 }
               }
             }
@@ -9204,7 +9077,7 @@
           }
         }
       },
-      "BreakSuccessMany": {
+      "PositionSuccessMany": {
         "description": "Success",
         "content": {
           "application/json": {
@@ -9214,7 +9087,28 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Break"
+                    "$ref": "#/components/schemas/Position"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "SiteSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Site"
                   }
                 },
                 "pagination": {
@@ -9369,27 +9263,6 @@
           }
         }
       },
-      "MemberSiteSuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MemberSite"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
-                }
-              }
-            }
-          }
-        }
-      },
       "MemberTimeBankTransactionSuccessMany": {
         "description": "Success",
         "content": {
@@ -9420,27 +9293,6 @@
               "properties": {
                 "data": {
                   "$ref": "#/components/schemas/MemberTimeBankTransaction"
-                }
-              }
-            }
-          }
-        }
-      },
-      "MemberTimeBankSuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MemberTimeBank"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
                 }
               }
             }
@@ -9483,6 +9335,99 @@
           }
         }
       },
+      "AvailabilityListSuccessOne": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/components/schemas/AvailabilityList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AvailabilityListSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityList"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MemberSiteSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberSite"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MemberTimeBankSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberTimeBank"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "HRPrivateDataSuccessOne": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
       "PayrollSuccessMany": {
         "description": "Success",
         "content": {
@@ -9513,27 +9458,6 @@
               "properties": {
                 "data": {
                   "$ref": "#/components/schemas/Payroll"
-                }
-              }
-            }
-          }
-        }
-      },
-      "PositionSuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Position"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
                 }
               }
             }
@@ -9663,24 +9587,6 @@
           }
         }
       },
-      "ResourceSuccessManyWithoutPagination": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Resource"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
       "ResourceSuccessMany": {
         "description": "Success",
         "content": {
@@ -9717,7 +9623,7 @@
           }
         }
       },
-      "SchedulerProjectionSuccessManyWithoutPagination": {
+      "ResourceSuccessManyWithoutPagination": {
         "description": "Success",
         "content": {
           "application/json": {
@@ -9727,7 +9633,7 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SchedulerProjection"
+                    "$ref": "#/components/schemas/Resource"
                   }
                 }
               }
@@ -9771,22 +9677,7 @@
           }
         }
       },
-      "SessionSuccessOne": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "$ref": "#/components/schemas/Session"
-                }
-              }
-            }
-          }
-        }
-      },
-      "ShiftSuccessManyWithoutPagination": {
+      "SchedulerProjectionSuccessManyWithoutPagination": {
         "description": "Success",
         "content": {
           "application/json": {
@@ -9796,8 +9687,23 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Shift"
+                    "$ref": "#/components/schemas/SchedulerProjection"
                   }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SessionSuccessOne": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/components/schemas/Session"
                 }
               }
             }
@@ -9840,7 +9746,7 @@
           }
         }
       },
-      "SiteSuccessMany": {
+      "ActivitySuccessMany": {
         "description": "Success",
         "content": {
           "application/json": {
@@ -9850,11 +9756,50 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Site"
+                    "$ref": "#/components/schemas/Activity"
                   }
                 },
                 "pagination": {
                   "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BreakSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Break"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ShiftSuccessManyWithoutPagination": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Shift"
+                  }
                 }
               }
             }
@@ -10031,6 +9976,56 @@
                   "$ref": "#/components/schemas/HRField"
                 }
               }
+            }
+          }
+        }
+      },
+      "EmptySuccess": {
+        "description": "Succès",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "NotFoundFailure": {
+        "description": "Erreur - Introuvable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            }
+          }
+        }
+      },
+      "InputParamsFailure": {
+        "description": "Erreur - Paramètres d'entrée invalides",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            }
+          }
+        }
+      },
+      "QueryParamFailure": {
+        "description": "Erreur - Paramètres de requête invalides",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            }
+          }
+        }
+      },
+      "PathParamFailure": {
+        "description": "Erreur - Chemin d'accès invalide",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
             }
           }
         }
@@ -10224,15 +10219,6 @@
           }
         }
       },
-      "ResourceBulkCreate": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ResourceBulkCreate"
-            }
-          }
-        }
-      },
       "ResourceCreate": {
         "content": {
           "application/json": {
@@ -10247,6 +10233,15 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/ResourceUpdate"
+            }
+          }
+        }
+      },
+      "ResourceBulkCreate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResourceBulkCreate"
             }
           }
         }
@@ -10305,20 +10300,20 @@
           }
         }
       },
-      "ShiftUpdate": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ShiftUpdate"
-            }
-          }
-        }
-      },
       "ShiftDelete": {
         "content": {
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/ShiftDelete"
+            }
+          }
+        }
+      },
+      "ShiftUpdate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ShiftUpdate"
             }
           }
         }
