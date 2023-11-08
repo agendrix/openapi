@@ -95,9 +95,6 @@ info:
     }'
     ```
 
-    # Authentication
-    <SecurityDefinitions />
-
     # Headers
     Specific headers must be set in order to interact with the API. Some headers in the API's response also contain relevant information.
 
@@ -2539,9 +2536,6 @@ components:
         key:
           type: string
           description: The activity's key.
-        parameters:
-          type: object
-          description: The activity's parameters.
         created_at:
           type: string
           description: When the activitie was created.
@@ -2550,6 +2544,9 @@ components:
           type: string
           description: When the activitie was last updated.
           format: date-time
+        parameters:
+          type: object
+          description: The activity's parameters.
     Availability:
       type: object
       description: A detailed description of an availability.
@@ -3209,10 +3206,6 @@ components:
           type: string
           description: The member's role in this site. Can either be member, supervisor
             or manager.
-        rate_type:
-          type: string
-          description: Whether the same rates are applied to all positions (single)
-            or every position has their own rates (position).
         supervisor_position_ids:
           type: array
           description: Which position ids in the current site does the member supervise.
@@ -3223,6 +3216,10 @@ components:
           description: Which resource ids in the current site does the member supervise.
           items:
             type: string
+        rate_type:
+          type: string
+          description: Whether the same rates are applied to all positions (single)
+            or every position has their own rates (position).
         created_at:
           type: string
           description: When the member site was created.
@@ -3565,18 +3562,6 @@ components:
           type: string
           description: When the member accepted the invitation.
           format: date-time
-        created_at:
-          type: string
-          description: When the member was created.
-          format: date-time
-        updated_at:
-          type: string
-          description: When the member was last updated.
-          format: date-time
-        deleted_at:
-          type: string
-          description: When the member was archived.
-          format: date-time
         code:
           type: string
           description: The member's invitation code.
@@ -3591,7 +3576,7 @@ components:
           description: If the member must be scheduled in order to clock.
         time_clock_transfer_next_call:
           type: boolean
-          description: If the next phone clock must be transfered.
+          description: If the next phone clock must be transferred.
         time_clock_transfer_next_call_number:
           type: string
           description: The number to transfer the next phone clock to.
@@ -3619,11 +3604,23 @@ components:
         payroll_auto_update:
           type: boolean
           description: If the member doesn't have to clock in.
-        profile:
-          "$ref": "#/components/schemas/Profile"
+        updated_at:
+          type: string
+          description: When the member was last updated.
+          format: date-time
+        created_at:
+          type: string
+          description: When the member was created.
+          format: date-time
+        deleted_at:
+          type: string
+          description: When the member was archived.
+          format: date-time
         hr_data:
           type: object
           description: The member's hr data.
+        profile:
+          "$ref": "#/components/schemas/Profile"
     Organization:
       type: object
       description: A detailed description of an organization.
@@ -4127,18 +4124,6 @@ components:
           type: string
           description: When the shift was confirmed by its member.
           format: date-time
-        created_at:
-          type: string
-          description: When the shift was created.
-          format: date-time
-        updated_at:
-          type: string
-          description: When the shift was last updated.
-          format: date-time
-        deleted_at:
-          type: string
-          description: When the shift was archived.
-          format: date-time
         open_quantity:
           type: integer
           description: How many shifts are available.
@@ -4183,6 +4168,14 @@ components:
           type: integer
           description: The shift's total duration.
           format: int32
+        original_shift_id:
+          type: string
+          description: The shift's original shift id.
+          format: uuid
+        new_version_id:
+          type: string
+          description: The shift's new version id.
+          format: uuid
         rate_base:
           type: number
           description: The rate paid to the member for the regular time.
@@ -4200,14 +4193,19 @@ components:
           description: The shift's resource ids.
           items:
             type: string
-        original_shift_id:
+            format: uuid
+        created_at:
           type: string
-          description: The shift's original shift id.
-          format: uuid
-        new_version_id:
+          description: When the shift was created.
+          format: date-time
+        updated_at:
           type: string
-          description: The shift's new version id.
-          format: uuid
+          description: When the shift was last updated.
+          format: date-time
+        deleted_at:
+          type: string
+          description: When the shift was archived.
+          format: date-time
     Site:
       type: object
       description: A detailed description of a site.
@@ -4554,21 +4552,21 @@ components:
         start_time:
           type: string
           description: The thread's publication time.
+        draft:
+          type: boolean
+          description: If the thread is a draft.
+        notify:
+          type: boolean
+          description: If the action notifies the organization's members.
+        sticky:
+          type: boolean
+          description: If the thread is sticky.
         commentable:
           type: boolean
           description: If the thread is commentable.
         acknowledgeable:
           type: boolean
           description: If the thread must be acknowledged by its concerned members.
-        draft:
-          type: boolean
-          description: If the thread is a draft.
-        sticky:
-          type: boolean
-          description: If the thread is sticky.
-        notify:
-          type: boolean
-          description: If the action notifies the organization's members.
         site_ids:
           type: array
           description: The site ids for which the thread is visible.
@@ -4610,21 +4608,21 @@ components:
         start_time:
           type: string
           description: The thread's publication time.
+        draft:
+          type: boolean
+          description: If the thread is a draft.
+        notify:
+          type: boolean
+          description: If the action notifies the organization's members.
+        sticky:
+          type: boolean
+          description: If the thread is sticky.
         commentable:
           type: boolean
           description: If the thread is commentable.
         acknowledgeable:
           type: boolean
           description: If the thread must be acknowledged by its concerned members.
-        draft:
-          type: boolean
-          description: If the thread is a draft.
-        sticky:
-          type: boolean
-          description: If the thread is sticky.
-        notify:
-          type: boolean
-          description: If the action notifies the organization's members.
         site_ids:
           type: array
           description: The site ids for which the thread is visible.
@@ -4704,14 +4702,14 @@ components:
         body:
           type: string
           description: The comment's body.
-        commentable_id:
-          type: string
-          description: The id of the commented resource.
-          format: uuid
         commentable_type:
           type: string
           description: The type of the the commented resource - shift, leave request,
             billboard thread, etc.
+        commentable_id:
+          type: string
+          description: The id of the commented resource.
+          format: uuid
         type:
           type: string
           description: If the comment is private or not. Must be 'private' or 'public'.
@@ -4722,14 +4720,14 @@ components:
         body:
           type: string
           description: The comment's body.
-        commentable_id:
-          type: string
-          description: The id of the commented resource.
-          format: uuid
         commentable_type:
           type: string
           description: The type of the the commented resource - shift, leave request,
             billboard thread, etc.
+        commentable_id:
+          type: string
+          description: The id of the commented resource.
+          format: uuid
         type:
           type: string
           description: If the comment is private or not. Must be 'private' or 'public'.
@@ -4770,6 +4768,7 @@ components:
           type: string
           description: The type of the human resource field.
         metadata:
+          type: object
           description: The metadata depending on the field_type of the human resource
             field.
         private_field:
@@ -4778,6 +4777,9 @@ components:
         sortable:
           type: boolean
           description: If the human resource field is sortable.
+        filterable:
+          type: boolean
+          description: If the human resource field is filterable.
         deleted_at:
           type: string
           description: When the human resource field was last deleted.
@@ -4799,10 +4801,14 @@ components:
       type: object
       description: A detailed description of a leave request's creation input parameters.
       properties:
-        member_site_position_id:
+        start_at:
           type: string
-          description: The requester's site position id.
-          format: uuid
+          description: The time at which the the leave request starts.
+          format: date-time
+        end_at:
+          type: string
+          description: The time at which the the leave request ends.
+          format: date-time
         justification:
           type: string
           description: The leave request justification.
@@ -4813,26 +4819,26 @@ components:
         paid:
           type: boolean
           description: If the leave request is paid.
-        start_at:
-          type: string
-          description: The time at which the the leave request starts.
-          format: date-time
-        end_at:
-          type: string
-          description: The time at which the the leave request ends.
-          format: date-time
         leave_type_id:
           type: string
           description: The leave request's leave type id.
+          format: uuid
         site_id:
           type: string
           description: The leave request's site id.
+          format: uuid
         position_id:
           type: string
           description: The leave request's position id.
+          format: uuid
+        member_site_position_id:
+          type: string
+          description: The requester's site position id.
+          format: uuid
         resource_id:
           type: string
           description: The leave request's resource id.
+          format: uuid
         member_id:
           type: string
           description: The requester's id.
@@ -4860,10 +4866,14 @@ components:
       type: object
       description: A detailed description of a leave request's update input parameters.
       properties:
-        member_site_position_id:
+        start_at:
           type: string
-          description: The requester's site position id.
-          format: uuid
+          description: The time at which the the leave request starts.
+          format: date-time
+        end_at:
+          type: string
+          description: The time at which the the leave request ends.
+          format: date-time
         justification:
           type: string
           description: The leave request justification.
@@ -4874,26 +4884,26 @@ components:
         paid:
           type: boolean
           description: If the leave request is paid.
-        start_at:
-          type: string
-          description: The time at which the the leave request starts.
-          format: date-time
-        end_at:
-          type: string
-          description: The time at which the the leave request ends.
-          format: date-time
         leave_type_id:
           type: string
           description: The leave request's leave type id.
+          format: uuid
         site_id:
           type: string
           description: The leave request's site id.
+          format: uuid
         position_id:
           type: string
           description: The leave request's position id.
+          format: uuid
+        member_site_position_id:
+          type: string
+          description: The requester's site position id.
+          format: uuid
         resource_id:
           type: string
           description: The leave request's resource id.
+          format: uuid
         time_off_payment_constraint_attributes:
           "$ref": "#/components/schemas/TimeOffPaymentConstraintUpdateAttributes"
     LeaveTypeCreate:
@@ -4903,30 +4913,30 @@ components:
       type: object
       description: A detailed description of a leave type's creation input parameters.
       properties:
+        keep_track_hours:
+          type: boolean
+          description: If time clock is enabled for your organization, whether or
+            not time offs with this leave type should impact the associated time bank.
         name:
           type: string
           description: The leave type's name.
         paid:
           type: boolean
           description: If the leave type is paid.
-        keep_track_hours:
-          type: boolean
-          description: If time clock is enabled for your organization, whether or
-            not time offs with this leave type should impact the associated time bank.
     LeaveTypeUpdate:
       type: object
       description: A detailed description of a leave type's update input parameters.
       properties:
+        keep_track_hours:
+          type: boolean
+          description: If time clock is enabled for your organization, whether or
+            not time offs with this leave type should impact the associated time bank.
         name:
           type: string
           description: The leave type's name.
         paid:
           type: boolean
           description: If the leave type is paid.
-        keep_track_hours:
-          type: boolean
-          description: If time clock is enabled for your organization, whether or
-            not time offs with this leave type should impact the associated time bank.
     LeaveValueSettingCreateAttributes:
       required:
       - interval_start
@@ -5135,10 +5145,6 @@ components:
           type: string
           description: The member's role in this site. Can either be member, supervisor
             or manager.
-        rate_type:
-          type: string
-          description: Whether the same rates are applied to all positions (single)
-            or every position has their own rates (position).
         rate_single_base:
           type: number
           description: The member's rate for regular hours for all positions in this
@@ -5154,6 +5160,10 @@ components:
           description: The member's rate for overtime 2 hours for all positions in
             this site, if enabled.
           format: float
+        rate_type:
+          type: string
+          description: Whether the same rates are applied to all positions (single)
+            or every position has their own rates (position).
         member_site_positions_attributes:
           type: array
           description: The positions associated to this member in this site
@@ -5178,10 +5188,6 @@ components:
           type: string
           description: The member's role in this site. Can either be member, supervisor
             or manager.
-        rate_type:
-          type: string
-          description: Whether the same rates are applied to all positions (single)
-            or every position has their own rates (position).
         rate_single_base:
           type: number
           description: The member's rate for regular hours for all positions in this
@@ -5197,6 +5203,10 @@ components:
           description: The member's rate for overtime 2 hours for all positions in
             this site, if enabled.
           format: float
+        rate_type:
+          type: string
+          description: Whether the same rates are applied to all positions (single)
+            or every position has their own rates (position).
         id:
           type: string
           description: Unique identifier for the object.
@@ -5227,16 +5237,16 @@ components:
       type: object
       description: A detailed description of a profile's creation input parameters.
       properties:
+        email:
+          type: string
+          description: The profile's email.
+          format: email
         first_name:
           type: string
           description: The profile's first name.
         last_name:
           type: string
           description: The profile's last name.
-        email:
-          type: string
-          description: The profile's email.
-          format: email
         birthdate:
           type: string
           description: The profile's birthdate.
@@ -5275,36 +5285,30 @@ components:
       type: object
       description: A detailed description of a member's creation input parameters.
       properties:
+        seniority_date:
+          type: string
+          description: When the member first started working for this organization.
+          format: date
+        deletion_date:
+          type: string
+          description: When the member will be archived.
+          format: date
         identification_number:
           type: string
           description: The member's identification number.
         additional_information:
           type: string
           description: Additional information related to the member.
-        main_position_id:
-          type: string
-          description: The unique identifier of the member's main position.
-          format: uuid
-        main_site_id:
-          type: string
-          description: The unique identifier of the member's main site.
-          format: uuid
-        admin:
-          type: boolean
-          description: If the member is an administrator of the organization.
-        hide_before_seniority_date:
-          type: boolean
-          description: If the member is hidden from the scheduler and timesheets before
-            the seniority date.
-        visible:
-          type: boolean
-          description: If the member is hidden from the scheduler and timesheets.
         override_overtime:
           type: boolean
           description: If the member has custom overtime thresholds.
         multi_level_overtime:
           type: boolean
           description: If multi-level overtime is enabled for the member.
+        override_spread_overtime:
+          type: boolean
+          description: If the member overrides the organization's overtime spread
+            setting.
         overtime_day_threshold:
           type: number
           description: The member's custom day overtime 1 threshold.
@@ -5323,29 +5327,45 @@ components:
           description: The member's custom week overtime 2 threshold, if multi-level
             overtime is enabled.
           format: float
-        seniority_date:
+        spread_overtime_enabled:
+          type: boolean
+          description: If the overtime is spread across multiple weeks for this member.
+        main_position_id:
           type: string
-          description: When the member first started working for this organization.
-          format: date
-        deletion_date:
+          description: The unique identifier of the member's main position.
+          format: uuid
+        main_site_id:
           type: string
-          description: When the member will be archived.
-          format: date
+          description: The unique identifier of the member's main site.
+          format: uuid
+        admin:
+          type: boolean
+          description: If the member is an administrator of the organization.
+        invite:
+          type: boolean
+          description: If this member is been invited to join the organization.
+        visible:
+          type: boolean
+          description: If the member is hidden from the scheduler and timesheets.
+        hide_before_seniority_date:
+          type: boolean
+          description: If the member is hidden from the scheduler and timesheets before
+            the seniority date.
         time_clock_code:
           type: string
           description: The member's time clock code.
         time_clock_override_defaults:
           type: boolean
           description: If the member overrides the organization's time clock settings.
-        time_clock_must_be_scheduled:
-          type: boolean
-          description: If the member must be scheduled in order to clock.
         time_clock_transfer_next_call:
           type: boolean
-          description: If the next phone clock must be transfered.
+          description: If the next phone clock must be transferred.
         time_clock_transfer_next_call_number:
           type: string
           description: The number to transfer the next phone clock to.
+        time_clock_must_be_scheduled:
+          type: boolean
+          description: If the member must be scheduled in order to clock.
         time_clock_window:
           type: integer
           description: The window used for various time clock settings, in minutes.
@@ -5366,16 +5386,6 @@ components:
         payroll_auto_update:
           type: boolean
           description: If the member doesn't have to clock in.
-        override_spread_overtime:
-          type: boolean
-          description: If the member overrides the organization's overtime spread
-            setting.
-        spread_overtime_enabled:
-          type: boolean
-          description: If the overtime is spread across multiple weeks for this member.
-        invite:
-          type: boolean
-          description: If this member is been invited to join the organization.
         profile_attributes:
           "$ref": "#/components/schemas/ProfileCreateAttributes"
         member_sites_attributes:
@@ -5387,16 +5397,16 @@ components:
       type: object
       description: A detailed description of a profile's update input parameters.
       properties:
+        email:
+          type: string
+          description: The profile's email.
+          format: email
         first_name:
           type: string
           description: The profile's first name.
         last_name:
           type: string
           description: The profile's last name.
-        email:
-          type: string
-          description: The profile's email.
-          format: email
         birthdate:
           type: string
           description: The profile's birthdate.
@@ -5432,36 +5442,30 @@ components:
       type: object
       description: A detailed description of a member's update input parameters.
       properties:
+        seniority_date:
+          type: string
+          description: When the member first started working for this organization.
+          format: date
+        deletion_date:
+          type: string
+          description: When the member will be archived.
+          format: date
         identification_number:
           type: string
           description: The member's identification number.
         additional_information:
           type: string
           description: Additional information related to the member.
-        main_position_id:
-          type: string
-          description: The unique identifier of the member's main position.
-          format: uuid
-        main_site_id:
-          type: string
-          description: The unique identifier of the member's main site.
-          format: uuid
-        admin:
-          type: boolean
-          description: If the member is an administrator of the organization.
-        hide_before_seniority_date:
-          type: boolean
-          description: If the member is hidden from the scheduler and timesheets before
-            the seniority date.
-        visible:
-          type: boolean
-          description: If the member is hidden from the scheduler and timesheets.
         override_overtime:
           type: boolean
           description: If the member has custom overtime thresholds.
         multi_level_overtime:
           type: boolean
           description: If multi-level overtime is enabled for the member.
+        override_spread_overtime:
+          type: boolean
+          description: If the member overrides the organization's overtime spread
+            setting.
         overtime_day_threshold:
           type: number
           description: The member's custom day overtime 1 threshold.
@@ -5480,29 +5484,45 @@ components:
           description: The member's custom week overtime 2 threshold, if multi-level
             overtime is enabled.
           format: float
-        seniority_date:
+        spread_overtime_enabled:
+          type: boolean
+          description: If the overtime is spread across multiple weeks for this member.
+        main_position_id:
           type: string
-          description: When the member first started working for this organization.
-          format: date
-        deletion_date:
+          description: The unique identifier of the member's main position.
+          format: uuid
+        main_site_id:
           type: string
-          description: When the member will be archived.
-          format: date
+          description: The unique identifier of the member's main site.
+          format: uuid
+        admin:
+          type: boolean
+          description: If the member is an administrator of the organization.
+        invite:
+          type: boolean
+          description: If this member is been invited to join the organization.
+        visible:
+          type: boolean
+          description: If the member is hidden from the scheduler and timesheets.
+        hide_before_seniority_date:
+          type: boolean
+          description: If the member is hidden from the scheduler and timesheets before
+            the seniority date.
         time_clock_code:
           type: string
           description: The member's time clock code.
         time_clock_override_defaults:
           type: boolean
           description: If the member overrides the organization's time clock settings.
-        time_clock_must_be_scheduled:
-          type: boolean
-          description: If the member must be scheduled in order to clock.
         time_clock_transfer_next_call:
           type: boolean
-          description: If the next phone clock must be transfered.
+          description: If the next phone clock must be transferred.
         time_clock_transfer_next_call_number:
           type: string
           description: The number to transfer the next phone clock to.
+        time_clock_must_be_scheduled:
+          type: boolean
+          description: If the member must be scheduled in order to clock.
         time_clock_window:
           type: integer
           description: The window used for various time clock settings, in minutes.
@@ -5523,16 +5543,6 @@ components:
         payroll_auto_update:
           type: boolean
           description: If the member doesn't have to clock in.
-        override_spread_overtime:
-          type: boolean
-          description: If the member overrides the organization's overtime spread
-            setting.
-        spread_overtime_enabled:
-          type: boolean
-          description: If the overtime is spread across multiple weeks for this member.
-        invite:
-          type: boolean
-          description: If this member is been invited to join the organization.
         profile_attributes:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
         member_sites_attributes:
@@ -5664,6 +5674,7 @@ components:
           type: string
           description: The unique identifier of the position's parent. If this is
             present, it means this is a sub-position.
+          format: uuid
     PositionUpdate:
       type: object
       description: A detailed description of a position's update input parameters.
@@ -5682,6 +5693,7 @@ components:
           type: string
           description: The unique identifier of the position's parent. If this is
             present, it means this is a sub-position.
+          format: uuid
     PremiumEntryCreateAttributes:
       required:
       - premium_id
@@ -5692,14 +5704,14 @@ components:
           type: string
           description: The premium's unique identifier.
           format: uuid
-        entry_minutes:
-          type: integer
-          description: The number of minutes the premium is applied to.
-          format: int32
         has_custom_value:
           type: boolean
           description: If the premium is applied to a specific amount of hours, otherwise
             it is applied to the shift's length.
+        entry_minutes:
+          type: integer
+          description: The number of minutes the premium is applied to.
+          format: int32
     PremiumEntryUpdateAttributes:
       required:
       - id
@@ -5710,14 +5722,14 @@ components:
           type: string
           description: The premium's unique identifier.
           format: uuid
-        entry_minutes:
-          type: integer
-          description: The number of minutes the premium is applied to.
-          format: int32
         has_custom_value:
           type: boolean
           description: If the premium is applied to a specific amount of hours, otherwise
             it is applied to the shift's length.
+        entry_minutes:
+          type: integer
+          description: The number of minutes the premium is applied to.
+          format: int32
         id:
           type: string
           description: Unique identifier for the object.
@@ -5760,18 +5772,18 @@ components:
       type: object
       description: A detailed description of a resource's creation input parameters.
       properties:
-        name:
-          type: string
-          description: The resource's name.
         'no':
           type: string
           description: The resource's unique short identifier.
-        description:
+        name:
           type: string
-          description: The resource's description.
+          description: The resource's name.
         address:
           type: string
           description: The resource's address.
+        description:
+          type: string
+          description: The resource's description.
         exclusive:
           type: boolean
           description: If the resource is exclusive.
@@ -5781,10 +5793,6 @@ components:
         type_equipment:
           type: boolean
           description: If the resource is an equipment.
-        minimum_paid_minutes_per_entry:
-          type: integer
-          description: The minimum amount of paid minutes per entry on the resource.
-          format: int32
         week_hours_min:
           type: number
           description: The minimum scheduling goals for this resource.
@@ -5793,6 +5801,10 @@ components:
           type: number
           description: The maximum scheduling goals for this resource.
           format: float
+        minimum_paid_minutes_per_entry:
+          type: integer
+          description: The minimum amount of paid minutes per entry on the resource.
+          format: int32
         document_ids:
           type: array
           description: The documents attached to this resource.
@@ -5809,18 +5821,18 @@ components:
       type: object
       description: A detailed description of a resource's update input parameters.
       properties:
-        name:
-          type: string
-          description: The resource's name.
         'no':
           type: string
           description: The resource's unique short identifier.
-        description:
+        name:
           type: string
-          description: The resource's description.
+          description: The resource's name.
         address:
           type: string
           description: The resource's address.
+        description:
+          type: string
+          description: The resource's description.
         exclusive:
           type: boolean
           description: If the resource is exclusive.
@@ -5830,10 +5842,6 @@ components:
         type_equipment:
           type: boolean
           description: If the resource is an equipment.
-        minimum_paid_minutes_per_entry:
-          type: integer
-          description: The minimum amount of paid minutes per entry on the resource.
-          format: int32
         week_hours_min:
           type: number
           description: The minimum scheduling goals for this resource.
@@ -5842,6 +5850,10 @@ components:
           type: number
           description: The maximum scheduling goals for this resource.
           format: float
+        minimum_paid_minutes_per_entry:
+          type: integer
+          description: The minimum amount of paid minutes per entry on the resource.
+          format: int32
         document_ids:
           type: array
           description: The documents attached to this resource.
@@ -5864,13 +5876,13 @@ components:
       description: A detailed description of a scheduler projection's creation input
         parameters.
       properties:
-        hours:
-          type: number
-          description: The number of expected scheduled hours.
-          format: float
         revenues:
           type: number
           description: The amount of expected revenues.
+          format: float
+        hours:
+          type: number
+          description: The number of expected scheduled hours.
           format: float
         site_id:
           type: string
@@ -5885,13 +5897,13 @@ components:
       description: A detailed description of a scheduler projection's update input
         parameters.
       properties:
-        hours:
-          type: number
-          description: The number of expected scheduled hours.
-          format: float
         revenues:
           type: number
           description: The amount of expected revenues.
+          format: float
+        hours:
+          type: number
+          description: The number of expected scheduled hours.
           format: float
     SchedulerProjectionUpdateForBulk:
       required:
@@ -5901,13 +5913,13 @@ components:
       description: A detailed description of a scheduler projection's update input
         parameters for a bulk operation.
       properties:
-        hours:
-          type: number
-          description: The number of expected scheduled hours.
-          format: float
         revenues:
           type: number
           description: The amount of expected revenues.
+          format: float
+        hours:
+          type: number
+          description: The number of expected scheduled hours.
           format: float
         site_id:
           type: string
@@ -5940,6 +5952,22 @@ components:
       type: object
       description: A detailed description of a shift's creation input parameters.
       properties:
+        site_id:
+          type: string
+          description: The unique identifier of the shift's site.
+          format: uuid
+        position_id:
+          type: string
+          description: The unique identifier of the shift's position.
+          format: uuid
+        sub_position_id:
+          type: string
+          description: The unique identifier of the shift's sub-position.
+          format: uuid
+        date:
+          type: string
+          description: The shift's date.
+          format: date
         start_at:
           type: string
           description: The shift's start date time.
@@ -5962,64 +5990,48 @@ components:
           type: string
           description: The shift's end date.
           format: date
-        date:
-          type: string
-          description: The shift's date.
-          format: date
-        site_id:
-          type: string
-          description: The unique identifier of the shift's site.
-          format: uuid
-        position_id:
-          type: string
-          description: The unique identifier of the shift's position.
-          format: uuid
-        sub_position_id:
-          type: string
-          description: The unique identifier of the shift's sub-position.
-          format: uuid
-        leave_type_id:
-          type: string
-          description: The unique identifier of the shift's leave type.
-          format: uuid
-        open:
+        on_call:
           type: boolean
-          description: If the shift is open.
-        recurring:
-          type: boolean
-          description: If the shift is recurring.
+          description: If the shift is on call.
         time_off:
           type: boolean
           description: If the shift is a time off.
-        paid:
+        all_day:
           type: boolean
-          description: If the shift is a paid time off or not.
+          description: If the shift is an all day time off.
         single_clock:
           type: boolean
           description: If the shift only requires a clock in.
         auto_clock:
           type: boolean
           description: If the shift is added automatically to the member's timesheet.
-        on_call:
+        hide_end_at:
           type: boolean
-          description: If the shift is on call.
-        all_day:
+          description: If the shift's end is hidden to members.
+        paid:
           type: boolean
-          description: If the shift is an all day time off.
-        reminder:
-          type: string
-          description: The shift's additional information.
+          description: If the shift is a paid time off or not.
+        recurring:
+          type: boolean
+          description: If the shift is recurring.
+        open:
+          type: boolean
+          description: If the shift is open.
         open_quantity:
           type: integer
           description: How many shifts are available.
           format: int32
-        hide_end_at:
-          type: boolean
-          description: If the shift's end is hidden to members.
+        leave_type_id:
+          type: string
+          description: The unique identifier of the shift's leave type.
+          format: uuid
         leave_value:
           type: integer
           description: The length of the time off.
           format: int32
+        reminder:
+          type: string
+          description: The shift's additional information.
         publish:
           type: boolean
           description: If the shift should be published after its creation.
@@ -6064,12 +6076,12 @@ components:
       properties:
         date:
           type: string
-          description: The date at which the shift will be transfered to.
+          description: The date to which the shift will be transferred.
           format: date
         member_id:
           type: string
-          description: The ID of the member to which the shift will be transfered
-            to. A blank value will transfer this shift as an open shift.
+          description: The ID of the member to which the shift will be transferred.
+            A blank value will transfer this shift as an open shift.
           format: uuid
         publish:
           type: boolean
@@ -6078,6 +6090,22 @@ components:
       type: object
       description: A detailed description of a shift's update input parameters.
       properties:
+        site_id:
+          type: string
+          description: The unique identifier of the shift's site.
+          format: uuid
+        position_id:
+          type: string
+          description: The unique identifier of the shift's position.
+          format: uuid
+        sub_position_id:
+          type: string
+          description: The unique identifier of the shift's sub-position.
+          format: uuid
+        date:
+          type: string
+          description: The shift's date.
+          format: date
         start_at:
           type: string
           description: The shift's start date time.
@@ -6100,64 +6128,48 @@ components:
           type: string
           description: The shift's end date.
           format: date
-        date:
-          type: string
-          description: The shift's date.
-          format: date
-        site_id:
-          type: string
-          description: The unique identifier of the shift's site.
-          format: uuid
-        position_id:
-          type: string
-          description: The unique identifier of the shift's position.
-          format: uuid
-        sub_position_id:
-          type: string
-          description: The unique identifier of the shift's sub-position.
-          format: uuid
-        leave_type_id:
-          type: string
-          description: The unique identifier of the shift's leave type.
-          format: uuid
-        open:
+        on_call:
           type: boolean
-          description: If the shift is open.
-        recurring:
-          type: boolean
-          description: If the shift is recurring.
+          description: If the shift is on call.
         time_off:
           type: boolean
           description: If the shift is a time off.
-        paid:
+        all_day:
           type: boolean
-          description: If the shift is a paid time off or not.
+          description: If the shift is an all day time off.
         single_clock:
           type: boolean
           description: If the shift only requires a clock in.
         auto_clock:
           type: boolean
           description: If the shift is added automatically to the member's timesheet.
-        on_call:
+        hide_end_at:
           type: boolean
-          description: If the shift is on call.
-        all_day:
+          description: If the shift's end is hidden to members.
+        paid:
           type: boolean
-          description: If the shift is an all day time off.
-        reminder:
-          type: string
-          description: The shift's additional information.
+          description: If the shift is a paid time off or not.
+        recurring:
+          type: boolean
+          description: If the shift is recurring.
+        open:
+          type: boolean
+          description: If the shift is open.
         open_quantity:
           type: integer
           description: How many shifts are available.
           format: int32
-        hide_end_at:
-          type: boolean
-          description: If the shift's end is hidden to members.
+        leave_type_id:
+          type: string
+          description: The unique identifier of the shift's leave type.
+          format: uuid
         leave_value:
           type: integer
           description: The length of the time off.
           format: int32
+        reminder:
+          type: string
+          description: The shift's additional information.
         publish:
           type: boolean
           description: If the shift should be published after its update, if it generated
@@ -6228,30 +6240,28 @@ components:
       type: object
       description: A detailed description of a time entry's creation input parameters.
       properties:
-        unpaid_break:
-          type: integer
-          description: Unpaid break minutes for the time entry.
-          format: int32
-        paid_break:
-          type: integer
-          description: Paid break minutes for the time entry.
-          format: int32
+        start_at:
+          type: string
+          description: The date time at which the time entry starts.
+          format: date-time
+        end_at:
+          type: string
+          description: The date time at which the time entry ends.
+          format: date-time
+        start_at_time:
+          type: string
+          description: The time at which the time entry starts.
+        end_at_time:
+          type: string
+          description: The time at which the time entry ends.
         overwritten_length_minutes:
           type: integer
           description: The time entry's custom length.
           format: int32
-        position_id:
+        date:
           type: string
-          description: The time entry's position id.
-          format: uuid
-        site_id:
-          type: string
-          description: The time entry's site id.
-          format: uuid
-        member_site_position_id:
-          type: string
-          description: The time entry's member site position id.
-          format: uuid
+          description: The time entry's date.
+          format: date
         time_off:
           type: boolean
           description: If the time entry is a time off.
@@ -6266,28 +6276,49 @@ components:
         time_off_paid:
           type: boolean
           description: If the time off is paid.
-        date:
+        time_off_resource_id:
           type: string
-          description: The time entry's date.
-          format: date
-        start_at:
+          description: The unique identifier of the time off's resource.
+          format: uuid
+        unpaid_break:
+          type: integer
+          description: Unpaid break minutes for the time entry.
+          format: int32
+        paid_break:
+          type: integer
+          description: Paid break minutes for the time entry.
+          format: int32
+        member_site_position_id:
           type: string
-          description: The date time at which the time entry starts.
-          format: date-time
-        end_at:
+          description: The time entry's member site position id.
+          format: uuid
+        site_id:
           type: string
-          description: The date time at which the time entry ends.
-          format: date-time
+          description: The time entry's site id.
+          format: uuid
+        position_id:
+          type: string
+          description: The time entry's position id.
+          format: uuid
+        notes:
+          type: string
+          description: The time entry notes.
         start_at_clock_notes:
           type: string
           description: Note left by the employee while clocking in.
         end_at_clock_notes:
           type: string
           description: Note left by the employee while clocking out.
-        break_started_at:
+        start_at_clock_job_site_id:
           type: string
-          description: The date time at which the time entry break started.
-          format: date-time
+          description: The unique identifier of the job site where the employee clocked
+            in.
+          format: uuid
+        end_at_clock_job_site_id:
+          type: string
+          description: The unique identifier of the job site where the employee clocked
+            in.
+          format: uuid
         rate_regular:
           type: number
           description: The regular rate for the time entry.
@@ -6300,29 +6331,10 @@ components:
           type: number
           description: The overtime 2 rate for the time entry.
           format: float
-        notes:
+        break_started_at:
           type: string
-          description: The time entry notes.
-        end_at_clock_job_site_id:
-          type: string
-          description: The unique identifier of the job site where the employee clocked
-            in.
-          format: uuid
-        time_off_resource_id:
-          type: string
-          description: The unique identifier of the time off's resource.
-          format: uuid
-        start_at_time:
-          type: string
-          description: The time at which the time entry starts.
-        end_at_time:
-          type: string
-          description: The time at which the time entry ends.
-        start_at_clock_job_site_id:
-          type: string
-          description: The unique identifier of the job site where the employee clocked
-            in.
-          format: uuid
+          description: The date time at which the time entry break started.
+          format: date-time
         member_id:
           type: string
           description: The time entry's member id.
@@ -6331,30 +6343,28 @@ components:
       type: object
       description: A detailed description of a time entry's update input parameters.
       properties:
-        unpaid_break:
-          type: integer
-          description: Unpaid break minutes for the time entry.
-          format: int32
-        paid_break:
-          type: integer
-          description: Paid break minutes for the time entry.
-          format: int32
+        start_at:
+          type: string
+          description: The date time at which the time entry starts.
+          format: date-time
+        end_at:
+          type: string
+          description: The date time at which the time entry ends.
+          format: date-time
+        start_at_time:
+          type: string
+          description: The time at which the time entry starts.
+        end_at_time:
+          type: string
+          description: The time at which the time entry ends.
         overwritten_length_minutes:
           type: integer
           description: The time entry's custom length.
           format: int32
-        position_id:
+        date:
           type: string
-          description: The time entry's position id.
-          format: uuid
-        site_id:
-          type: string
-          description: The time entry's site id.
-          format: uuid
-        member_site_position_id:
-          type: string
-          description: The time entry's member site position id.
-          format: uuid
+          description: The time entry's date.
+          format: date
         time_off:
           type: boolean
           description: If the time entry is a time off.
@@ -6369,28 +6379,49 @@ components:
         time_off_paid:
           type: boolean
           description: If the time off is paid.
-        date:
+        time_off_resource_id:
           type: string
-          description: The time entry's date.
-          format: date
-        start_at:
+          description: The unique identifier of the time off's resource.
+          format: uuid
+        unpaid_break:
+          type: integer
+          description: Unpaid break minutes for the time entry.
+          format: int32
+        paid_break:
+          type: integer
+          description: Paid break minutes for the time entry.
+          format: int32
+        member_site_position_id:
           type: string
-          description: The date time at which the time entry starts.
-          format: date-time
-        end_at:
+          description: The time entry's member site position id.
+          format: uuid
+        site_id:
           type: string
-          description: The date time at which the time entry ends.
-          format: date-time
+          description: The time entry's site id.
+          format: uuid
+        position_id:
+          type: string
+          description: The time entry's position id.
+          format: uuid
+        notes:
+          type: string
+          description: The time entry notes.
         start_at_clock_notes:
           type: string
           description: Note left by the employee while clocking in.
         end_at_clock_notes:
           type: string
           description: Note left by the employee while clocking out.
-        break_started_at:
+        start_at_clock_job_site_id:
           type: string
-          description: The date time at which the time entry break started.
-          format: date-time
+          description: The unique identifier of the job site where the employee clocked
+            in.
+          format: uuid
+        end_at_clock_job_site_id:
+          type: string
+          description: The unique identifier of the job site where the employee clocked
+            in.
+          format: uuid
         rate_regular:
           type: number
           description: The regular rate for the time entry.
@@ -6403,58 +6434,14 @@ components:
           type: number
           description: The overtime 2 rate for the time entry.
           format: float
-        notes:
+        break_started_at:
           type: string
-          description: The time entry notes.
-        end_at_clock_job_site_id:
-          type: string
-          description: The unique identifier of the job site where the employee clocked
-            in.
-          format: uuid
-        time_off_resource_id:
-          type: string
-          description: The unique identifier of the time off's resource.
-          format: uuid
-        start_at_time:
-          type: string
-          description: The time at which the time entry starts.
-        end_at_time:
-          type: string
-          description: The time at which the time entry ends.
-        start_at_clock_job_site_id:
-          type: string
-          description: The unique identifier of the job site where the employee clocked
-            in.
-          format: uuid
+          description: The date time at which the time entry break started.
+          format: date-time
     UserUpdate:
       type: object
       description: A detailed description of a user's update input parameters.
       properties:
-        email:
-          type: string
-          description: The user's email.
-          format: email
-        email_notifications:
-          type: boolean
-          description: If the user receives email notifications.
-        sms_notifications:
-          type: boolean
-          description: If the user receives SMS notifications.
-        sms_notifications_phone_status:
-          type: string
-          description: If the phone number's confirmation status, pending or confirmed.
-        sms_notifications_phone_number:
-          type: string
-          description: The phone number at which the user receives the sms notifications
-        disabled_notifications:
-          type: array
-          description: A list of the notifications this user has disabled.
-          items:
-            type: string
-        shift_reminder_time:
-          type: integer
-          description: When the user is reminded of an upcoming shift, in minutes.
-          format: int32
         locale:
           type: string
           description: The user's language.
@@ -6465,6 +6452,31 @@ components:
         time_zone_name:
           type: string
           description: The user's timezone name.
+        email:
+          type: string
+          description: The user's email.
+          format: email
+        disabled_notifications:
+          type: array
+          description: A list of the notifications this user has disabled.
+          items:
+            type: string
+        sms_notifications:
+          type: boolean
+          description: If the user receives SMS notifications.
+        sms_notifications_phone_status:
+          type: string
+          description: If the phone number's confirmation status, pending or confirmed.
+        sms_notifications_phone_number:
+          type: string
+          description: The phone number at which the user receives the sms notifications
+        email_notifications:
+          type: boolean
+          description: If the user receives email notifications.
+        shift_reminder_time:
+          type: integer
+          description: When the user is reminded of an upcoming shift, in minutes.
+          format: int32
         profile_attributes:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
     ResourceBulkCreate:
@@ -6502,71 +6514,6 @@ components:
           items:
             "$ref": "#/components/schemas/SchedulerProjectionUpdateForBulk"
   responses:
-    HRPrivateDataSuccessOne:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: object
-    EmptySuccess:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-    NotFoundFailure:
-      description: Not found error
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Errors"
-    InputParamsFailure:
-      description: Input params error
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Errors"
-    QueryParamFailure:
-      description: Query param error
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Errors"
-    PathParamFailure:
-      description: Path param error
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Errors"
-    ActivitySuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/Activity"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
-    AvailabilitySuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/Availability"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
     AvailabilityListRequestSuccessMany:
       description: Success
       content:
@@ -6589,28 +6536,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/AvailabilityListRequest"
-    AvailabilityListSuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/AvailabilityList"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
-    AvailabilityListSuccessOne:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                "$ref": "#/components/schemas/AvailabilityList"
     BillboardTagSuccessMany:
       description: Success
       content:
@@ -6655,7 +6580,7 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/BillboardThread"
-    BreakSuccessMany:
+    PositionSuccessMany:
       description: Success
       content:
         application/json:
@@ -6665,7 +6590,20 @@ components:
               data:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/Break"
+                  "$ref": "#/components/schemas/Position"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    SiteSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Site"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
     ClockLogSuccessMany:
@@ -6756,19 +6694,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/LeaveType"
-    MemberSiteSuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/MemberSite"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
     MemberTimeBankTransactionSuccessMany:
       description: Success
       content:
@@ -6791,19 +6716,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/MemberTimeBankTransaction"
-    MemberTimeBankSuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/MemberTimeBank"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
     MemberSuccessMany:
       description: Success
       content:
@@ -6826,6 +6738,63 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Member"
+    AvailabilityListSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/AvailabilityList"
+    AvailabilityListSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/AvailabilityList"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    MemberSiteSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/MemberSite"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    MemberTimeBankSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/MemberTimeBank"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    HRPrivateDataSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
     PayrollSuccessMany:
       description: Success
       content:
@@ -6848,19 +6817,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Payroll"
-    PositionSuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/Position"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
     PositionSuccessOne:
       description: Success
       content:
@@ -6936,17 +6892,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Publication"
-    ResourceSuccessManyWithoutPagination:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/Resource"
     ResourceSuccessMany:
       description: Success
       content:
@@ -6969,7 +6914,7 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Resource"
-    SchedulerProjectionSuccessManyWithoutPagination:
+    ResourceSuccessManyWithoutPagination:
       description: Success
       content:
         application/json:
@@ -6979,7 +6924,7 @@ components:
               data:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/SchedulerProjection"
+                  "$ref": "#/components/schemas/Resource"
     SchedulerProjectionSuccessMany:
       description: Success
       content:
@@ -7002,16 +6947,7 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/SchedulerProjection"
-    SessionSuccessOne:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                "$ref": "#/components/schemas/Session"
-    ShiftSuccessManyWithoutPagination:
+    SchedulerProjectionSuccessManyWithoutPagination:
       description: Success
       content:
         application/json:
@@ -7021,7 +6957,16 @@ components:
               data:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/Shift"
+                  "$ref": "#/components/schemas/SchedulerProjection"
+    SessionSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/Session"
     ShiftSuccessMany:
       description: Success
       content:
@@ -7044,7 +6989,7 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Shift"
-    SiteSuccessMany:
+    ActivitySuccessMany:
       description: Success
       content:
         application/json:
@@ -7054,9 +6999,33 @@ components:
               data:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/Site"
+                  "$ref": "#/components/schemas/Activity"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
+    BreakSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Break"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    ShiftSuccessManyWithoutPagination:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Shift"
     SiteSuccessOne:
       description: Success
       content:
@@ -7163,6 +7132,36 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/HRField"
+    EmptySuccess:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+    NotFoundFailure:
+      description: Not found error
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
+    InputParamsFailure:
+      description: Input params error
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
+    QueryParamFailure:
+      description: Query param error
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
+    PathParamFailure:
+      description: Path param error
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
   parameters:
     PathId:
       name: id
@@ -7280,11 +7279,6 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/PositionUpdate"
-    ResourceBulkCreate:
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/ResourceBulkCreate"
     ResourceCreate:
       content:
         application/json:
@@ -7295,6 +7289,11 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/ResourceUpdate"
+    ResourceBulkCreate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/ResourceBulkCreate"
     SchedulerProjectionCreate:
       content:
         application/json:
@@ -7325,16 +7324,16 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/ShiftCreate"
-    ShiftUpdate:
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/ShiftUpdate"
     ShiftDelete:
       content:
         application/json:
           schema:
             "$ref": "#/components/schemas/ShiftDelete"
+    ShiftUpdate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/ShiftUpdate"
     ShiftTransfer:
       content:
         application/json:
