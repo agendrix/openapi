@@ -18,17 +18,12 @@ info:
     Votre Client ID et votre Client Secret sont obligatoires afin de récupérer vos jetons OAuth 2.0. Les adresses URIs de redirection le sont également - au moins un.
 
     ## Développement
-    L'environnement de test est utilisé pour effectuer des essais. Lorsque vous utilisez cet environnement, vous n'avez pas besoin d'activer le produit API pour votre propre application Agendrix.
+    L'environnement de test est utilisé pour effectuer des essais. Votre application n'a pas besoin d'être approuvée pour utiliser cet environnement. Lorsque vous utilisez la sandbox, n'oubliez pas de changer vos appels en conséquence - sandbox.agendrix.net/oauth au lieu de app.agendrix.com/oauth et api.sandbox.agendrix.net au lieu de api.agendrix.com.
 
     Pour vous connecter à l'environnement de test, suivez ces étapes:
       - Depuis la section [Applications](./applications), cliquez sur votre application;
       - Accédez à l'onglet « Développement »;
       - Cliquez sur le lien « Se connecter à l'environnement de test ».
-
-    Si vous souhaitez utiliser directement votre propre application Agendrix, suivez ces étapes :
-      - Connectez-vous à votre application Agendrix;
-      - Accédez à l'onglet « Facturation »;
-      - Défilez à la section « Modules complémentaires », puis cliquez sur le bouton « Discuter avec les ventes » sous la tuile API.
 
     ## Obtenir un jeton d'accès OAuth 2.0
     Vous avez besoin d'un jeton d'accès pour accéder à l'API Agendrix. Le moyen le plus simple de le faire est via [l'aire de jeux](./playground) OAuth 2.0. Il y a également une explication détaillée du processus dans la section OAuth 2.0 ci-dessous.
@@ -40,11 +35,7 @@ info:
     Cette section regroupe les différentes ressources téléchargeables de l'API d'Agendrix.
 
     ## OAS 3
-    Un document Open API Specification est une description détaillée et précise d'une API, depuis ses schémas de sécurité jusqu'à ses points de terminaison. Il a de nombreuses utilisations - notre propre [document](./open-api-spec) génère une grande partie de cette documentation, ainsi que la collection Postman. L'écosystème Open API est riche, mature et est largement utilisé par la communauté. Pour en savoir plus sur l'OAS, cliquez <a href='https://github.com/OAI/OpenAPI-Specification' target='_blank'>ici</a>.
-
-    ## Collection Postman
-    Postman est une plateforme collaborative pour le développement d'API. En important la [collection](./postman-collection) préconçue d'Agendrix , vous pouvez facilement tester et expérimenter avec l'API d'Agendrix. Téléchargez la collection, importez-là dans Postman, définissez votre jeton d'accès - depuis la collection, voir plus d'actions, modifier, autorisations - et vous êtes prêt à l'utiliser.
-    Pour en savoir plus sur Postman, cliquez <a href='https://www.postman.com/' target='_blank'>ici</a>.
+    Un document Open API Specification est une description détaillée et précise d'une API, depuis ses schémas de sécurité jusqu'à ses points de terminaison. Il a de nombreuses utilisations - notre propre [document](https://github.com/agendrix/openapi/blob/main/fr/open_api.yml) génère une grande partie de cette documentation, ainsi que la collection Postman. L'écosystème Open API est riche, mature et est largement utilisé par la communauté. Pour en savoir plus sur l'OAS, cliquez <a href='https://github.com/OAI/OpenAPI-Specification' target='_blank'>ici</a>.
 
     ## Exemples
     Nous avons également mis en place des <a href='https://github.com/agendrix/public-api-integration-examples' target='_blank'>exemples</a> d'intégration de base avec notre API en Javascript et Ruby.
@@ -79,8 +70,8 @@ info:
     }'
     ```
 
-    ## Échanger le jeton de rafraîchissement pour un nouveau jeton d'accès
-    Le jeton d'accès récupéré expirera éventuellement - sa durée de vie est de 2 heures. Plutôt que de faire le processus d'autorisation à nouveau, le jeton de rafraîchissement peut être utilisé pour demander de nouveaux jetons d'accès et d'actualisation. Le type de contribution devient *refresh_token* et celui-ci doit être inclus dans la requête avec le Client ID, le Client Secret ainsi que l'URI de redirection. Un sous-ensemble de la portée du jeton d'accès d'origine peut également être inclus dans la requête.
+    ## Échanger le jeton de rafraîchissement pour de nouveaux jetons
+    Le jeton d'accès récupéré expirera éventuellement - sa durée de vie est de 2 heures. Plutôt que de faire le processus d'autorisation à nouveau, le jeton de rafraîchissement peut être utilisé pour demander de nouveaux jetons d'accès et de rafraîchissement. Le type de contribution devient *refresh_token* et celui-ci doit être inclus dans la requête avec le Client ID, le Client Secret ainsi que l'URI de redirection. Un sous-ensemble de la portée du jeton d'accès d'origine peut également être inclus dans la requête.
     ```
     curl --request POST 'https://app.agendrix.com/oauth/token' \
     --header 'Content-Type: application/json' \
@@ -93,8 +84,10 @@ info:
     }'
     ```
 
-    # Authentification
-    <SecurityDefinitions />
+    Les jetons de rafraîchissement deviennent invalides une fois utilisés, mais n'expirent pas. Vous pouvez répéter le processus de rafraîchissement aussi longtemps que nécessaire.
+
+    # Rôle du propriétaire du jeton
+    Les données renvoyées par l'API seront limitées au rôle du propriétaire du jeton. Cela signifie que si un jeton d'accès a été généré à l'aide d'une autorisation d'accès d'un gestionnaire, les données renvoyées par l'API seront limitées aux positions et aux sites gérés par l'utilisateur. Les actions seront également limitées par le rôle du propriétaire. Si vous souhaitez récupérer toutes les données relatives à une organisation, le jeton utilisé doit être généré par un administrateur de l'organisation.
 
     # En-têtes
     Des en-têtes spécifiques doivent être définis pour interagir avec l'API. Certains en-têtes contiennent également des informations pertinentes.
@@ -171,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: '1'
+  version: 1.0.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -191,16 +184,21 @@ tags:
   description: Opérations sur les commentaires
 - name: LeaveRequests
   description: Opérations sur les demandes de congés
+- name: HRFields
+  description: Opérations sur les champs de ressources humaines
 - name: LeaveTypes
   description: Opérations sur les types de congé
 - name: MemberTimeBankTransactions
   description: Opérations sur les transactions d'une banque de temps d'un membre
 - name: Members
-  description: Opération sur les membres
+  description: Un membre est l'entité qui relie un utilisateur à une organisation.
+    Un utilisateur a un membre par organisation dont il fait partie dans Agendrix.
 - name: Payrolls
   description: Opération sur les paies
 - name: Positions
-  description: Opération sur les positions
+  description: Une position représente une position disponible dans l'organisation.
+    Un employé peut se voir attribuer plusieures positions pour chaque succursale
+    dont il fait partie.
 - name: PremiumEntries
   description: Opération sur les entrées de prime
 - name: Premiums
@@ -214,13 +212,25 @@ tags:
 - name: Session
   description: Opération sur la session
 - name: Shifts
-  description: Opération sur les quarts de travail
+  description: 'Les quarts sont les données qui alimentent le planificateur. Il est
+    important de noter que le planificateur est composé de quarts brouillons et de
+    quarts publiés. Un employé dans Agendrix ne verra que les quarts publiés dans
+    son horaire. Lorsqu''un administrateur ou un gestionnaire crée un quart de travail
+    futur, il s''agit d''un brouillon. Le quart doit être publié pour que l''employé
+    puisse le voir. Les modifications apportées à un quart futur existant créeront
+    une nouvelle version du quart en tant que brouillon. Une fois le quart publié,
+    il remplacera son ancienne version dans l''horaire de l''employé. Il en va de
+    même pour la suppression, le transfert, etc. Les quarts dans le passés sont automatiquement
+    publiés. Il est possible d''ajouter ''publish : true'' aux requêtes d''écriture
+    pour publier automatiquement un quart après qu''il a été modifié via l''API.'
 - name: Sites
-  description: Opération sur les succursales
+  description: Une succursale représente l'une des succursales de l'organisation.
+    Un gestionnaire gère des succursales spécifiques.
 - name: TimeBanks
   description: Opérations sur les banques de temps
 - name: TimeEntries
-  description: Opérations sur les entrées de temps
+  description: Les entrées de temps sont les entrées finalisées d'un employé. Elles
+    sont générées par les quarts, les demandes de congé, les pointages, etc.
 - name: TransferRequests
   description: Opérations sur les demandes de transfert
 - name: Users
@@ -1813,41 +1823,41 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: La status utilisé afin de filtrer la requête. Doit être'draft'
+        description: La status utilisé afin de filtrer la requête. Doit être 'draft'
           ou 'published'.
         schema:
           type: string
       - name: search[from]
         in: query
-        description: La date de début utilisé afin de filtrer la requête. Demmander
-          si  updated_since et updated_until ne sont pas fournit.
+        description: La date et heure de début utilisées afin de filtrer la requête.
+          Requis si updated_since et updated_until ne sont pas fournis.
         schema:
           type: string
       - name: search[to]
         in: query
-        description: La date et heure utilisé afin de filtrer la requête. La plage
-          horaire maximal entre 'from' et 'to' doit être égal ou plus petit que 31
-          jours. Demmander si  updated_since et updated_until ne sont pas fournit.
+        description: La date et heure de fin utilisées afin de filtrer la requête.
+          L'interval maximal entre 'from' et 'to' doit être égal ou plus petit que
+          31 jours. Tous les quarts qui superposent cet interval seront retournés.
+          Requis si updated_since et updated_until ne sont pas fournis.
         schema:
           type: string
       - name: search[updated_since]
         in: query
-        description: La valeur 'updated_since', la date et heure utilisé afin de filtrer
-          la requête.
+        description: La valeur 'updated_since', la date et heure utilisées afin de
+          filtrer la requête.
         schema:
           type: string
       - name: search[updated_until]
         in: query
-        description: La valeur 'updated_until', la date et heure utilisé afin de filtrer
-          la requête.
+        description: La valeur 'updated_until', la date et heure utilisées afin de
+          filtrer la requête.
         schema:
           type: string
       - name: search[with_deleted]
         in: query
         description: Inclure les quarts de travail archivé dans le résultat paginé.
           Utilisable seulement si les filtres 'updated_since' et 'updated_until' sont
-          présent.Includes archived shifts into the paginated result. Only usable
-          with updated_since and updated_until filters.
+          présents.
         schema:
           type: string
       responses:
@@ -1916,10 +1926,9 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
   "/shifts/{id}/transfer":
     put:
-      summary: Transférer un shift.
-      description: Transfère un shift à un membre et/ou une date spécifique. Peut
-        également transférer une quart assigné à une quart ouvert en laissant member_id
-        vide.
+      summary: Transférer un quart.
+      description: Transférer à un membre et/ou à une date spécifique. Peut aussi
+        transférer un quart assigné en quart à combler en laissant le member_id vide.
       tags:
       - Shifts
       operationId: transfer_shift
@@ -2555,9 +2564,6 @@ components:
         key:
           type: string
           description: La clé de l'activité.
-        parameters:
-          type: object
-          description: Les paramètres de l'activité.
         created_at:
           type: string
           description: Le moment de création de l'activité.
@@ -2566,6 +2572,9 @@ components:
           type: string
           description: Le dernier moment de modification de l'activité.
           format: date-time
+        parameters:
+          type: object
+          description: Les paramètres de l'activité.
     Availability:
       type: object
       description: Une description détaillé de la disponibilité.
@@ -3231,10 +3240,6 @@ components:
           type: string
           description: Le rôle du membre dans la succursale. Il peut être employé,
             superviseur ou gestionnaire.
-        rate_type:
-          type: string
-          description: Si les taux horaires sont appliqués à toutes les positions
-            (simple), ou chaque position assignée a son propre taux horaire (position)
         supervisor_position_ids:
           type: array
           description: Les identifiants uniques des positions supervisées par le membre
@@ -3247,6 +3252,10 @@ components:
             membre dans la succursale.
           items:
             type: string
+        rate_type:
+          type: string
+          description: Si les taux horaires sont appliqués à toutes les positions
+            (simple), ou chaque position assignée a son propre taux horaire (position)
         created_at:
           type: string
           description: La date et l'heure de création.
@@ -3601,18 +3610,6 @@ components:
           type: string
           description: La date à laquelle le membre a accepté l'invitation.
           format: date-time
-        created_at:
-          type: string
-          description: La date et l'heure de création.
-          format: date-time
-        updated_at:
-          type: string
-          description: La date et l'heure de la dernière modification.
-          format: date-time
-        deleted_at:
-          type: string
-          description: La date à laquelle le membre a été archivé.
-          format: date-time
         code:
           type: string
           description: Le code d'invitation du membre.
@@ -3657,11 +3654,23 @@ components:
         payroll_auto_update:
           type: boolean
           description: Si le membre n'a pas besoin de pointer.
-        profile:
-          "$ref": "#/components/schemas/Profile"
+        updated_at:
+          type: string
+          description: La date et l'heure de la dernière modification.
+          format: date-time
+        created_at:
+          type: string
+          description: La date et l'heure de création.
+          format: date-time
+        deleted_at:
+          type: string
+          description: La date à laquelle le membre a été archivé.
+          format: date-time
         hr_data:
           type: object
           description: Le hr_data du membre.
+        profile:
+          "$ref": "#/components/schemas/Profile"
     Organization:
       type: object
       description: Une description détaillée d'une organization.
@@ -4176,18 +4185,6 @@ components:
           type: string
           description: Date et heure que les membres au confirmer le quart de travail.
           format: date-time
-        created_at:
-          type: string
-          description: La date et l'heure de création.
-          format: date-time
-        updated_at:
-          type: string
-          description: La date et l'heure de la dernière modification.
-          format: date-time
-        deleted_at:
-          type: string
-          description: Date et heure d'archive du quart de travail.
-          format: date-time
         open_quantity:
           type: integer
           description: Nombre de quart de travail disponible.
@@ -4232,6 +4229,14 @@ components:
           type: integer
           description: Duré total du quart de travail.
           format: int32
+        original_shift_id:
+          type: string
+          description: L'original shift id du quart.
+          format: uuid
+        new_version_id:
+          type: string
+          description: Le new version shift id du quart.
+          format: uuid
         rate_base:
           type: number
           description: Taux horaire régulier du membre.
@@ -4246,17 +4251,22 @@ components:
           format: float
         resource_ids:
           type: array
-          description: Les resource IDs du quart de travail.
+          description: The shift's resource ids.
           items:
             type: string
-        original_shift_id:
+            format: uuid
+        created_at:
           type: string
-          description: L'ID du quart de travail original.
-          format: uuid
-        new_version_id:
+          description: La date et l'heure de création.
+          format: date-time
+        updated_at:
           type: string
-          description: L'ID de la nouvelle version du quart de travail.
-          format: uuid
+          description: La date et l'heure de la dernière modification.
+          format: date-time
+        deleted_at:
+          type: string
+          description: Date et heure d'archive du quart de travail.
+          format: date-time
     Site:
       type: object
       description: Description détaillée d'une succursale.
@@ -4609,21 +4619,21 @@ components:
         start_time:
           type: string
           description: La date et l'heure auxquelles la publication a été publiée.
+        draft:
+          type: boolean
+          description: Si la publication est un brouillon.
+        notify:
+          type: boolean
+          description: Si la publication envoie une notification aux membres de l'organisation.
+        sticky:
+          type: boolean
+          description: Si la publication est collante.
         commentable:
           type: boolean
           description: Si la publication peut être commentée.
         acknowledgeable:
           type: boolean
           description: Si la publication peut être confirmée par les membres concernés.
-        draft:
-          type: boolean
-          description: Si la publication est un brouillon.
-        sticky:
-          type: boolean
-          description: Si la publication est collante.
-        notify:
-          type: boolean
-          description: Si la publication envoie une notification aux membres de l'organisation.
         site_ids:
           type: array
           description: Les ID des succursales pour lesquelles la publication est visible.
@@ -4666,21 +4676,21 @@ components:
         start_time:
           type: string
           description: La date et l'heure auxquelles la publication a été publiée.
+        draft:
+          type: boolean
+          description: Si la publication est un brouillon.
+        notify:
+          type: boolean
+          description: Si la publication envoie une notification aux membres de l'organisation.
+        sticky:
+          type: boolean
+          description: Si la publication est collante.
         commentable:
           type: boolean
           description: Si la publication peut être commentée.
         acknowledgeable:
           type: boolean
           description: Si la publication peut être confirmée par les membres concernés.
-        draft:
-          type: boolean
-          description: Si la publication est un brouillon.
-        sticky:
-          type: boolean
-          description: Si la publication est collante.
-        notify:
-          type: boolean
-          description: Si la publication envoie une notification aux membres de l'organisation.
         site_ids:
           type: array
           description: Les ID des succursales pour lesquelles la publication est visible.
@@ -4763,14 +4773,14 @@ components:
         body:
           type: string
           description: Le contenu du commentaire.
-        commentable_id:
-          type: string
-          description: L'identifiant de l'objet commenté.
-          format: uuid
         commentable_type:
           type: string
           description: Le type d'objet commenté -  quart, demande de congé, publication
             d'actualité, etc.
+        commentable_id:
+          type: string
+          description: L'identifiant de l'objet commenté.
+          format: uuid
         type:
           type: string
           description: Si le commentaire est privé ou non. Doit être 'private' ou
@@ -4783,14 +4793,14 @@ components:
         body:
           type: string
           description: Le contenu du commentaire.
-        commentable_id:
-          type: string
-          description: L'identifiant de l'objet commenté.
-          format: uuid
         commentable_type:
           type: string
           description: Le type d'objet commenté -  quart, demande de congé, publication
             d'actualité, etc.
+        commentable_id:
+          type: string
+          description: L'identifiant de l'objet commenté.
+          format: uuid
         type:
           type: string
           description: Si le commentaire est privé ou non. Doit être 'private' ou
@@ -4832,6 +4842,7 @@ components:
           type: string
           description: Le type du champ de ressources humaines.
         metadata:
+          type: object
           description: Les métadonnées selon le field_type du champ de ressources
             humaines.
         private_field:
@@ -4840,6 +4851,9 @@ components:
         sortable:
           type: boolean
           description: Si le champ de ressources humaines est triable.
+        filterable:
+          type: boolean
+          description: Si le champ de ressources humaines est filtrable.
         deleted_at:
           type: string
           description: Date et heure de la suppression du champ de ressources humaines.
@@ -4863,10 +4877,14 @@ components:
       description: Une description détaillée des paramètres d'entrée d'une création
         de demande de congé.
       properties:
-        member_site_position_id:
+        start_at:
           type: string
-          description: L'identifiant de la position du site du demandeur.
-          format: uuid
+          description: Le moment auquel le congé demandé débute
+          format: date-time
+        end_at:
+          type: string
+          description: Le moment auquel le congé demandé se termine.
+          format: date-time
         justification:
           type: string
           description: La justification du congé demandé.
@@ -4877,26 +4895,26 @@ components:
         paid:
           type: boolean
           description: Si le congé demandé est payé.
-        start_at:
-          type: string
-          description: Le moment auquel le congé demandé débute
-          format: date-time
-        end_at:
-          type: string
-          description: Le moment auquel le congé demandé se termine.
-          format: date-time
         leave_type_id:
           type: string
           description: L'identifiant du type de congé demandé.
+          format: uuid
         site_id:
           type: string
           description: L'identifiant de la location liée au congé demandé.
+          format: uuid
         position_id:
           type: string
           description: L'identifiant de la position liée au congé demandé.
+          format: uuid
+        member_site_position_id:
+          type: string
+          description: L'identifiant de la position du site du demandeur.
+          format: uuid
         resource_id:
           type: string
           description: L'identifiant de la resource liée au congé demandé.
+          format: uuid
         member_id:
           type: string
           description: L'identifiant du demandeur.
@@ -4926,10 +4944,14 @@ components:
       description: Une description détaillée des paramètres d'entrée d'une modification
         de demande de congé.
       properties:
-        member_site_position_id:
+        start_at:
           type: string
-          description: L'identifiant de la position du site du demandeur.
-          format: uuid
+          description: Le moment auquel le congé demandé débute
+          format: date-time
+        end_at:
+          type: string
+          description: Le moment auquel le congé demandé se termine.
+          format: date-time
         justification:
           type: string
           description: La justification du congé demandé.
@@ -4940,26 +4962,26 @@ components:
         paid:
           type: boolean
           description: Si le congé demandé est payé.
-        start_at:
-          type: string
-          description: Le moment auquel le congé demandé débute
-          format: date-time
-        end_at:
-          type: string
-          description: Le moment auquel le congé demandé se termine.
-          format: date-time
         leave_type_id:
           type: string
           description: L'identifiant du type de congé demandé.
+          format: uuid
         site_id:
           type: string
           description: L'identifiant de la location liée au congé demandé.
+          format: uuid
         position_id:
           type: string
           description: L'identifiant de la position liée au congé demandé.
+          format: uuid
+        member_site_position_id:
+          type: string
+          description: L'identifiant de la position du site du demandeur.
+          format: uuid
         resource_id:
           type: string
           description: L'identifiant de la resource liée au congé demandé.
+          format: uuid
         time_off_payment_constraint_attributes:
           "$ref": "#/components/schemas/TimeOffPaymentConstraintUpdateAttributes"
     LeaveTypeCreate:
@@ -4970,33 +4992,33 @@ components:
       description: Une description détaillée des paramètres d'entrée d'une création
         de type de congé.
       properties:
+        keep_track_hours:
+          type: boolean
+          description: Si les entrées de temps sont activées pour votre organisation,
+            si les congés de ce type de congé doivent impacté les banques d'heures
+            associées.
         name:
           type: string
           description: Le nom du type de congé.
         paid:
           type: boolean
           description: Si le type de congé est payé.
-        keep_track_hours:
-          type: boolean
-          description: Si les entrées de temps sont activées pour votre organisation,
-            si les congés de ce type de congé doivent impacté les banques d'heures
-            associées.
     LeaveTypeUpdate:
       type: object
       description: Une description détaillée des paramètres d'entrée d'une modification
         de type de congé.
       properties:
+        keep_track_hours:
+          type: boolean
+          description: Si les entrées de temps sont activées pour votre organisation,
+            si les congés de ce type de congé doivent impacté les banques d'heures
+            associées.
         name:
           type: string
           description: Le nom du type de congé.
         paid:
           type: boolean
           description: Si le type de congé est payé.
-        keep_track_hours:
-          type: boolean
-          description: Si les entrées de temps sont activées pour votre organisation,
-            si les congés de ce type de congé doivent impacté les banques d'heures
-            associées.
     LeaveValueSettingCreateAttributes:
       required:
       - interval_start
@@ -5214,10 +5236,6 @@ components:
           type: string
           description: Le rôle du membre dans la succursale. Il peut être employé,
             superviseur ou gestionnaire.
-        rate_type:
-          type: string
-          description: Si les taux horaires sont appliqués à toutes les positions
-            (simple), ou chaque position assignée a son propre taux horaire (position).
         rate_single_base:
           type: number
           description: Le taux horaire régulier du membre pour toutes ses positions
@@ -5233,6 +5251,10 @@ components:
           description: Le taux horaire supplémentaire 2 du membre pour toutes ses
             positions dans la succursale, si activé.
           format: float
+        rate_type:
+          type: string
+          description: Si les taux horaires sont appliqués à toutes les positions
+            (simple), ou chaque position assignée a son propre taux horaire (position).
         member_site_positions_attributes:
           type: array
           description: Les positions associées à ce membre dans cette succursale.
@@ -5258,10 +5280,6 @@ components:
           type: string
           description: Le rôle du membre dans la succursale. Il peut être employé,
             superviseur ou gestionnaire.
-        rate_type:
-          type: string
-          description: Si les taux horaires sont appliqués à toutes les positions
-            (simple), ou chaque position assignée a son propre taux horaire (position).
         rate_single_base:
           type: number
           description: Le taux horaire régulier du membre pour toutes ses positions
@@ -5277,6 +5295,10 @@ components:
           description: Le taux horaire supplémentaire 2 du membre pour toutes ses
             positions dans la succursale, si activé.
           format: float
+        rate_type:
+          type: string
+          description: Si les taux horaires sont appliqués à toutes les positions
+            (simple), ou chaque position assignée a son propre taux horaire (position).
         id:
           type: string
           description: Identificateur unique de l'objet.
@@ -5307,16 +5329,16 @@ components:
       type: object
       description: Description détaillée des paramètres de création du profil.
       properties:
+        email:
+          type: string
+          description: L'adresse e-mail du profil.
+          format: email
         first_name:
           type: string
           description: Le prénom du profil.
         last_name:
           type: string
           description: Le nom de famille du profil.
-        email:
-          type: string
-          description: L'adresse e-mail du profil.
-          format: email
         birthdate:
           type: string
           description: La date de naissance du profil.
@@ -5356,31 +5378,20 @@ components:
       description: Une description détaillée des paramètres d'entrée de la création
         d'un membre.
       properties:
+        seniority_date:
+          type: string
+          description: La date à laquelle le membre a commencé à travailler pour l'organisation.
+          format: date
+        deletion_date:
+          type: string
+          description: La date à laquelle le membre sera archivée.
+          format: date
         identification_number:
           type: string
           description: The member's identification number.
         additional_information:
           type: string
           description: Informations additionnelles sur le membre.
-        main_position_id:
-          type: string
-          description: L'identifiant unique de la position principale du membre.
-          format: uuid
-        main_site_id:
-          type: string
-          description: L'identifiant unique du succursale principale du membre.
-          format: uuid
-        admin:
-          type: boolean
-          description: Si le membre est un administrateur de l'organisation.
-        hide_before_seniority_date:
-          type: boolean
-          description: Si le membre est exclu du planificateur et des feuilles de
-            temps avant sa date d'embauche.
-        visible:
-          type: boolean
-          description: Si le membre est exclu du planificateur et des feuilles de
-            temps.
         override_overtime:
           type: boolean
           description: Si le membre possède des seuils d'heures supplémentaires personalisés.
@@ -5388,6 +5399,10 @@ components:
           type: boolean
           description: Si les heures supplémentaires multi-niveau sont activées pour
             le membre.
+        override_spread_overtime:
+          type: boolean
+          description: Si le membre outrepasse les paramètres d'heures supplémentaires
+            de l'organisation.
         overtime_day_threshold:
           type: number
           description: Le seuil d'heures supplémentaires de jour personalisé 1 du
@@ -5408,23 +5423,38 @@ components:
           description: Le seuil d'heures supplémentaires de semaine personalisé 2
             du membre, si les heures supplémentaires multi-niveau sont activées.
           format: float
-        seniority_date:
+        spread_overtime_enabled:
+          type: boolean
+          description: Si les heures supplémentaires du membre sont dispersées au
+            travers plusieurs semaines.
+        main_position_id:
           type: string
-          description: La date à laquelle le membre a commencé à travailler pour l'organisation.
-          format: date
-        deletion_date:
+          description: L'identifiant unique de la position principale du membre.
+          format: uuid
+        main_site_id:
           type: string
-          description: La date à laquelle le membre sera archivée.
-          format: date
+          description: L'identifiant unique du succursale principale du membre.
+          format: uuid
+        admin:
+          type: boolean
+          description: Si le membre est un administrateur de l'organisation.
+        invite:
+          type: boolean
+          description: Si le membre est invité à rejoindre l'organisation.
+        visible:
+          type: boolean
+          description: Si le membre est exclu du planificateur et des feuilles de
+            temps.
+        hide_before_seniority_date:
+          type: boolean
+          description: Si le membre est exclu du planificateur et des feuilles de
+            temps avant sa date d'embauche.
         time_clock_code:
           type: string
           description: Le code de pointage du membre.
         time_clock_override_defaults:
           type: boolean
           description: Si le membre outrepasse les paramètres de pointage de l'organisation.
-        time_clock_must_be_scheduled:
-          type: boolean
-          description: Si le membre doit être à l'horaire pour pointer.
         time_clock_transfer_next_call:
           type: boolean
           description: Si le prochain pointage par téléphone doit être transféré.
@@ -5432,6 +5462,9 @@ components:
           type: string
           description: Le numéro auquel le prochain pointage par téléphone doit être
             transféré.
+        time_clock_must_be_scheduled:
+          type: boolean
+          description: Si le membre doit être à l'horaire pour pointer.
         time_clock_window:
           type: integer
           description: La fenètre utilisée pour différents paramètres de pointage,
@@ -5453,17 +5486,6 @@ components:
         payroll_auto_update:
           type: boolean
           description: Si le membre n'a pas besoin de pointer.
-        override_spread_overtime:
-          type: boolean
-          description: Si le membre outrepasse les paramètres d'heures supplémentaires
-            de l'organisation.
-        spread_overtime_enabled:
-          type: boolean
-          description: Si les heures supplémentaires du membre sont dispersées au
-            travers plusieurs semaines.
-        invite:
-          type: boolean
-          description: Si le membre est invité à rejoindre l'organisation.
         profile_attributes:
           "$ref": "#/components/schemas/ProfileCreateAttributes"
         member_sites_attributes:
@@ -5475,16 +5497,16 @@ components:
       type: object
       description: Description détaillée des paramètres de mise à jour du profil.
       properties:
+        email:
+          type: string
+          description: L'adresse e-mail du profil.
+          format: email
         first_name:
           type: string
           description: Le prénom du profil.
         last_name:
           type: string
           description: Le nom de famille du profil.
-        email:
-          type: string
-          description: L'adresse e-mail du profil.
-          format: email
         birthdate:
           type: string
           description: La date de naissance du profil.
@@ -5521,31 +5543,20 @@ components:
       description: Une description détaillée des paramètres d'entrée de la mise à
         jour d'un membre.
       properties:
+        seniority_date:
+          type: string
+          description: La date à laquelle le membre a commencé à travailler pour l'organisation.
+          format: date
+        deletion_date:
+          type: string
+          description: La date à laquelle le membre sera archivée.
+          format: date
         identification_number:
           type: string
           description: The member's identification number.
         additional_information:
           type: string
           description: Informations additionnelles sur le membre.
-        main_position_id:
-          type: string
-          description: L'identifiant unique de la position principale du membre.
-          format: uuid
-        main_site_id:
-          type: string
-          description: L'identifiant unique du succursale principale du membre.
-          format: uuid
-        admin:
-          type: boolean
-          description: Si le membre est un administrateur de l'organisation.
-        hide_before_seniority_date:
-          type: boolean
-          description: Si le membre est exclu du planificateur et des feuilles de
-            temps avant sa date d'embauche.
-        visible:
-          type: boolean
-          description: Si le membre est exclu du planificateur et des feuilles de
-            temps.
         override_overtime:
           type: boolean
           description: Si le membre possède des seuils d'heures supplémentaires personalisés.
@@ -5553,6 +5564,10 @@ components:
           type: boolean
           description: Si les heures supplémentaires multi-niveau sont activées pour
             le membre.
+        override_spread_overtime:
+          type: boolean
+          description: Si le membre outrepasse les paramètres d'heures supplémentaires
+            de l'organisation.
         overtime_day_threshold:
           type: number
           description: Le seuil d'heures supplémentaires de jour personalisé 1 du
@@ -5573,23 +5588,38 @@ components:
           description: Le seuil d'heures supplémentaires de semaine personalisé 2
             du membre, si les heures supplémentaires multi-niveau sont activées.
           format: float
-        seniority_date:
+        spread_overtime_enabled:
+          type: boolean
+          description: Si les heures supplémentaires du membre sont dispersées au
+            travers plusieurs semaines.
+        main_position_id:
           type: string
-          description: La date à laquelle le membre a commencé à travailler pour l'organisation.
-          format: date
-        deletion_date:
+          description: L'identifiant unique de la position principale du membre.
+          format: uuid
+        main_site_id:
           type: string
-          description: La date à laquelle le membre sera archivée.
-          format: date
+          description: L'identifiant unique du succursale principale du membre.
+          format: uuid
+        admin:
+          type: boolean
+          description: Si le membre est un administrateur de l'organisation.
+        invite:
+          type: boolean
+          description: Si le membre est invité à rejoindre l'organisation.
+        visible:
+          type: boolean
+          description: Si le membre est exclu du planificateur et des feuilles de
+            temps.
+        hide_before_seniority_date:
+          type: boolean
+          description: Si le membre est exclu du planificateur et des feuilles de
+            temps avant sa date d'embauche.
         time_clock_code:
           type: string
           description: Le code de pointage du membre.
         time_clock_override_defaults:
           type: boolean
           description: Si le membre outrepasse les paramètres de pointage de l'organisation.
-        time_clock_must_be_scheduled:
-          type: boolean
-          description: Si le membre doit être à l'horaire pour pointer.
         time_clock_transfer_next_call:
           type: boolean
           description: Si le prochain pointage par téléphone doit être transféré.
@@ -5597,6 +5627,9 @@ components:
           type: string
           description: Le numéro auquel le prochain pointage par téléphone doit être
             transféré.
+        time_clock_must_be_scheduled:
+          type: boolean
+          description: Si le membre doit être à l'horaire pour pointer.
         time_clock_window:
           type: integer
           description: La fenètre utilisée pour différents paramètres de pointage,
@@ -5618,17 +5651,6 @@ components:
         payroll_auto_update:
           type: boolean
           description: Si le membre n'a pas besoin de pointer.
-        override_spread_overtime:
-          type: boolean
-          description: Si le membre outrepasse les paramètres d'heures supplémentaires
-            de l'organisation.
-        spread_overtime_enabled:
-          type: boolean
-          description: Si les heures supplémentaires du membre sont dispersées au
-            travers plusieurs semaines.
-        invite:
-          type: boolean
-          description: Si le membre est invité à rejoindre l'organisation.
         profile_attributes:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
         member_sites_attributes:
@@ -5764,6 +5786,7 @@ components:
           type: string
           description: Identifiant unique de la position parent. Si cette valeur est
             présente, la position est une sous-position.
+          format: uuid
     PositionUpdate:
       type: object
       description: Description détaillée des paramètres d'entré de la mise à jour
@@ -5783,6 +5806,7 @@ components:
           type: string
           description: Identifiant unique de la position parent. Si cette valeur est
             présente, la position est une sous-position.
+          format: uuid
     PremiumEntryCreateAttributes:
       required:
       - premium_id
@@ -5794,14 +5818,14 @@ components:
           type: string
           description: Identifiant unique des primes.
           format: uuid
-        entry_minutes:
-          type: integer
-          description: Le nombre de minute que la prime s'applique.
-          format: int32
         has_custom_value:
           type: boolean
           description: Si la prime s'applique sur un nombre précis d'heure, sinon
             s'applique sur le quart de travail complet.
+        entry_minutes:
+          type: integer
+          description: Le nombre de minute que la prime s'applique.
+          format: int32
     PremiumEntryUpdateAttributes:
       required:
       - id
@@ -5813,14 +5837,14 @@ components:
           type: string
           description: Identifiant unique des primes.
           format: uuid
-        entry_minutes:
-          type: integer
-          description: Le nombre de minute que la prime s'applique.
-          format: int32
         has_custom_value:
           type: boolean
           description: Si la prime s'applique sur un nombre précis d'heure, sinon
             s'applique sur le quart de travail complet.
+        entry_minutes:
+          type: integer
+          description: Le nombre de minute que la prime s'applique.
+          format: int32
         id:
           type: string
           description: Identifiant unique de l'objet.
@@ -5865,18 +5889,18 @@ components:
       type: object
       description: Description détaillée des paramètres de créations d'une ressource.
       properties:
-        name:
-          type: string
-          description: Nom de la ressource.
         'no':
           type: string
           description: L'identifiant unique raccourcit de la ressource.
-        description:
+        name:
           type: string
-          description: Description de la ressource.
+          description: Nom de la ressource.
         address:
           type: string
           description: L'adresse de la ressource.
+        description:
+          type: string
+          description: Description de la ressource.
         exclusive:
           type: boolean
           description: Si la ressource est exclusive.
@@ -5886,11 +5910,6 @@ components:
         type_equipment:
           type: boolean
           description: Si la ressource est un équipement.
-        minimum_paid_minutes_per_entry:
-          type: integer
-          description: Le montant minimum de minutes payées par enregistrement de
-            la ressource.
-          format: int32
         week_hours_min:
           type: number
           description: L'objectif minimum du nombre d'heures planifiées par ressource.
@@ -5899,6 +5918,11 @@ components:
           type: number
           description: L'objectif maximum du nombre d'heures planifiées par ressource.
           format: float
+        minimum_paid_minutes_per_entry:
+          type: integer
+          description: Le montant minimum de minutes payées par enregistrement de
+            la ressource.
+          format: int32
         document_ids:
           type: array
           description: Document attaché à cette ressource.
@@ -5915,18 +5939,18 @@ components:
       type: object
       description: Description détaillée des paramètres de mise à jour d'une ressource.
       properties:
-        name:
-          type: string
-          description: Nom de la ressource.
         'no':
           type: string
           description: L'identifiant unique raccourcit de la ressource.
-        description:
+        name:
           type: string
-          description: Description de la ressource.
+          description: Nom de la ressource.
         address:
           type: string
           description: L'adresse de la ressource.
+        description:
+          type: string
+          description: Description de la ressource.
         exclusive:
           type: boolean
           description: Si la ressource est exclusive.
@@ -5936,11 +5960,6 @@ components:
         type_equipment:
           type: boolean
           description: Si la ressource est un équipement.
-        minimum_paid_minutes_per_entry:
-          type: integer
-          description: Le montant minimum de minutes payées par enregistrement de
-            la ressource.
-          format: int32
         week_hours_min:
           type: number
           description: L'objectif minimum du nombre d'heures planifiées par ressource.
@@ -5949,6 +5968,11 @@ components:
           type: number
           description: L'objectif maximum du nombre d'heures planifiées par ressource.
           format: float
+        minimum_paid_minutes_per_entry:
+          type: integer
+          description: Le montant minimum de minutes payées par enregistrement de
+            la ressource.
+          format: int32
         document_ids:
           type: array
           description: Document attaché à cette ressource.
@@ -5971,13 +5995,13 @@ components:
       description: Description détaillée des paramètres de création d'une prévision
         du planificateur d'horaires.
       properties:
-        hours:
-          type: number
-          description: Nombre d'heures prévues à l'horaire.
-          format: float
         revenues:
           type: number
           description: Montant des revenus attendus.
+          format: float
+        hours:
+          type: number
+          description: Nombre d'heures prévues à l'horaire.
           format: float
         site_id:
           type: string
@@ -5993,13 +6017,13 @@ components:
       description: Description détaillée des paramètres de mise à jour d'une prévision
         du planificateur d'horaires.
       properties:
-        hours:
-          type: number
-          description: Nombre d'heures prévues à l'horaire.
-          format: float
         revenues:
           type: number
           description: Montant des revenus attendus.
+          format: float
+        hours:
+          type: number
+          description: Nombre d'heures prévues à l'horaire.
           format: float
     SchedulerProjectionUpdateForBulk:
       required:
@@ -6009,13 +6033,13 @@ components:
       description: Description détaillée des paramètres de mise à jour de plusieurs
         prévisions du planificateur d'horaires.
       properties:
-        hours:
-          type: number
-          description: Nombre d'heures prévues à l'horaire.
-          format: float
         revenues:
           type: number
           description: Montant des revenus attendus.
+          format: float
+        hours:
+          type: number
+          description: Nombre d'heures prévues à l'horaire.
           format: float
         site_id:
           type: string
@@ -6051,6 +6075,22 @@ components:
       description: Description détaillée des paramètres de création d'un quart de
         travail.
       properties:
+        site_id:
+          type: string
+          description: Identifiant unique de la succursale du quart de travail.
+          format: uuid
+        position_id:
+          type: string
+          description: Identifiant unique de la position du quart de travail.
+          format: uuid
+        sub_position_id:
+          type: string
+          description: Identifiant unique de la sous-position du quart de travail.
+          format: uuid
+        date:
+          type: string
+          description: Date du du quart de travail.
+          format: date
         start_at:
           type: string
           description: Date et heure de début du quart de travail shift's start date
@@ -6074,64 +6114,48 @@ components:
           type: string
           description: Date de fin du quart de travail.
           format: date
-        date:
-          type: string
-          description: Date du du quart de travail.
-          format: date
-        site_id:
-          type: string
-          description: Identifiant unique de la succursale du quart de travail.
-          format: uuid
-        position_id:
-          type: string
-          description: Identifiant unique de la position du quart de travail.
-          format: uuid
-        sub_position_id:
-          type: string
-          description: Identifiant unique de la sous-position du quart de travail.
-          format: uuid
-        leave_type_id:
-          type: string
-          description: Identifiant unique du type de congé quart de travail.
-          format: uuid
-        open:
+        on_call:
           type: boolean
-          description: Si le quart de travail est ouvert.
-        recurring:
-          type: boolean
-          description: Si le quart de travail est recurrent.
+          description: Si le quart de travail est sur appel.
         time_off:
           type: boolean
           description: Si le quart de travail est un congé.
-        paid:
+        all_day:
           type: boolean
-          description: Si le quart de travail est est un congé payé.
+          description: Si le quart de travail est toute la journée.
         single_clock:
           type: boolean
           description: Si le quart de travail est demmande uniquement de pointée l'entrée.
         auto_clock:
           type: boolean
           description: Si le quart de travail est pointe automatiquement l'employé.
-        on_call:
+        hide_end_at:
           type: boolean
-          description: Si le quart de travail est sur appel.
-        all_day:
+          description: Si la fin du quart de travail est cachée aux membres.
+        paid:
           type: boolean
-          description: Si le quart de travail est toute la journée.
-        reminder:
-          type: string
-          description: Informations supplémentaires du quart de travail.
+          description: Si le quart de travail est est un congé payé.
+        recurring:
+          type: boolean
+          description: Si le quart de travail est recurrent.
+        open:
+          type: boolean
+          description: Si le quart de travail est ouvert.
         open_quantity:
           type: integer
           description: Nombre de quart de travail disponible.
           format: int32
-        hide_end_at:
-          type: boolean
-          description: Si la fin du quart de travail est cachée aux membres.
+        leave_type_id:
+          type: string
+          description: Identifiant unique du type de congé quart de travail.
+          format: uuid
         leave_value:
           type: integer
           description: Durée du congé.
           format: int32
+        reminder:
+          type: string
+          description: Informations supplémentaires du quart de travail.
         publish:
           type: boolean
           description: Si le quart doit être publié après sa création.
@@ -6173,26 +6197,42 @@ components:
           description: Si le quart doit être publié après avoir été supprimé.
     ShiftTransfer:
       type: object
-      description: Une description détaillée des paramètres d'entrée du transfert
+      description: Une description détaillée des paramètres d'entrée de transfert
         d'un quart.
       properties:
         date:
           type: string
-          description: La date à laquelle le quart sera transféré.
+          description: La date où le quart sera transféré.
           format: date
         member_id:
           type: string
-          description: L'ID du membre auquel le quart sera transféré. L'absence de
-            valeur transferera le quart comme un quart ouvert.
+          description: L'ID du membre auquel le quart sera transféré. Une valeur vide
+            transférera ce quart en quart à combler.
           format: uuid
         publish:
           type: boolean
-          description: Si le quart doit être publié après avoir été transféré.
+          description: Si le quart devrait être publié après son transfert.
     ShiftUpdate:
       type: object
       description: Description détaillée des paramètres de mise à jour d'un quart
         de travail.
       properties:
+        site_id:
+          type: string
+          description: Identifiant unique de la succursale du quart de travail.
+          format: uuid
+        position_id:
+          type: string
+          description: Identifiant unique de la position du quart de travail.
+          format: uuid
+        sub_position_id:
+          type: string
+          description: Identifiant unique de la sous-position du quart de travail.
+          format: uuid
+        date:
+          type: string
+          description: Date du du quart de travail.
+          format: date
         start_at:
           type: string
           description: Date et heure de début du quart de travail shift's start date
@@ -6216,64 +6256,48 @@ components:
           type: string
           description: Date de fin du quart de travail.
           format: date
-        date:
-          type: string
-          description: Date du du quart de travail.
-          format: date
-        site_id:
-          type: string
-          description: Identifiant unique de la succursale du quart de travail.
-          format: uuid
-        position_id:
-          type: string
-          description: Identifiant unique de la position du quart de travail.
-          format: uuid
-        sub_position_id:
-          type: string
-          description: Identifiant unique de la sous-position du quart de travail.
-          format: uuid
-        leave_type_id:
-          type: string
-          description: Identifiant unique du type de congé quart de travail.
-          format: uuid
-        open:
+        on_call:
           type: boolean
-          description: Si le quart de travail est ouvert.
-        recurring:
-          type: boolean
-          description: Si le quart de travail est recurrent.
+          description: Si le quart de travail est sur appel.
         time_off:
           type: boolean
           description: Si le quart de travail est un congé.
-        paid:
+        all_day:
           type: boolean
-          description: Si le quart de travail est est un congé payé.
+          description: Si le quart de travail est toute la journée.
         single_clock:
           type: boolean
           description: Si le quart de travail est demmande uniquement de pointée l'entrée.
         auto_clock:
           type: boolean
           description: Si le quart de travail est pointe automatiquement l'employé.
-        on_call:
+        hide_end_at:
           type: boolean
-          description: Si le quart de travail est sur appel.
-        all_day:
+          description: Si la fin du quart de travail est cachée aux membres.
+        paid:
           type: boolean
-          description: Si le quart de travail est toute la journée.
-        reminder:
-          type: string
-          description: Informations supplémentaires du quart de travail.
+          description: Si le quart de travail est est un congé payé.
+        recurring:
+          type: boolean
+          description: Si le quart de travail est recurrent.
+        open:
+          type: boolean
+          description: Si le quart de travail est ouvert.
         open_quantity:
           type: integer
           description: Nombre de quart de travail disponible.
           format: int32
-        hide_end_at:
-          type: boolean
-          description: Si la fin du quart de travail est cachée aux membres.
+        leave_type_id:
+          type: string
+          description: Identifiant unique du type de congé quart de travail.
+          format: uuid
         leave_value:
           type: integer
           description: Durée du congé.
           format: int32
+        reminder:
+          type: string
+          description: Informations supplémentaires du quart de travail.
         publish:
           type: boolean
           description: Si le quart doit être publié après avoir été mis à jour, s'il
@@ -6345,30 +6369,28 @@ components:
       description: Une description détaillée des paramètres d'entrée de création d'une
         entrée de temps.
       properties:
-        unpaid_break:
-          type: integer
-          description: Minutes de pause non payées.
-          format: int32
-        paid_break:
-          type: integer
-          description: Minutes de pause payées.
-          format: int32
+        start_at:
+          type: string
+          description: La date et l'heure du début de l'entrée de temps.
+          format: date-time
+        end_at:
+          type: string
+          description: La date et l'heure de la fin de l'entrée de temps.
+          format: date-time
+        start_at_time:
+          type: string
+          description: Heure à laquelle l'entrée de temps commence.
+        end_at_time:
+          type: string
+          description: Heure à laquelle l'entrée de temps termine.
         overwritten_length_minutes:
           type: integer
           description: La longueur personnalisée de l'entrée de temps.
           format: int32
-        position_id:
+        date:
           type: string
-          description: ID de position.
-          format: uuid
-        site_id:
-          type: string
-          description: ID de la succursale.
-          format: uuid
-        member_site_position_id:
-          type: string
-          description: ID du 'member_site_position'.
-          format: uuid
+          description: La date de l'entrée de temps.
+          format: date
         time_off:
           type: boolean
           description: Si l'entrée de temps est un congé.
@@ -6383,28 +6405,49 @@ components:
         time_off_paid:
           type: boolean
           description: Si le congé est payé.
-        date:
+        time_off_resource_id:
           type: string
-          description: La date de l'entrée de temps.
-          format: date
-        start_at:
+          description: L'identifiant unique de la ressource associée.
+          format: uuid
+        unpaid_break:
+          type: integer
+          description: Minutes de pause non payées.
+          format: int32
+        paid_break:
+          type: integer
+          description: Minutes de pause payées.
+          format: int32
+        member_site_position_id:
           type: string
-          description: La date et l'heure du début de l'entrée de temps.
-          format: date-time
-        end_at:
+          description: ID du 'member_site_position'.
+          format: uuid
+        site_id:
           type: string
-          description: La date et l'heure de la fin de l'entrée de temps.
-          format: date-time
+          description: ID de la succursale.
+          format: uuid
+        position_id:
+          type: string
+          description: ID de position.
+          format: uuid
+        notes:
+          type: string
+          description: Les notes d'entrée de temps.
         start_at_clock_notes:
           type: string
           description: Note laissée par l'employé lors de son pointage d'entré.
         end_at_clock_notes:
           type: string
           description: Note laissée par l'employé lors du pointage de sortie.
-        break_started_at:
+        start_at_clock_job_site_id:
           type: string
-          description: La date et l'heure du début de la pause.
-          format: date-time
+          description: L'identifiant unique du lieu de travail où l'employé a pointé
+            son entrée.
+          format: uuid
+        end_at_clock_job_site_id:
+          type: string
+          description: L'identifiant unique du lieu de travail où l'employé a pointé
+            sa sortie.
+          format: uuid
         rate_regular:
           type: number
           description: Le taux régulier pour l'entrée de temps.
@@ -6417,29 +6460,10 @@ components:
           type: number
           description: Le taux du temps supplémentaires 2 pour l'entrée de temps.
           format: float
-        notes:
+        break_started_at:
           type: string
-          description: Les notes d'entrée de temps.
-        end_at_clock_job_site_id:
-          type: string
-          description: L'identifiant unique du lieu de travail où l'employé a pointé
-            sa sortie.
-          format: uuid
-        time_off_resource_id:
-          type: string
-          description: L'identifiant unique de la ressource associée.
-          format: uuid
-        start_at_time:
-          type: string
-          description: Heure à laquelle l'entrée de temps commence.
-        end_at_time:
-          type: string
-          description: Heure à laquelle l'entrée de temps termine.
-        start_at_clock_job_site_id:
-          type: string
-          description: L'identifiant unique du lieu de travail où l'employé a pointé
-            son entrée.
-          format: uuid
+          description: La date et l'heure du début de la pause.
+          format: date-time
         member_id:
           type: string
           description: ID de l'employé assigné à l'entrée de temps.
@@ -6449,30 +6473,28 @@ components:
       description: Une description détaillée des paramètres d'entrée de mise à jour
         d'une entrée de temps.
       properties:
-        unpaid_break:
-          type: integer
-          description: Minutes de pause non payées.
-          format: int32
-        paid_break:
-          type: integer
-          description: Minutes de pause payées.
-          format: int32
+        start_at:
+          type: string
+          description: La date et l'heure du début de l'entrée de temps.
+          format: date-time
+        end_at:
+          type: string
+          description: La date et l'heure de la fin de l'entrée de temps.
+          format: date-time
+        start_at_time:
+          type: string
+          description: Heure à laquelle l'entrée de temps commence.
+        end_at_time:
+          type: string
+          description: Heure à laquelle l'entrée de temps termine.
         overwritten_length_minutes:
           type: integer
           description: La longueur personnalisée de l'entrée de temps.
           format: int32
-        position_id:
+        date:
           type: string
-          description: ID de position.
-          format: uuid
-        site_id:
-          type: string
-          description: ID de la succursale.
-          format: uuid
-        member_site_position_id:
-          type: string
-          description: ID du 'member_site_position'.
-          format: uuid
+          description: La date de l'entrée de temps.
+          format: date
         time_off:
           type: boolean
           description: Si l'entrée de temps est un congé.
@@ -6487,28 +6509,49 @@ components:
         time_off_paid:
           type: boolean
           description: Si le congé est payé.
-        date:
+        time_off_resource_id:
           type: string
-          description: La date de l'entrée de temps.
-          format: date
-        start_at:
+          description: L'identifiant unique de la ressource associée.
+          format: uuid
+        unpaid_break:
+          type: integer
+          description: Minutes de pause non payées.
+          format: int32
+        paid_break:
+          type: integer
+          description: Minutes de pause payées.
+          format: int32
+        member_site_position_id:
           type: string
-          description: La date et l'heure du début de l'entrée de temps.
-          format: date-time
-        end_at:
+          description: ID du 'member_site_position'.
+          format: uuid
+        site_id:
           type: string
-          description: La date et l'heure de la fin de l'entrée de temps.
-          format: date-time
+          description: ID de la succursale.
+          format: uuid
+        position_id:
+          type: string
+          description: ID de position.
+          format: uuid
+        notes:
+          type: string
+          description: Les notes d'entrée de temps.
         start_at_clock_notes:
           type: string
           description: Note laissée par l'employé lors de son pointage d'entré.
         end_at_clock_notes:
           type: string
           description: Note laissée par l'employé lors du pointage de sortie.
-        break_started_at:
+        start_at_clock_job_site_id:
           type: string
-          description: La date et l'heure du début de la pause.
-          format: date-time
+          description: L'identifiant unique du lieu de travail où l'employé a pointé
+            son entrée.
+          format: uuid
+        end_at_clock_job_site_id:
+          type: string
+          description: L'identifiant unique du lieu de travail où l'employé a pointé
+            sa sortie.
+          format: uuid
         rate_regular:
           type: number
           description: Le taux régulier pour l'entrée de temps.
@@ -6521,41 +6564,34 @@ components:
           type: number
           description: Le taux du temps supplémentaires 2 pour l'entrée de temps.
           format: float
-        notes:
+        break_started_at:
           type: string
-          description: Les notes d'entrée de temps.
-        end_at_clock_job_site_id:
-          type: string
-          description: L'identifiant unique du lieu de travail où l'employé a pointé
-            sa sortie.
-          format: uuid
-        time_off_resource_id:
-          type: string
-          description: L'identifiant unique de la ressource associée.
-          format: uuid
-        start_at_time:
-          type: string
-          description: Heure à laquelle l'entrée de temps commence.
-        end_at_time:
-          type: string
-          description: Heure à laquelle l'entrée de temps termine.
-        start_at_clock_job_site_id:
-          type: string
-          description: L'identifiant unique du lieu de travail où l'employé a pointé
-            son entrée.
-          format: uuid
+          description: La date et l'heure du début de la pause.
+          format: date-time
     UserUpdate:
       type: object
       description: Description détaillée des paramètres d'entrée de mise à jour d'un
         utilisateur.
       properties:
+        locale:
+          type: string
+          description: La langue de l'utilisateur.
+        time_format:
+          type: integer
+          description: Le format d'heure de l'utilisateur, 12 ou 24.
+          format: int32
+        time_zone_name:
+          type: string
+          description: Le fuseau horaire de l'utilisateur.
         email:
           type: string
           description: Courriel de l'utilisateur.
           format: email
-        email_notifications:
-          type: boolean
-          description: Si l'utilisateur reçoit des notifications par e-mail.
+        disabled_notifications:
+          type: array
+          description: Une liste des notifications que cet utilisateur a désactivées.
+          items:
+            type: string
         sms_notifications:
           type: boolean
           description: Si l'utilisateur reçoit des notifications par SMS.
@@ -6567,26 +6603,14 @@ components:
           type: string
           description: Le numéro de téléphone auquel l'utilisateur reçoit les notifications
             par SMS.
-        disabled_notifications:
-          type: array
-          description: Une liste des notifications que cet utilisateur a désactivées.
-          items:
-            type: string
+        email_notifications:
+          type: boolean
+          description: Si l'utilisateur reçoit des notifications par e-mail.
         shift_reminder_time:
           type: integer
           description: Lorsque l'utilisateur reçoit un rappel d'un quart de travail
             à venir, en minutes.
           format: int32
-        locale:
-          type: string
-          description: La langue de l'utilisateur.
-        time_format:
-          type: integer
-          description: Le format d'heure de l'utilisateur, 12 ou 24.
-          format: int32
-        time_zone_name:
-          type: string
-          description: Le fuseau horaire de l'utilisateur.
         profile_attributes:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
     ResourceBulkCreate:
@@ -6625,71 +6649,6 @@ components:
           items:
             "$ref": "#/components/schemas/SchedulerProjectionUpdateForBulk"
   responses:
-    HRPrivateDataSuccessOne:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: object
-    EmptySuccess:
-      description: Succès
-      content:
-        application/json:
-          schema:
-            type: object
-    NotFoundFailure:
-      description: Erreur - Introuvable
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Errors"
-    InputParamsFailure:
-      description: Erreur - Paramètres d'entrée invalides
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Errors"
-    QueryParamFailure:
-      description: Erreur - Paramètres de requête invalides
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Errors"
-    PathParamFailure:
-      description: Erreur - Chemin d'accès invalide
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/Errors"
-    ActivitySuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/Activity"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
-    AvailabilitySuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/Availability"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
     AvailabilityListRequestSuccessMany:
       description: Success
       content:
@@ -6712,28 +6671,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/AvailabilityListRequest"
-    AvailabilityListSuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/AvailabilityList"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
-    AvailabilityListSuccessOne:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                "$ref": "#/components/schemas/AvailabilityList"
     BillboardTagSuccessMany:
       description: Success
       content:
@@ -6778,7 +6715,7 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/BillboardThread"
-    BreakSuccessMany:
+    PositionSuccessMany:
       description: Success
       content:
         application/json:
@@ -6788,7 +6725,20 @@ components:
               data:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/Break"
+                  "$ref": "#/components/schemas/Position"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    SiteSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Site"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
     ClockLogSuccessMany:
@@ -6879,19 +6829,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/LeaveType"
-    MemberSiteSuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/MemberSite"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
     MemberTimeBankTransactionSuccessMany:
       description: Success
       content:
@@ -6914,19 +6851,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/MemberTimeBankTransaction"
-    MemberTimeBankSuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/MemberTimeBank"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
     MemberSuccessMany:
       description: Success
       content:
@@ -6949,6 +6873,63 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Member"
+    AvailabilityListSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/AvailabilityList"
+    AvailabilityListSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/AvailabilityList"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    MemberSiteSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/MemberSite"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    MemberTimeBankSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/MemberTimeBank"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    HRPrivateDataSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
     PayrollSuccessMany:
       description: Success
       content:
@@ -6971,19 +6952,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Payroll"
-    PositionSuccessMany:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/Position"
-              pagination:
-                "$ref": "#/components/schemas/CommonPagination"
     PositionSuccessOne:
       description: Success
       content:
@@ -7059,17 +7027,6 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Publication"
-    ResourceSuccessManyWithoutPagination:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                type: array
-                items:
-                  "$ref": "#/components/schemas/Resource"
     ResourceSuccessMany:
       description: Success
       content:
@@ -7092,7 +7049,7 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Resource"
-    SchedulerProjectionSuccessManyWithoutPagination:
+    ResourceSuccessManyWithoutPagination:
       description: Success
       content:
         application/json:
@@ -7102,7 +7059,7 @@ components:
               data:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/SchedulerProjection"
+                  "$ref": "#/components/schemas/Resource"
     SchedulerProjectionSuccessMany:
       description: Success
       content:
@@ -7125,16 +7082,7 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/SchedulerProjection"
-    SessionSuccessOne:
-      description: Success
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              data:
-                "$ref": "#/components/schemas/Session"
-    ShiftSuccessManyWithoutPagination:
+    SchedulerProjectionSuccessManyWithoutPagination:
       description: Success
       content:
         application/json:
@@ -7144,7 +7092,16 @@ components:
               data:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/Shift"
+                  "$ref": "#/components/schemas/SchedulerProjection"
+    SessionSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/Session"
     ShiftSuccessMany:
       description: Success
       content:
@@ -7167,7 +7124,7 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Shift"
-    SiteSuccessMany:
+    ActivitySuccessMany:
       description: Success
       content:
         application/json:
@@ -7177,9 +7134,33 @@ components:
               data:
                 type: array
                 items:
-                  "$ref": "#/components/schemas/Site"
+                  "$ref": "#/components/schemas/Activity"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
+    BreakSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Break"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    ShiftSuccessManyWithoutPagination:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Shift"
     SiteSuccessOne:
       description: Success
       content:
@@ -7286,6 +7267,36 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/HRField"
+    EmptySuccess:
+      description: Succès
+      content:
+        application/json:
+          schema:
+            type: object
+    NotFoundFailure:
+      description: Erreur - Introuvable
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
+    InputParamsFailure:
+      description: Erreur - Paramètres d'entrée invalides
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
+    QueryParamFailure:
+      description: Erreur - Paramètres de requête invalides
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
+    PathParamFailure:
+      description: Erreur - Chemin d'accès invalide
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
   parameters:
     PathId:
       name: id
@@ -7404,11 +7415,6 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/PositionUpdate"
-    ResourceBulkCreate:
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/ResourceBulkCreate"
     ResourceCreate:
       content:
         application/json:
@@ -7419,6 +7425,11 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/ResourceUpdate"
+    ResourceBulkCreate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/ResourceBulkCreate"
     SchedulerProjectionCreate:
       content:
         application/json:
@@ -7449,16 +7460,16 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/ShiftCreate"
-    ShiftUpdate:
-      content:
-        application/json:
-          schema:
-            "$ref": "#/components/schemas/ShiftUpdate"
     ShiftDelete:
       content:
         application/json:
           schema:
             "$ref": "#/components/schemas/ShiftDelete"
+    ShiftUpdate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/ShiftUpdate"
     ShiftTransfer:
       content:
         application/json:

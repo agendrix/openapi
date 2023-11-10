@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "title": "Agendrix API",
-    "description": "\nCette page contient une description détaillée de l'API publique d'Agendrix. Ci-dessous, vous trouverez une section « Pour commencer » résumant les principales étapes  pour effectuer votre premier appel à l'API, ainsi qu'une section OAUth 2.0 décrivant le processus d'authentification nécessaire afin de récupérer un jeton d'accès obligatoire. Vous pouvez également accéder à l'information concernant les en-têtes, les réponses et les erreurs de l'API. Chaque point de terminaison est ensuite décrit, regroupé par leur modèle de base de données. Autorisations, paramètres, réponses, tout ce dont vous avez besoin est là. Profitez-en!\n\n# Pour commencer\nCe guide décrit comment effectuer votre premier appel à l'API publique d'Agendrix.\n\n## Créer une application\nCréer une application générera vos clés de développement pour un environnement de test où vous pouvez effectuer tous les tests que vous souhaitez, ainsi qu'un environnement de production. Il est possible d'utiliser l'application pour vous-même ou pour vos clients.\n  - Depuis la section [Applications](./applications), cliquez sur le bouton « Nouvelle application » et choisissez un nom pour votre nouvelle application.\n  - Vous avez maintenant été redirigé vers les informations générales de votre application. Vous pouvez y ajouter une description, une icône et modifier le nom de votre application. Vous pouvez également voir l'état d'approbation de votre application. Celle-ci doit être approuvée avant de pouvoir être utilisée en production.\n  - Vous pouvez récupérer vos identifiants de développement et de production dans leurs sections respectives. Vous pouvez régénérer vos secrets, gérer vos adresses URIs de redirection et vos portées.\n\nVotre Client ID et votre Client Secret sont obligatoires afin de récupérer vos jetons OAuth 2.0. Les adresses URIs de redirection le sont également - au moins un.\n\n## Développement\nL'environnement de test est utilisé pour effectuer des essais. Lorsque vous utilisez cet environnement, vous n'avez pas besoin d'activer le produit API pour votre propre application Agendrix.\n\nPour vous connecter à l'environnement de test, suivez ces étapes:\n  - Depuis la section [Applications](./applications), cliquez sur votre application;\n  - Accédez à l'onglet « Développement »;\n  - Cliquez sur le lien « Se connecter à l'environnement de test ».\n\nSi vous souhaitez utiliser directement votre propre application Agendrix, suivez ces étapes :\n  - Connectez-vous à votre application Agendrix;\n  - Accédez à l'onglet « Facturation »;\n  - Défilez à la section « Modules complémentaires », puis cliquez sur le bouton « Discuter avec les ventes » sous la tuile API.\n\n## Obtenir un jeton d'accès OAuth 2.0\nVous avez besoin d'un jeton d'accès pour accéder à l'API Agendrix. Le moyen le plus simple de le faire est via [l'aire de jeux](./playground) OAuth 2.0. Il y a également une explication détaillée du processus dans la section OAuth 2.0 ci-dessous.\n\n## Faire un appel à l'API\nMaintenant que vous avez un jeton d'accès, vous pouvez l'utiliser pour faire toute sorte d'appels en ajoutant l'en-tête « Autorisation à la requête », à condition que vos identifiants incluent les portées requises pour un point de terminaison précis.\n\n# Ressources\nCette section regroupe les différentes ressources téléchargeables de l'API d'Agendrix.\n\n## OAS 3\nUn document Open API Specification est une description détaillée et précise d'une API, depuis ses schémas de sécurité jusqu'à ses points de terminaison. Il a de nombreuses utilisations - notre propre [document](./open-api-spec) génère une grande partie de cette documentation, ainsi que la collection Postman. L'écosystème Open API est riche, mature et est largement utilisé par la communauté. Pour en savoir plus sur l'OAS, cliquez <a href='https://github.com/OAI/OpenAPI-Specification' target='_blank'>ici</a>.\n\n## Collection Postman\nPostman est une plateforme collaborative pour le développement d'API. En important la [collection](./postman-collection) préconçue d'Agendrix , vous pouvez facilement tester et expérimenter avec l'API d'Agendrix. Téléchargez la collection, importez-là dans Postman, définissez votre jeton d'accès - depuis la collection, voir plus d'actions, modifier, autorisations - et vous êtes prêt à l'utiliser.\nPour en savoir plus sur Postman, cliquez <a href='https://www.postman.com/' target='_blank'>ici</a>.\n\n## Exemples\nNous avons également mis en place des <a href='https://github.com/agendrix/public-api-integration-examples' target='_blank'>exemples</a> d'intégration de base avec notre API en Javascript et Ruby.\nCes exemples comprennent le processus complet OAuth ainsi que la gestion des jetons et bien sûr, la réalisation des requêtes à l'API.\n\n# OAuth 2.0\nAgendrix utilise le protocole OAuth 2.0 pour l'autorisation. Dès qu'une application est créée, elle peut être utilisée pour demander des jetons d'accès et de rafraîchissement. Le jeton d'accès est valide pour une période de 2 heures et doit être rafraîchi par la suite avec le jeton de rafraîchissement. Le jeton d'accès peut ensuite être utilisé pour effectuer des appels à l'API. Pour une démonstration intéractive du processus, veuillez utiliser l'aire de jeux OAuth 2.0.\n\n## Préparer la requête d'autorisation\nLa première étape consiste à préparer la requête d'autorisation en utilisant le Client ID et l'un des URIs de redirection définis pour l'application - ou le client. Les portées sont « read » par défaut lorsqu'elles ne sont pas spécifiées.\n```\nhttps://app.agendrix.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=read+write\n```\n\n## Rediriger l'utilisateur\nUne fois que l'utilisateur est redirigé à la requête d'autorisation, il doit donner son approbation pour partager ses données avec l'application et choisir l'organisation pour laquelle il souhaite le faire. La requête d'autorisation est ensuite traitée par le serveur OAuth 2.0.\n\n## Gérer la réponse du serveur OAuth 2.0\nSi la requête d'autorisation est valide, le serveur OAuth 2.0 envoie un code d'autorisation à l'URI de redirection spécifié dans la requête. Ce code peut être utilisé pour préparer la requête visant à récupérer les jetons d'accès et de rafraîchissement.\n\n## Échanger le code d'autorisation pour des jetons\nLa dernière étape consiste simplement à échanger le code d'autorisation reçu contre les jetons. Le Client ID, le Client Secret, l'URI de redirection et le type de contribution - qui est toujours *authorization_code* - doivent être inclus dans la requête. Le serveur OAuth 2.0 envoie ensuite le jeton d'accès et de rafraîchissement à l'URI de redirection défini.\n```\ncurl --request POST 'https://app.agendrix.com/oauth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n  \"client_id\": \"{CLIENT_ID}\",\n  \"client_secret\": \"{CLIENT_SECRET}\",\n  \"redirect_uri\": \"{REDIRECT_URI}\",\n  \"grant_type\": \"authorization_code\",\n  \"code\": \"{AUTORIZATION_CODE}\"\n}'\n```\n\n## Échanger le jeton de rafraîchissement pour un nouveau jeton d'accès\nLe jeton d'accès récupéré expirera éventuellement - sa durée de vie est de 2 heures. Plutôt que de faire le processus d'autorisation à nouveau, le jeton de rafraîchissement peut être utilisé pour demander de nouveaux jetons d'accès et d'actualisation. Le type de contribution devient *refresh_token* et celui-ci doit être inclus dans la requête avec le Client ID, le Client Secret ainsi que l'URI de redirection. Un sous-ensemble de la portée du jeton d'accès d'origine peut également être inclus dans la requête.\n```\ncurl --request POST 'https://app.agendrix.com/oauth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n  \"client_id\": \"{CLIENT_ID}\",\n  \"client_secret\": \"{CLIENT_SECRET}\",\n  \"redirect_uri\": \"{REDIRECT_URI}\",\n  \"grant_type\": \"refresh_token\",\n  \"refresh_token\": \"{REFRESH_TOKEN}\",\n}'\n```\n\n# Authentification\n<SecurityDefinitions />\n\n# En-têtes\nDes en-têtes spécifiques doivent être définis pour interagir avec l'API. Certains en-têtes contiennent également des informations pertinentes.\n\n## Requêtes\nToutes requêtes effectuées vers l'API publique d'Agendrix requièrent deux en-têtes spécifiques. Le premier est l'en-tête Content-Type. Il doit toujours être réglé à *application/json*, car c'est le format pris en charge par l'API. Le deuxième est l'en-tête Authorization, dans lequel vous devez ajouter votre jeton d'accès en tant que *Bearer*. Vous pouvez voir un exemple de requête curl classique dans la section [Effectuer un appel API](./documentation#section/Effectuer-un-appel-API).\n\n## Responses\nToutes les réponses de l'API sont en JSON; alors, elles ont toutes l'en-tête Content-Type réglé sur *application/json*. Dans le cas spécifique où le nombre de requêtes à l'API dépasse le taux [limite](./documentation#section/Taux-limite), les en-têtes RateLimit-Limit, RateLimit-Remaining et RateLimit-Reset sont ajoutés aux en-têtes de la réponse. Ils représentent respectivement le taux limite de requêtes autorisées, le nombre restant de requêtes autorisées - qui est toujours égal à 0 dans ce cas - et le nombre de secondes avant la réinitialisation du taux limite.\n\n# Taux limite\nLe taux limite actuel de l'API est réglée à 360 requêtes par minute. Tant que cette limite est respectée et que la requête est valide ainsi que son jeton d'accès, elle est traitée par l'API.\n\n# Actions de masse\n## Limite du nombre d'éléments\nLe nombre d'éléments limite est actuellement 1000 par requête. Tout comme le taux limite, tant que le nombre d'éléments limite est respecté et que la requête ainsi que son jeton d'accès sont valides, elle est traitée par l'API.\n\n# Effectuer un appel API\nUne fois que vous avez le jeton d'accès, passer un appel à l'API publique d'Agendrix est plutôt simple. Il s'agit d'une requête HTTP classique. Tout ce que vous avez à faire est d'ajouter les en-têtes requis ainsi que les paramètres de corps et de requête - en fonction du type de requête -, comme vous pouvez le voir dans l'exemple ci-dessous.\n```\ncurl --request POST 'https://api.agendrix.com/v1/positions' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--data-raw '{\n    \"name\": \"A position name\"\n}'\n```\n\n# Réponses\nToutes les réponses sont en JSON. La structure des réponses varie légèrement en fonction du contexte.\n\n## Réponses paginées\nLes réponses paginées contiennent toujours les champs « données » et « pagination ». Le champ « données » représente les données requises renvoyées par l'API - pour les réponses paginées, il s'agit d'une liste d'objets. Le champ « pagination » représente les métadonnées de pagination de la réponse. Le champ « pagination » contient la valeur de tri, les valeurs de recherche, la taille de la page, la limite de taille de page, les pages actuelle, suivante, précédente, dernière, première et totale, le nombre total d'objets et finalement, si la page demandée est hors de portée.\n\n## Autres réponses\nToutes les autres réponses contiennent toujours les champs « données » et « erreurs ». Le champ « données » représente, encore une fois, les données renvoyées par l'API - mais directement en tant qu'objet cette fois-ci - et sera nul s'il contient des erreurs. Le champ « erreurs » est une liste d'objets décrivant l'erreur avec les champs source, message court et/ou message long. Le champ « erreurs » est nul si la requête est traitée sans erreurs.\n\n# Erreurs\n## Erreurs non autorisées - Code 401\nDifférents types d'erreurs non autorisées peuvent survenir lors de l'utilisation de l'API :\n  - Jeton invalide\n  - Jeton expiré\n  - Jeton révoqué\n  - Jeton inconnu\n  - Application non approuvée\n  - Opération non autorisée (Votre utilisateur Agendrix ne détient pas les droits pour effectuer l'action)\n\n## Erreur interdite - Code 403\nLorsque le jeton ne possède pas la portée requise pour effectuer l'action.\n\n## Erreur de taux limite - Code 429\nLorsque la limite de fréquence de 180 requêtes par minute n'est pas respectée, une erreur de limite de fréquence est retournée. L'en-tête *RateLimit-Reset* spécifie combien de temps il reste avant qu'une autre demande puisse être effectuée.\n\n## Erreur interne du serveur - Code 500\nWLorsqu'une erreur inattendue survient sur le serveur, l'API renvoie une erreur interne du serveur.\n\n## Erreur non trouvée - Code 404\nCela peut se produire pour chaque point de terminaison qui doit récupérer un enregistrement existant - requêtes GET et PUT -, à l'exception d'une mise à jour en masse\n\n## Erreur de paramètre de requête - Code 400\nDifférents types d'erreurs de paramètres de requête peuvent être déclenchés par l'API :\n  - Si un paramètre requis est manquant\n  - Si un paramètre a un format incorrect (i.e. dates)\n  - Si un paramètre a une valeur incorrecte (i.e. trier ou rechercher des valeurs)\n\n  Cela ne peut se produire que pour les points de terminaison paginés - requêtes GET.\n\n## Erreur de paramètres d'entrée - Code 400\nSi un *payload* ne respecte pas le schéma spécifié dans la documentation, l'API retournera une erreur de paramètres d'entrée. Cela ne peut se produire que pour des requêtes POST et PUT.\n\n## Erreur de paramètre de route - Code 400\nCeci peut uniquement se produire pour les points de terminaison qui nécessitent des paramètres inhabituels dans leur route - i.e. la liste de disponibilité d'un membre affichée par date : `/members/{id}/availability_lists/{date}`.\n\n# Aide\n## Nous contacter\nN'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.",
-    "version": "1"
+    "description": "\nCette page contient une description détaillée de l'API publique d'Agendrix. Ci-dessous, vous trouverez une section « Pour commencer » résumant les principales étapes  pour effectuer votre premier appel à l'API, ainsi qu'une section OAUth 2.0 décrivant le processus d'authentification nécessaire afin de récupérer un jeton d'accès obligatoire. Vous pouvez également accéder à l'information concernant les en-têtes, les réponses et les erreurs de l'API. Chaque point de terminaison est ensuite décrit, regroupé par leur modèle de base de données. Autorisations, paramètres, réponses, tout ce dont vous avez besoin est là. Profitez-en!\n\n# Pour commencer\nCe guide décrit comment effectuer votre premier appel à l'API publique d'Agendrix.\n\n## Créer une application\nCréer une application générera vos clés de développement pour un environnement de test où vous pouvez effectuer tous les tests que vous souhaitez, ainsi qu'un environnement de production. Il est possible d'utiliser l'application pour vous-même ou pour vos clients.\n  - Depuis la section [Applications](./applications), cliquez sur le bouton « Nouvelle application » et choisissez un nom pour votre nouvelle application.\n  - Vous avez maintenant été redirigé vers les informations générales de votre application. Vous pouvez y ajouter une description, une icône et modifier le nom de votre application. Vous pouvez également voir l'état d'approbation de votre application. Celle-ci doit être approuvée avant de pouvoir être utilisée en production.\n  - Vous pouvez récupérer vos identifiants de développement et de production dans leurs sections respectives. Vous pouvez régénérer vos secrets, gérer vos adresses URIs de redirection et vos portées.\n\nVotre Client ID et votre Client Secret sont obligatoires afin de récupérer vos jetons OAuth 2.0. Les adresses URIs de redirection le sont également - au moins un.\n\n## Développement\nL'environnement de test est utilisé pour effectuer des essais. Votre application n'a pas besoin d'être approuvée pour utiliser cet environnement. Lorsque vous utilisez la sandbox, n'oubliez pas de changer vos appels en conséquence - sandbox.agendrix.net/oauth au lieu de app.agendrix.com/oauth et api.sandbox.agendrix.net au lieu de api.agendrix.com.\n\nPour vous connecter à l'environnement de test, suivez ces étapes:\n  - Depuis la section [Applications](./applications), cliquez sur votre application;\n  - Accédez à l'onglet « Développement »;\n  - Cliquez sur le lien « Se connecter à l'environnement de test ».\n\n## Obtenir un jeton d'accès OAuth 2.0\nVous avez besoin d'un jeton d'accès pour accéder à l'API Agendrix. Le moyen le plus simple de le faire est via [l'aire de jeux](./playground) OAuth 2.0. Il y a également une explication détaillée du processus dans la section OAuth 2.0 ci-dessous.\n\n## Faire un appel à l'API\nMaintenant que vous avez un jeton d'accès, vous pouvez l'utiliser pour faire toute sorte d'appels en ajoutant l'en-tête « Autorisation à la requête », à condition que vos identifiants incluent les portées requises pour un point de terminaison précis.\n\n# Ressources\nCette section regroupe les différentes ressources téléchargeables de l'API d'Agendrix.\n\n## OAS 3\nUn document Open API Specification est une description détaillée et précise d'une API, depuis ses schémas de sécurité jusqu'à ses points de terminaison. Il a de nombreuses utilisations - notre propre [document](https://github.com/agendrix/openapi/blob/main/fr/open_api.yml) génère une grande partie de cette documentation, ainsi que la collection Postman. L'écosystème Open API est riche, mature et est largement utilisé par la communauté. Pour en savoir plus sur l'OAS, cliquez <a href='https://github.com/OAI/OpenAPI-Specification' target='_blank'>ici</a>.\n\n## Exemples\nNous avons également mis en place des <a href='https://github.com/agendrix/public-api-integration-examples' target='_blank'>exemples</a> d'intégration de base avec notre API en Javascript et Ruby.\nCes exemples comprennent le processus complet OAuth ainsi que la gestion des jetons et bien sûr, la réalisation des requêtes à l'API.\n\n# OAuth 2.0\nAgendrix utilise le protocole OAuth 2.0 pour l'autorisation. Dès qu'une application est créée, elle peut être utilisée pour demander des jetons d'accès et de rafraîchissement. Le jeton d'accès est valide pour une période de 2 heures et doit être rafraîchi par la suite avec le jeton de rafraîchissement. Le jeton d'accès peut ensuite être utilisé pour effectuer des appels à l'API. Pour une démonstration intéractive du processus, veuillez utiliser l'aire de jeux OAuth 2.0.\n\n## Préparer la requête d'autorisation\nLa première étape consiste à préparer la requête d'autorisation en utilisant le Client ID et l'un des URIs de redirection définis pour l'application - ou le client. Les portées sont « read » par défaut lorsqu'elles ne sont pas spécifiées.\n```\nhttps://app.agendrix.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=read+write\n```\n\n## Rediriger l'utilisateur\nUne fois que l'utilisateur est redirigé à la requête d'autorisation, il doit donner son approbation pour partager ses données avec l'application et choisir l'organisation pour laquelle il souhaite le faire. La requête d'autorisation est ensuite traitée par le serveur OAuth 2.0.\n\n## Gérer la réponse du serveur OAuth 2.0\nSi la requête d'autorisation est valide, le serveur OAuth 2.0 envoie un code d'autorisation à l'URI de redirection spécifié dans la requête. Ce code peut être utilisé pour préparer la requête visant à récupérer les jetons d'accès et de rafraîchissement.\n\n## Échanger le code d'autorisation pour des jetons\nLa dernière étape consiste simplement à échanger le code d'autorisation reçu contre les jetons. Le Client ID, le Client Secret, l'URI de redirection et le type de contribution - qui est toujours *authorization_code* - doivent être inclus dans la requête. Le serveur OAuth 2.0 envoie ensuite le jeton d'accès et de rafraîchissement à l'URI de redirection défini.\n```\ncurl --request POST 'https://app.agendrix.com/oauth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n  \"client_id\": \"{CLIENT_ID}\",\n  \"client_secret\": \"{CLIENT_SECRET}\",\n  \"redirect_uri\": \"{REDIRECT_URI}\",\n  \"grant_type\": \"authorization_code\",\n  \"code\": \"{AUTORIZATION_CODE}\"\n}'\n```\n\n## Échanger le jeton de rafraîchissement pour de nouveaux jetons\nLe jeton d'accès récupéré expirera éventuellement - sa durée de vie est de 2 heures. Plutôt que de faire le processus d'autorisation à nouveau, le jeton de rafraîchissement peut être utilisé pour demander de nouveaux jetons d'accès et de rafraîchissement. Le type de contribution devient *refresh_token* et celui-ci doit être inclus dans la requête avec le Client ID, le Client Secret ainsi que l'URI de redirection. Un sous-ensemble de la portée du jeton d'accès d'origine peut également être inclus dans la requête.\n```\ncurl --request POST 'https://app.agendrix.com/oauth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n  \"client_id\": \"{CLIENT_ID}\",\n  \"client_secret\": \"{CLIENT_SECRET}\",\n  \"redirect_uri\": \"{REDIRECT_URI}\",\n  \"grant_type\": \"refresh_token\",\n  \"refresh_token\": \"{REFRESH_TOKEN}\",\n}'\n```\n\nLes jetons de rafraîchissement deviennent invalides une fois utilisés, mais n'expirent pas. Vous pouvez répéter le processus de rafraîchissement aussi longtemps que nécessaire.\n\n# Rôle du propriétaire du jeton\nLes données renvoyées par l'API seront limitées au rôle du propriétaire du jeton. Cela signifie que si un jeton d'accès a été généré à l'aide d'une autorisation d'accès d'un gestionnaire, les données renvoyées par l'API seront limitées aux positions et aux sites gérés par l'utilisateur. Les actions seront également limitées par le rôle du propriétaire. Si vous souhaitez récupérer toutes les données relatives à une organisation, le jeton utilisé doit être généré par un administrateur de l'organisation.\n\n# En-têtes\nDes en-têtes spécifiques doivent être définis pour interagir avec l'API. Certains en-têtes contiennent également des informations pertinentes.\n\n## Requêtes\nToutes requêtes effectuées vers l'API publique d'Agendrix requièrent deux en-têtes spécifiques. Le premier est l'en-tête Content-Type. Il doit toujours être réglé à *application/json*, car c'est le format pris en charge par l'API. Le deuxième est l'en-tête Authorization, dans lequel vous devez ajouter votre jeton d'accès en tant que *Bearer*. Vous pouvez voir un exemple de requête curl classique dans la section [Effectuer un appel API](./documentation#section/Effectuer-un-appel-API).\n\n## Responses\nToutes les réponses de l'API sont en JSON; alors, elles ont toutes l'en-tête Content-Type réglé sur *application/json*. Dans le cas spécifique où le nombre de requêtes à l'API dépasse le taux [limite](./documentation#section/Taux-limite), les en-têtes RateLimit-Limit, RateLimit-Remaining et RateLimit-Reset sont ajoutés aux en-têtes de la réponse. Ils représentent respectivement le taux limite de requêtes autorisées, le nombre restant de requêtes autorisées - qui est toujours égal à 0 dans ce cas - et le nombre de secondes avant la réinitialisation du taux limite.\n\n# Taux limite\nLe taux limite actuel de l'API est réglée à 360 requêtes par minute. Tant que cette limite est respectée et que la requête est valide ainsi que son jeton d'accès, elle est traitée par l'API.\n\n# Actions de masse\n## Limite du nombre d'éléments\nLe nombre d'éléments limite est actuellement 1000 par requête. Tout comme le taux limite, tant que le nombre d'éléments limite est respecté et que la requête ainsi que son jeton d'accès sont valides, elle est traitée par l'API.\n\n# Effectuer un appel API\nUne fois que vous avez le jeton d'accès, passer un appel à l'API publique d'Agendrix est plutôt simple. Il s'agit d'une requête HTTP classique. Tout ce que vous avez à faire est d'ajouter les en-têtes requis ainsi que les paramètres de corps et de requête - en fonction du type de requête -, comme vous pouvez le voir dans l'exemple ci-dessous.\n```\ncurl --request POST 'https://api.agendrix.com/v1/positions' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--data-raw '{\n    \"name\": \"A position name\"\n}'\n```\n\n# Réponses\nToutes les réponses sont en JSON. La structure des réponses varie légèrement en fonction du contexte.\n\n## Réponses paginées\nLes réponses paginées contiennent toujours les champs « données » et « pagination ». Le champ « données » représente les données requises renvoyées par l'API - pour les réponses paginées, il s'agit d'une liste d'objets. Le champ « pagination » représente les métadonnées de pagination de la réponse. Le champ « pagination » contient la valeur de tri, les valeurs de recherche, la taille de la page, la limite de taille de page, les pages actuelle, suivante, précédente, dernière, première et totale, le nombre total d'objets et finalement, si la page demandée est hors de portée.\n\n## Autres réponses\nToutes les autres réponses contiennent toujours les champs « données » et « erreurs ». Le champ « données » représente, encore une fois, les données renvoyées par l'API - mais directement en tant qu'objet cette fois-ci - et sera nul s'il contient des erreurs. Le champ « erreurs » est une liste d'objets décrivant l'erreur avec les champs source, message court et/ou message long. Le champ « erreurs » est nul si la requête est traitée sans erreurs.\n\n# Erreurs\n## Erreurs non autorisées - Code 401\nDifférents types d'erreurs non autorisées peuvent survenir lors de l'utilisation de l'API :\n  - Jeton invalide\n  - Jeton expiré\n  - Jeton révoqué\n  - Jeton inconnu\n  - Application non approuvée\n  - Opération non autorisée (Votre utilisateur Agendrix ne détient pas les droits pour effectuer l'action)\n\n## Erreur interdite - Code 403\nLorsque le jeton ne possède pas la portée requise pour effectuer l'action.\n\n## Erreur de taux limite - Code 429\nLorsque la limite de fréquence de 180 requêtes par minute n'est pas respectée, une erreur de limite de fréquence est retournée. L'en-tête *RateLimit-Reset* spécifie combien de temps il reste avant qu'une autre demande puisse être effectuée.\n\n## Erreur interne du serveur - Code 500\nWLorsqu'une erreur inattendue survient sur le serveur, l'API renvoie une erreur interne du serveur.\n\n## Erreur non trouvée - Code 404\nCela peut se produire pour chaque point de terminaison qui doit récupérer un enregistrement existant - requêtes GET et PUT -, à l'exception d'une mise à jour en masse\n\n## Erreur de paramètre de requête - Code 400\nDifférents types d'erreurs de paramètres de requête peuvent être déclenchés par l'API :\n  - Si un paramètre requis est manquant\n  - Si un paramètre a un format incorrect (i.e. dates)\n  - Si un paramètre a une valeur incorrecte (i.e. trier ou rechercher des valeurs)\n\n  Cela ne peut se produire que pour les points de terminaison paginés - requêtes GET.\n\n## Erreur de paramètres d'entrée - Code 400\nSi un *payload* ne respecte pas le schéma spécifié dans la documentation, l'API retournera une erreur de paramètres d'entrée. Cela ne peut se produire que pour des requêtes POST et PUT.\n\n## Erreur de paramètre de route - Code 400\nCeci peut uniquement se produire pour les points de terminaison qui nécessitent des paramètres inhabituels dans leur route - i.e. la liste de disponibilité d'un membre affichée par date : `/members/{id}/availability_lists/{date}`.\n\n# Aide\n## Nous contacter\nN'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.",
+    "version": "1.0.1"
   },
   "servers": [
     {
@@ -44,6 +44,10 @@
       "description": "Opérations sur les demandes de congés"
     },
     {
+      "name": "HRFields",
+      "description": "Opérations sur les champs de ressources humaines"
+    },
+    {
       "name": "LeaveTypes",
       "description": "Opérations sur les types de congé"
     },
@@ -53,7 +57,7 @@
     },
     {
       "name": "Members",
-      "description": "Opération sur les membres"
+      "description": "Un membre est l'entité qui relie un utilisateur à une organisation. Un utilisateur a un membre par organisation dont il fait partie dans Agendrix."
     },
     {
       "name": "Payrolls",
@@ -61,7 +65,7 @@
     },
     {
       "name": "Positions",
-      "description": "Opération sur les positions"
+      "description": "Une position représente une position disponible dans l'organisation. Un employé peut se voir attribuer plusieures positions pour chaque succursale dont il fait partie."
     },
     {
       "name": "PremiumEntries",
@@ -89,11 +93,11 @@
     },
     {
       "name": "Shifts",
-      "description": "Opération sur les quarts de travail"
+      "description": "Les quarts sont les données qui alimentent le planificateur. Il est important de noter que le planificateur est composé de quarts brouillons et de quarts publiés. Un employé dans Agendrix ne verra que les quarts publiés dans son horaire. Lorsqu'un administrateur ou un gestionnaire crée un quart de travail futur, il s'agit d'un brouillon. Le quart doit être publié pour que l'employé puisse le voir. Les modifications apportées à un quart futur existant créeront une nouvelle version du quart en tant que brouillon. Une fois le quart publié, il remplacera son ancienne version dans l'horaire de l'employé. Il en va de même pour la suppression, le transfert, etc. Les quarts dans le passés sont automatiquement publiés. Il est possible d'ajouter 'publish : true' aux requêtes d'écriture pour publier automatiquement un quart après qu'il a été modifié via l'API."
     },
     {
       "name": "Sites",
-      "description": "Opération sur les succursales"
+      "description": "Une succursale représente l'une des succursales de l'organisation. Un gestionnaire gère des succursales spécifiques."
     },
     {
       "name": "TimeBanks",
@@ -101,7 +105,7 @@
     },
     {
       "name": "TimeEntries",
-      "description": "Opérations sur les entrées de temps"
+      "description": "Les entrées de temps sont les entrées finalisées d'un employé. Elles sont générées par les quarts, les demandes de congé, les pointages, etc."
     },
     {
       "name": "TransferRequests",
@@ -2675,7 +2679,7 @@
           {
             "name": "search[status]",
             "in": "query",
-            "description": "La status utilisé afin de filtrer la requête. Doit être'draft' ou 'published'.",
+            "description": "La status utilisé afin de filtrer la requête. Doit être 'draft' ou 'published'.",
             "schema": {
               "type": "string"
             }
@@ -2683,7 +2687,7 @@
           {
             "name": "search[from]",
             "in": "query",
-            "description": "La date de début utilisé afin de filtrer la requête. Demmander si  updated_since et updated_until ne sont pas fournit.",
+            "description": "La date et heure de début utilisées afin de filtrer la requête. Requis si updated_since et updated_until ne sont pas fournis.",
             "schema": {
               "type": "string"
             }
@@ -2691,7 +2695,7 @@
           {
             "name": "search[to]",
             "in": "query",
-            "description": "La date et heure utilisé afin de filtrer la requête. La plage horaire maximal entre 'from' et 'to' doit être égal ou plus petit que 31 jours. Demmander si  updated_since et updated_until ne sont pas fournit.",
+            "description": "La date et heure de fin utilisées afin de filtrer la requête. L'interval maximal entre 'from' et 'to' doit être égal ou plus petit que 31 jours. Tous les quarts qui superposent cet interval seront retournés. Requis si updated_since et updated_until ne sont pas fournis.",
             "schema": {
               "type": "string"
             }
@@ -2699,7 +2703,7 @@
           {
             "name": "search[updated_since]",
             "in": "query",
-            "description": "La valeur 'updated_since', la date et heure utilisé afin de filtrer la requête.",
+            "description": "La valeur 'updated_since', la date et heure utilisées afin de filtrer la requête.",
             "schema": {
               "type": "string"
             }
@@ -2707,7 +2711,7 @@
           {
             "name": "search[updated_until]",
             "in": "query",
-            "description": "La valeur 'updated_until', la date et heure utilisé afin de filtrer la requête.",
+            "description": "La valeur 'updated_until', la date et heure utilisées afin de filtrer la requête.",
             "schema": {
               "type": "string"
             }
@@ -2715,7 +2719,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclure les quarts de travail archivé dans le résultat paginé. Utilisable seulement si les filtres 'updated_since' et 'updated_until' sont présent.Includes archived shifts into the paginated result. Only usable with updated_since and updated_until filters.",
+            "description": "Inclure les quarts de travail archivé dans le résultat paginé. Utilisable seulement si les filtres 'updated_since' et 'updated_until' sont présents.",
             "schema": {
               "type": "string"
             }
@@ -2826,8 +2830,8 @@
     },
     "/shifts/{id}/transfer": {
       "put": {
-        "summary": "Transférer un shift.",
-        "description": "Transfère un shift à un membre et/ou une date spécifique. Peut également transférer une quart assigné à une quart ouvert en laissant member_id vide.",
+        "summary": "Transférer un quart.",
+        "description": "Transférer à un membre et/ou à une date spécifique. Peut aussi transférer un quart assigné en quart à combler en laissant le member_id vide.",
         "tags": [
           "Shifts"
         ],
@@ -3850,10 +3854,6 @@
             "type": "string",
             "description": "La clé de l'activité."
           },
-          "parameters": {
-            "type": "object",
-            "description": "Les paramètres de l'activité."
-          },
           "created_at": {
             "type": "string",
             "description": "Le moment de création de l'activité.",
@@ -3863,6 +3863,10 @@
             "type": "string",
             "description": "Le dernier moment de modification de l'activité.",
             "format": "date-time"
+          },
+          "parameters": {
+            "type": "object",
+            "description": "Les paramètres de l'activité."
           }
         }
       },
@@ -4703,10 +4707,6 @@
             "type": "string",
             "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
           },
-          "rate_type": {
-            "type": "string",
-            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)"
-          },
           "supervisor_position_ids": {
             "type": "array",
             "description": "Les identifiants uniques des positions supervisées par le membre dans la succursale.",
@@ -4720,6 +4720,10 @@
             "items": {
               "type": "string"
             }
+          },
+          "rate_type": {
+            "type": "string",
+            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)"
           },
           "created_at": {
             "type": "string",
@@ -5150,21 +5154,6 @@
             "description": "La date à laquelle le membre a accepté l'invitation.",
             "format": "date-time"
           },
-          "created_at": {
-            "type": "string",
-            "description": "La date et l'heure de création.",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "La date et l'heure de la dernière modification.",
-            "format": "date-time"
-          },
-          "deleted_at": {
-            "type": "string",
-            "description": "La date à laquelle le membre a été archivé.",
-            "format": "date-time"
-          },
           "code": {
             "type": "string",
             "description": "Le code d'invitation du membre."
@@ -5216,12 +5205,27 @@
             "type": "boolean",
             "description": "Si le membre n'a pas besoin de pointer."
           },
-          "profile": {
-            "$ref": "#/components/schemas/Profile"
+          "updated_at": {
+            "type": "string",
+            "description": "La date et l'heure de la dernière modification.",
+            "format": "date-time"
+          },
+          "created_at": {
+            "type": "string",
+            "description": "La date et l'heure de création.",
+            "format": "date-time"
+          },
+          "deleted_at": {
+            "type": "string",
+            "description": "La date à laquelle le membre a été archivé.",
+            "format": "date-time"
           },
           "hr_data": {
             "type": "object",
             "description": "Le hr_data du membre."
+          },
+          "profile": {
+            "$ref": "#/components/schemas/Profile"
           }
         }
       },
@@ -5874,21 +5878,6 @@
             "description": "Date et heure que les membres au confirmer le quart de travail.",
             "format": "date-time"
           },
-          "created_at": {
-            "type": "string",
-            "description": "La date et l'heure de création.",
-            "format": "date-time"
-          },
-          "updated_at": {
-            "type": "string",
-            "description": "La date et l'heure de la dernière modification.",
-            "format": "date-time"
-          },
-          "deleted_at": {
-            "type": "string",
-            "description": "Date et heure d'archive du quart de travail.",
-            "format": "date-time"
-          },
           "open_quantity": {
             "type": "integer",
             "description": "Nombre de quart de travail disponible.",
@@ -5944,6 +5933,16 @@
             "description": "Duré total du quart de travail.",
             "format": "int32"
           },
+          "original_shift_id": {
+            "type": "string",
+            "description": "L'original shift id du quart.",
+            "format": "uuid"
+          },
+          "new_version_id": {
+            "type": "string",
+            "description": "Le new version shift id du quart.",
+            "format": "uuid"
+          },
           "rate_base": {
             "type": "number",
             "description": "Taux horaire régulier du membre.",
@@ -5961,20 +5960,26 @@
           },
           "resource_ids": {
             "type": "array",
-            "description": "Les resource IDs du quart de travail.",
+            "description": "The shift's resource ids.",
             "items": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           },
-          "original_shift_id": {
+          "created_at": {
             "type": "string",
-            "description": "L'ID du quart de travail original.",
-            "format": "uuid"
+            "description": "La date et l'heure de création.",
+            "format": "date-time"
           },
-          "new_version_id": {
+          "updated_at": {
             "type": "string",
-            "description": "L'ID de la nouvelle version du quart de travail.",
-            "format": "uuid"
+            "description": "La date et l'heure de la dernière modification.",
+            "format": "date-time"
+          },
+          "deleted_at": {
+            "type": "string",
+            "description": "Date et heure d'archive du quart de travail.",
+            "format": "date-time"
           }
         }
       },
@@ -6421,6 +6426,18 @@
             "type": "string",
             "description": "La date et l'heure auxquelles la publication a été publiée."
           },
+          "draft": {
+            "type": "boolean",
+            "description": "Si la publication est un brouillon."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Si la publication envoie une notification aux membres de l'organisation."
+          },
+          "sticky": {
+            "type": "boolean",
+            "description": "Si la publication est collante."
+          },
           "commentable": {
             "type": "boolean",
             "description": "Si la publication peut être commentée."
@@ -6428,18 +6445,6 @@
           "acknowledgeable": {
             "type": "boolean",
             "description": "Si la publication peut être confirmée par les membres concernés."
-          },
-          "draft": {
-            "type": "boolean",
-            "description": "Si la publication est un brouillon."
-          },
-          "sticky": {
-            "type": "boolean",
-            "description": "Si la publication est collante."
-          },
-          "notify": {
-            "type": "boolean",
-            "description": "Si la publication envoie une notification aux membres de l'organisation."
           },
           "site_ids": {
             "type": "array",
@@ -6497,6 +6502,18 @@
             "type": "string",
             "description": "La date et l'heure auxquelles la publication a été publiée."
           },
+          "draft": {
+            "type": "boolean",
+            "description": "Si la publication est un brouillon."
+          },
+          "notify": {
+            "type": "boolean",
+            "description": "Si la publication envoie une notification aux membres de l'organisation."
+          },
+          "sticky": {
+            "type": "boolean",
+            "description": "Si la publication est collante."
+          },
           "commentable": {
             "type": "boolean",
             "description": "Si la publication peut être commentée."
@@ -6504,18 +6521,6 @@
           "acknowledgeable": {
             "type": "boolean",
             "description": "Si la publication peut être confirmée par les membres concernés."
-          },
-          "draft": {
-            "type": "boolean",
-            "description": "Si la publication est un brouillon."
-          },
-          "sticky": {
-            "type": "boolean",
-            "description": "Si la publication est collante."
-          },
-          "notify": {
-            "type": "boolean",
-            "description": "Si la publication envoie une notification aux membres de l'organisation."
           },
           "site_ids": {
             "type": "array",
@@ -6622,14 +6627,14 @@
             "type": "string",
             "description": "Le contenu du commentaire."
           },
+          "commentable_type": {
+            "type": "string",
+            "description": "Le type d'objet commenté -  quart, demande de congé, publication d'actualité, etc."
+          },
           "commentable_id": {
             "type": "string",
             "description": "L'identifiant de l'objet commenté.",
             "format": "uuid"
-          },
-          "commentable_type": {
-            "type": "string",
-            "description": "Le type d'objet commenté -  quart, demande de congé, publication d'actualité, etc."
           },
           "type": {
             "type": "string",
@@ -6645,14 +6650,14 @@
             "type": "string",
             "description": "Le contenu du commentaire."
           },
+          "commentable_type": {
+            "type": "string",
+            "description": "Le type d'objet commenté -  quart, demande de congé, publication d'actualité, etc."
+          },
           "commentable_id": {
             "type": "string",
             "description": "L'identifiant de l'objet commenté.",
             "format": "uuid"
-          },
-          "commentable_type": {
-            "type": "string",
-            "description": "Le type d'objet commenté -  quart, demande de congé, publication d'actualité, etc."
           },
           "type": {
             "type": "string",
@@ -6707,6 +6712,7 @@
             "description": "Le type du champ de ressources humaines."
           },
           "metadata": {
+            "type": "object",
             "description": "Les métadonnées selon le field_type du champ de ressources humaines."
           },
           "private_field": {
@@ -6716,6 +6722,10 @@
           "sortable": {
             "type": "boolean",
             "description": "Si le champ de ressources humaines est triable."
+          },
+          "filterable": {
+            "type": "boolean",
+            "description": "Si le champ de ressources humaines est filtrable."
           },
           "deleted_at": {
             "type": "string",
@@ -6744,10 +6754,15 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée d'une création de demande de congé.",
         "properties": {
-          "member_site_position_id": {
+          "start_at": {
             "type": "string",
-            "description": "L'identifiant de la position du site du demandeur.",
-            "format": "uuid"
+            "description": "Le moment auquel le congé demandé débute",
+            "format": "date-time"
+          },
+          "end_at": {
+            "type": "string",
+            "description": "Le moment auquel le congé demandé se termine.",
+            "format": "date-time"
           },
           "justification": {
             "type": "string",
@@ -6762,31 +6777,30 @@
             "type": "boolean",
             "description": "Si le congé demandé est payé."
           },
-          "start_at": {
-            "type": "string",
-            "description": "Le moment auquel le congé demandé débute",
-            "format": "date-time"
-          },
-          "end_at": {
-            "type": "string",
-            "description": "Le moment auquel le congé demandé se termine.",
-            "format": "date-time"
-          },
           "leave_type_id": {
             "type": "string",
-            "description": "L'identifiant du type de congé demandé."
+            "description": "L'identifiant du type de congé demandé.",
+            "format": "uuid"
           },
           "site_id": {
             "type": "string",
-            "description": "L'identifiant de la location liée au congé demandé."
+            "description": "L'identifiant de la location liée au congé demandé.",
+            "format": "uuid"
           },
           "position_id": {
             "type": "string",
-            "description": "L'identifiant de la position liée au congé demandé."
+            "description": "L'identifiant de la position liée au congé demandé.",
+            "format": "uuid"
+          },
+          "member_site_position_id": {
+            "type": "string",
+            "description": "L'identifiant de la position du site du demandeur.",
+            "format": "uuid"
           },
           "resource_id": {
             "type": "string",
-            "description": "L'identifiant de la resource liée au congé demandé."
+            "description": "L'identifiant de la resource liée au congé demandé.",
+            "format": "uuid"
           },
           "member_id": {
             "type": "string",
@@ -6822,10 +6836,15 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée d'une modification de demande de congé.",
         "properties": {
-          "member_site_position_id": {
+          "start_at": {
             "type": "string",
-            "description": "L'identifiant de la position du site du demandeur.",
-            "format": "uuid"
+            "description": "Le moment auquel le congé demandé débute",
+            "format": "date-time"
+          },
+          "end_at": {
+            "type": "string",
+            "description": "Le moment auquel le congé demandé se termine.",
+            "format": "date-time"
           },
           "justification": {
             "type": "string",
@@ -6840,31 +6859,30 @@
             "type": "boolean",
             "description": "Si le congé demandé est payé."
           },
-          "start_at": {
-            "type": "string",
-            "description": "Le moment auquel le congé demandé débute",
-            "format": "date-time"
-          },
-          "end_at": {
-            "type": "string",
-            "description": "Le moment auquel le congé demandé se termine.",
-            "format": "date-time"
-          },
           "leave_type_id": {
             "type": "string",
-            "description": "L'identifiant du type de congé demandé."
+            "description": "L'identifiant du type de congé demandé.",
+            "format": "uuid"
           },
           "site_id": {
             "type": "string",
-            "description": "L'identifiant de la location liée au congé demandé."
+            "description": "L'identifiant de la location liée au congé demandé.",
+            "format": "uuid"
           },
           "position_id": {
             "type": "string",
-            "description": "L'identifiant de la position liée au congé demandé."
+            "description": "L'identifiant de la position liée au congé demandé.",
+            "format": "uuid"
+          },
+          "member_site_position_id": {
+            "type": "string",
+            "description": "L'identifiant de la position du site du demandeur.",
+            "format": "uuid"
           },
           "resource_id": {
             "type": "string",
-            "description": "L'identifiant de la resource liée au congé demandé."
+            "description": "L'identifiant de la resource liée au congé demandé.",
+            "format": "uuid"
           },
           "time_off_payment_constraint_attributes": {
             "$ref": "#/components/schemas/TimeOffPaymentConstraintUpdateAttributes"
@@ -6879,6 +6897,10 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée d'une création de type de congé.",
         "properties": {
+          "keep_track_hours": {
+            "type": "boolean",
+            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
+          },
           "name": {
             "type": "string",
             "description": "Le nom du type de congé."
@@ -6886,10 +6908,6 @@
           "paid": {
             "type": "boolean",
             "description": "Si le type de congé est payé."
-          },
-          "keep_track_hours": {
-            "type": "boolean",
-            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
           }
         }
       },
@@ -6897,6 +6915,10 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée d'une modification de type de congé.",
         "properties": {
+          "keep_track_hours": {
+            "type": "boolean",
+            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
+          },
           "name": {
             "type": "string",
             "description": "Le nom du type de congé."
@@ -6904,10 +6926,6 @@
           "paid": {
             "type": "boolean",
             "description": "Si le type de congé est payé."
-          },
-          "keep_track_hours": {
-            "type": "boolean",
-            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
           }
         }
       },
@@ -7162,10 +7180,6 @@
             "type": "string",
             "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
           },
-          "rate_type": {
-            "type": "string",
-            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)."
-          },
           "rate_single_base": {
             "type": "number",
             "description": "Le taux horaire régulier du membre pour toutes ses positions dans la succursale.",
@@ -7180,6 +7194,10 @@
             "type": "number",
             "description": "Le taux horaire supplémentaire 2 du membre pour toutes ses positions dans la succursale, si activé.",
             "format": "float"
+          },
+          "rate_type": {
+            "type": "string",
+            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)."
           },
           "member_site_positions_attributes": {
             "type": "array",
@@ -7213,10 +7231,6 @@
             "type": "string",
             "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
           },
-          "rate_type": {
-            "type": "string",
-            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)."
-          },
           "rate_single_base": {
             "type": "number",
             "description": "Le taux horaire régulier du membre pour toutes ses positions dans la succursale.",
@@ -7231,6 +7245,10 @@
             "type": "number",
             "description": "Le taux horaire supplémentaire 2 du membre pour toutes ses positions dans la succursale, si activé.",
             "format": "float"
+          },
+          "rate_type": {
+            "type": "string",
+            "description": "Si les taux horaires sont appliqués à toutes les positions (simple), ou chaque position assignée a son propre taux horaire (position)."
           },
           "id": {
             "type": "string",
@@ -7280,6 +7298,11 @@
         "type": "object",
         "description": "Description détaillée des paramètres de création du profil.",
         "properties": {
+          "email": {
+            "type": "string",
+            "description": "L'adresse e-mail du profil.",
+            "format": "email"
+          },
           "first_name": {
             "type": "string",
             "description": "Le prénom du profil."
@@ -7287,11 +7310,6 @@
           "last_name": {
             "type": "string",
             "description": "Le nom de famille du profil."
-          },
-          "email": {
-            "type": "string",
-            "description": "L'adresse e-mail du profil.",
-            "format": "email"
           },
           "birthdate": {
             "type": "string",
@@ -7343,6 +7361,16 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée de la création d'un membre.",
         "properties": {
+          "seniority_date": {
+            "type": "string",
+            "description": "La date à laquelle le membre a commencé à travailler pour l'organisation.",
+            "format": "date"
+          },
+          "deletion_date": {
+            "type": "string",
+            "description": "La date à laquelle le membre sera archivée.",
+            "format": "date"
+          },
           "identification_number": {
             "type": "string",
             "description": "The member's identification number."
@@ -7351,28 +7379,6 @@
             "type": "string",
             "description": "Informations additionnelles sur le membre."
           },
-          "main_position_id": {
-            "type": "string",
-            "description": "L'identifiant unique de la position principale du membre.",
-            "format": "uuid"
-          },
-          "main_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du succursale principale du membre.",
-            "format": "uuid"
-          },
-          "admin": {
-            "type": "boolean",
-            "description": "Si le membre est un administrateur de l'organisation."
-          },
-          "hide_before_seniority_date": {
-            "type": "boolean",
-            "description": "Si le membre est exclu du planificateur et des feuilles de temps avant sa date d'embauche."
-          },
-          "visible": {
-            "type": "boolean",
-            "description": "Si le membre est exclu du planificateur et des feuilles de temps."
-          },
           "override_overtime": {
             "type": "boolean",
             "description": "Si le membre possède des seuils d'heures supplémentaires personalisés."
@@ -7380,6 +7386,10 @@
           "multi_level_overtime": {
             "type": "boolean",
             "description": "Si les heures supplémentaires multi-niveau sont activées pour le membre."
+          },
+          "override_spread_overtime": {
+            "type": "boolean",
+            "description": "Si le membre outrepasse les paramètres d'heures supplémentaires de l'organisation."
           },
           "overtime_day_threshold": {
             "type": "number",
@@ -7401,15 +7411,35 @@
             "description": "Le seuil d'heures supplémentaires de semaine personalisé 2 du membre, si les heures supplémentaires multi-niveau sont activées.",
             "format": "float"
           },
-          "seniority_date": {
-            "type": "string",
-            "description": "La date à laquelle le membre a commencé à travailler pour l'organisation.",
-            "format": "date"
+          "spread_overtime_enabled": {
+            "type": "boolean",
+            "description": "Si les heures supplémentaires du membre sont dispersées au travers plusieurs semaines."
           },
-          "deletion_date": {
+          "main_position_id": {
             "type": "string",
-            "description": "La date à laquelle le membre sera archivée.",
-            "format": "date"
+            "description": "L'identifiant unique de la position principale du membre.",
+            "format": "uuid"
+          },
+          "main_site_id": {
+            "type": "string",
+            "description": "L'identifiant unique du succursale principale du membre.",
+            "format": "uuid"
+          },
+          "admin": {
+            "type": "boolean",
+            "description": "Si le membre est un administrateur de l'organisation."
+          },
+          "invite": {
+            "type": "boolean",
+            "description": "Si le membre est invité à rejoindre l'organisation."
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Si le membre est exclu du planificateur et des feuilles de temps."
+          },
+          "hide_before_seniority_date": {
+            "type": "boolean",
+            "description": "Si le membre est exclu du planificateur et des feuilles de temps avant sa date d'embauche."
           },
           "time_clock_code": {
             "type": "string",
@@ -7419,10 +7449,6 @@
             "type": "boolean",
             "description": "Si le membre outrepasse les paramètres de pointage de l'organisation."
           },
-          "time_clock_must_be_scheduled": {
-            "type": "boolean",
-            "description": "Si le membre doit être à l'horaire pour pointer."
-          },
           "time_clock_transfer_next_call": {
             "type": "boolean",
             "description": "Si le prochain pointage par téléphone doit être transféré."
@@ -7430,6 +7456,10 @@
           "time_clock_transfer_next_call_number": {
             "type": "string",
             "description": "Le numéro auquel le prochain pointage par téléphone doit être transféré."
+          },
+          "time_clock_must_be_scheduled": {
+            "type": "boolean",
+            "description": "Si le membre doit être à l'horaire pour pointer."
           },
           "time_clock_window": {
             "type": "integer",
@@ -7453,18 +7483,6 @@
             "type": "boolean",
             "description": "Si le membre n'a pas besoin de pointer."
           },
-          "override_spread_overtime": {
-            "type": "boolean",
-            "description": "Si le membre outrepasse les paramètres d'heures supplémentaires de l'organisation."
-          },
-          "spread_overtime_enabled": {
-            "type": "boolean",
-            "description": "Si les heures supplémentaires du membre sont dispersées au travers plusieurs semaines."
-          },
-          "invite": {
-            "type": "boolean",
-            "description": "Si le membre est invité à rejoindre l'organisation."
-          },
           "profile_attributes": {
             "$ref": "#/components/schemas/ProfileCreateAttributes"
           },
@@ -7481,6 +7499,11 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour du profil.",
         "properties": {
+          "email": {
+            "type": "string",
+            "description": "L'adresse e-mail du profil.",
+            "format": "email"
+          },
           "first_name": {
             "type": "string",
             "description": "Le prénom du profil."
@@ -7488,11 +7511,6 @@
           "last_name": {
             "type": "string",
             "description": "Le nom de famille du profil."
-          },
-          "email": {
-            "type": "string",
-            "description": "L'adresse e-mail du profil.",
-            "format": "email"
           },
           "birthdate": {
             "type": "string",
@@ -7540,6 +7558,16 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée de la mise à jour d'un membre.",
         "properties": {
+          "seniority_date": {
+            "type": "string",
+            "description": "La date à laquelle le membre a commencé à travailler pour l'organisation.",
+            "format": "date"
+          },
+          "deletion_date": {
+            "type": "string",
+            "description": "La date à laquelle le membre sera archivée.",
+            "format": "date"
+          },
           "identification_number": {
             "type": "string",
             "description": "The member's identification number."
@@ -7548,28 +7576,6 @@
             "type": "string",
             "description": "Informations additionnelles sur le membre."
           },
-          "main_position_id": {
-            "type": "string",
-            "description": "L'identifiant unique de la position principale du membre.",
-            "format": "uuid"
-          },
-          "main_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du succursale principale du membre.",
-            "format": "uuid"
-          },
-          "admin": {
-            "type": "boolean",
-            "description": "Si le membre est un administrateur de l'organisation."
-          },
-          "hide_before_seniority_date": {
-            "type": "boolean",
-            "description": "Si le membre est exclu du planificateur et des feuilles de temps avant sa date d'embauche."
-          },
-          "visible": {
-            "type": "boolean",
-            "description": "Si le membre est exclu du planificateur et des feuilles de temps."
-          },
           "override_overtime": {
             "type": "boolean",
             "description": "Si le membre possède des seuils d'heures supplémentaires personalisés."
@@ -7577,6 +7583,10 @@
           "multi_level_overtime": {
             "type": "boolean",
             "description": "Si les heures supplémentaires multi-niveau sont activées pour le membre."
+          },
+          "override_spread_overtime": {
+            "type": "boolean",
+            "description": "Si le membre outrepasse les paramètres d'heures supplémentaires de l'organisation."
           },
           "overtime_day_threshold": {
             "type": "number",
@@ -7598,15 +7608,35 @@
             "description": "Le seuil d'heures supplémentaires de semaine personalisé 2 du membre, si les heures supplémentaires multi-niveau sont activées.",
             "format": "float"
           },
-          "seniority_date": {
-            "type": "string",
-            "description": "La date à laquelle le membre a commencé à travailler pour l'organisation.",
-            "format": "date"
+          "spread_overtime_enabled": {
+            "type": "boolean",
+            "description": "Si les heures supplémentaires du membre sont dispersées au travers plusieurs semaines."
           },
-          "deletion_date": {
+          "main_position_id": {
             "type": "string",
-            "description": "La date à laquelle le membre sera archivée.",
-            "format": "date"
+            "description": "L'identifiant unique de la position principale du membre.",
+            "format": "uuid"
+          },
+          "main_site_id": {
+            "type": "string",
+            "description": "L'identifiant unique du succursale principale du membre.",
+            "format": "uuid"
+          },
+          "admin": {
+            "type": "boolean",
+            "description": "Si le membre est un administrateur de l'organisation."
+          },
+          "invite": {
+            "type": "boolean",
+            "description": "Si le membre est invité à rejoindre l'organisation."
+          },
+          "visible": {
+            "type": "boolean",
+            "description": "Si le membre est exclu du planificateur et des feuilles de temps."
+          },
+          "hide_before_seniority_date": {
+            "type": "boolean",
+            "description": "Si le membre est exclu du planificateur et des feuilles de temps avant sa date d'embauche."
           },
           "time_clock_code": {
             "type": "string",
@@ -7616,10 +7646,6 @@
             "type": "boolean",
             "description": "Si le membre outrepasse les paramètres de pointage de l'organisation."
           },
-          "time_clock_must_be_scheduled": {
-            "type": "boolean",
-            "description": "Si le membre doit être à l'horaire pour pointer."
-          },
           "time_clock_transfer_next_call": {
             "type": "boolean",
             "description": "Si le prochain pointage par téléphone doit être transféré."
@@ -7627,6 +7653,10 @@
           "time_clock_transfer_next_call_number": {
             "type": "string",
             "description": "Le numéro auquel le prochain pointage par téléphone doit être transféré."
+          },
+          "time_clock_must_be_scheduled": {
+            "type": "boolean",
+            "description": "Si le membre doit être à l'horaire pour pointer."
           },
           "time_clock_window": {
             "type": "integer",
@@ -7649,18 +7679,6 @@
           "payroll_auto_update": {
             "type": "boolean",
             "description": "Si le membre n'a pas besoin de pointer."
-          },
-          "override_spread_overtime": {
-            "type": "boolean",
-            "description": "Si le membre outrepasse les paramètres d'heures supplémentaires de l'organisation."
-          },
-          "spread_overtime_enabled": {
-            "type": "boolean",
-            "description": "Si les heures supplémentaires du membre sont dispersées au travers plusieurs semaines."
-          },
-          "invite": {
-            "type": "boolean",
-            "description": "Si le membre est invité à rejoindre l'organisation."
           },
           "profile_attributes": {
             "$ref": "#/components/schemas/ProfileUpdateAttributes"
@@ -7844,7 +7862,8 @@
           },
           "parent_id": {
             "type": "string",
-            "description": "Identifiant unique de la position parent. Si cette valeur est présente, la position est une sous-position."
+            "description": "Identifiant unique de la position parent. Si cette valeur est présente, la position est une sous-position.",
+            "format": "uuid"
           }
         }
       },
@@ -7867,7 +7886,8 @@
           },
           "parent_id": {
             "type": "string",
-            "description": "Identifiant unique de la position parent. Si cette valeur est présente, la position est une sous-position."
+            "description": "Identifiant unique de la position parent. Si cette valeur est présente, la position est une sous-position.",
+            "format": "uuid"
           }
         }
       },
@@ -7883,14 +7903,14 @@
             "description": "Identifiant unique des primes.",
             "format": "uuid"
           },
+          "has_custom_value": {
+            "type": "boolean",
+            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
+          },
           "entry_minutes": {
             "type": "integer",
             "description": "Le nombre de minute que la prime s'applique.",
             "format": "int32"
-          },
-          "has_custom_value": {
-            "type": "boolean",
-            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
           }
         }
       },
@@ -7906,14 +7926,14 @@
             "description": "Identifiant unique des primes.",
             "format": "uuid"
           },
+          "has_custom_value": {
+            "type": "boolean",
+            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
+          },
           "entry_minutes": {
             "type": "integer",
             "description": "Le nombre de minute que la prime s'applique.",
             "format": "int32"
-          },
-          "has_custom_value": {
-            "type": "boolean",
-            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
           },
           "id": {
             "type": "string",
@@ -7970,21 +7990,21 @@
         "type": "object",
         "description": "Description détaillée des paramètres de créations d'une ressource.",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Nom de la ressource."
-          },
           "no": {
             "type": "string",
             "description": "L'identifiant unique raccourcit de la ressource."
           },
-          "description": {
+          "name": {
             "type": "string",
-            "description": "Description de la ressource."
+            "description": "Nom de la ressource."
           },
           "address": {
             "type": "string",
             "description": "L'adresse de la ressource."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description de la ressource."
           },
           "exclusive": {
             "type": "boolean",
@@ -7998,11 +8018,6 @@
             "type": "boolean",
             "description": "Si la ressource est un équipement."
           },
-          "minimum_paid_minutes_per_entry": {
-            "type": "integer",
-            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
-            "format": "int32"
-          },
           "week_hours_min": {
             "type": "number",
             "description": "L'objectif minimum du nombre d'heures planifiées par ressource.",
@@ -8012,6 +8027,11 @@
             "type": "number",
             "description": "L'objectif maximum du nombre d'heures planifiées par ressource.",
             "format": "float"
+          },
+          "minimum_paid_minutes_per_entry": {
+            "type": "integer",
+            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
+            "format": "int32"
           },
           "document_ids": {
             "type": "array",
@@ -8036,21 +8056,21 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour d'une ressource.",
         "properties": {
-          "name": {
-            "type": "string",
-            "description": "Nom de la ressource."
-          },
           "no": {
             "type": "string",
             "description": "L'identifiant unique raccourcit de la ressource."
           },
-          "description": {
+          "name": {
             "type": "string",
-            "description": "Description de la ressource."
+            "description": "Nom de la ressource."
           },
           "address": {
             "type": "string",
             "description": "L'adresse de la ressource."
+          },
+          "description": {
+            "type": "string",
+            "description": "Description de la ressource."
           },
           "exclusive": {
             "type": "boolean",
@@ -8064,11 +8084,6 @@
             "type": "boolean",
             "description": "Si la ressource est un équipement."
           },
-          "minimum_paid_minutes_per_entry": {
-            "type": "integer",
-            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
-            "format": "int32"
-          },
           "week_hours_min": {
             "type": "number",
             "description": "L'objectif minimum du nombre d'heures planifiées par ressource.",
@@ -8078,6 +8093,11 @@
             "type": "number",
             "description": "L'objectif maximum du nombre d'heures planifiées par ressource.",
             "format": "float"
+          },
+          "minimum_paid_minutes_per_entry": {
+            "type": "integer",
+            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
+            "format": "int32"
           },
           "document_ids": {
             "type": "array",
@@ -8113,14 +8133,14 @@
         "type": "object",
         "description": "Description détaillée des paramètres de création d'une prévision du planificateur d'horaires.",
         "properties": {
-          "hours": {
-            "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
-            "format": "float"
-          },
           "revenues": {
             "type": "number",
             "description": "Montant des revenus attendus.",
+            "format": "float"
+          },
+          "hours": {
+            "type": "number",
+            "description": "Nombre d'heures prévues à l'horaire.",
             "format": "float"
           },
           "site_id": {
@@ -8139,14 +8159,14 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour d'une prévision du planificateur d'horaires.",
         "properties": {
-          "hours": {
-            "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
-            "format": "float"
-          },
           "revenues": {
             "type": "number",
             "description": "Montant des revenus attendus.",
+            "format": "float"
+          },
+          "hours": {
+            "type": "number",
+            "description": "Nombre d'heures prévues à l'horaire.",
             "format": "float"
           }
         }
@@ -8159,14 +8179,14 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour de plusieurs prévisions du planificateur d'horaires.",
         "properties": {
-          "hours": {
-            "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
-            "format": "float"
-          },
           "revenues": {
             "type": "number",
             "description": "Montant des revenus attendus.",
+            "format": "float"
+          },
+          "hours": {
+            "type": "number",
+            "description": "Nombre d'heures prévues à l'horaire.",
             "format": "float"
           },
           "site_id": {
@@ -8208,6 +8228,26 @@
         "type": "object",
         "description": "Description détaillée des paramètres de création d'un quart de travail.",
         "properties": {
+          "site_id": {
+            "type": "string",
+            "description": "Identifiant unique de la succursale du quart de travail.",
+            "format": "uuid"
+          },
+          "position_id": {
+            "type": "string",
+            "description": "Identifiant unique de la position du quart de travail.",
+            "format": "uuid"
+          },
+          "sub_position_id": {
+            "type": "string",
+            "description": "Identifiant unique de la sous-position du quart de travail.",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date du du quart de travail.",
+            "format": "date"
+          },
           "start_at": {
             "type": "string",
             "description": "Date et heure de début du quart de travail shift's start date time.",
@@ -8236,46 +8276,17 @@
             "description": "Date de fin du quart de travail.",
             "format": "date"
           },
-          "date": {
-            "type": "string",
-            "description": "Date du du quart de travail.",
-            "format": "date"
-          },
-          "site_id": {
-            "type": "string",
-            "description": "Identifiant unique de la succursale du quart de travail.",
-            "format": "uuid"
-          },
-          "position_id": {
-            "type": "string",
-            "description": "Identifiant unique de la position du quart de travail.",
-            "format": "uuid"
-          },
-          "sub_position_id": {
-            "type": "string",
-            "description": "Identifiant unique de la sous-position du quart de travail.",
-            "format": "uuid"
-          },
-          "leave_type_id": {
-            "type": "string",
-            "description": "Identifiant unique du type de congé quart de travail.",
-            "format": "uuid"
-          },
-          "open": {
+          "on_call": {
             "type": "boolean",
-            "description": "Si le quart de travail est ouvert."
-          },
-          "recurring": {
-            "type": "boolean",
-            "description": "Si le quart de travail est recurrent."
+            "description": "Si le quart de travail est sur appel."
           },
           "time_off": {
             "type": "boolean",
             "description": "Si le quart de travail est un congé."
           },
-          "paid": {
+          "all_day": {
             "type": "boolean",
-            "description": "Si le quart de travail est est un congé payé."
+            "description": "Si le quart de travail est toute la journée."
           },
           "single_clock": {
             "type": "boolean",
@@ -8285,31 +8296,40 @@
             "type": "boolean",
             "description": "Si le quart de travail est pointe automatiquement l'employé."
           },
-          "on_call": {
+          "hide_end_at": {
             "type": "boolean",
-            "description": "Si le quart de travail est sur appel."
+            "description": "Si la fin du quart de travail est cachée aux membres."
           },
-          "all_day": {
+          "paid": {
             "type": "boolean",
-            "description": "Si le quart de travail est toute la journée."
+            "description": "Si le quart de travail est est un congé payé."
           },
-          "reminder": {
-            "type": "string",
-            "description": "Informations supplémentaires du quart de travail."
+          "recurring": {
+            "type": "boolean",
+            "description": "Si le quart de travail est recurrent."
+          },
+          "open": {
+            "type": "boolean",
+            "description": "Si le quart de travail est ouvert."
           },
           "open_quantity": {
             "type": "integer",
             "description": "Nombre de quart de travail disponible.",
             "format": "int32"
           },
-          "hide_end_at": {
-            "type": "boolean",
-            "description": "Si la fin du quart de travail est cachée aux membres."
+          "leave_type_id": {
+            "type": "string",
+            "description": "Identifiant unique du type de congé quart de travail.",
+            "format": "uuid"
           },
           "leave_value": {
             "type": "integer",
             "description": "Durée du congé.",
             "format": "int32"
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Informations supplémentaires du quart de travail."
           },
           "publish": {
             "type": "boolean",
@@ -8365,21 +8385,21 @@
       },
       "ShiftTransfer": {
         "type": "object",
-        "description": "Une description détaillée des paramètres d'entrée du transfert d'un quart.",
+        "description": "Une description détaillée des paramètres d'entrée de transfert d'un quart.",
         "properties": {
           "date": {
             "type": "string",
-            "description": "La date à laquelle le quart sera transféré.",
+            "description": "La date où le quart sera transféré.",
             "format": "date"
           },
           "member_id": {
             "type": "string",
-            "description": "L'ID du membre auquel le quart sera transféré. L'absence de valeur transferera le quart comme un quart ouvert.",
+            "description": "L'ID du membre auquel le quart sera transféré. Une valeur vide transférera ce quart en quart à combler.",
             "format": "uuid"
           },
           "publish": {
             "type": "boolean",
-            "description": "Si le quart doit être publié après avoir été transféré."
+            "description": "Si le quart devrait être publié après son transfert."
           }
         }
       },
@@ -8387,6 +8407,26 @@
         "type": "object",
         "description": "Description détaillée des paramètres de mise à jour d'un quart de travail.",
         "properties": {
+          "site_id": {
+            "type": "string",
+            "description": "Identifiant unique de la succursale du quart de travail.",
+            "format": "uuid"
+          },
+          "position_id": {
+            "type": "string",
+            "description": "Identifiant unique de la position du quart de travail.",
+            "format": "uuid"
+          },
+          "sub_position_id": {
+            "type": "string",
+            "description": "Identifiant unique de la sous-position du quart de travail.",
+            "format": "uuid"
+          },
+          "date": {
+            "type": "string",
+            "description": "Date du du quart de travail.",
+            "format": "date"
+          },
           "start_at": {
             "type": "string",
             "description": "Date et heure de début du quart de travail shift's start date time.",
@@ -8415,46 +8455,17 @@
             "description": "Date de fin du quart de travail.",
             "format": "date"
           },
-          "date": {
-            "type": "string",
-            "description": "Date du du quart de travail.",
-            "format": "date"
-          },
-          "site_id": {
-            "type": "string",
-            "description": "Identifiant unique de la succursale du quart de travail.",
-            "format": "uuid"
-          },
-          "position_id": {
-            "type": "string",
-            "description": "Identifiant unique de la position du quart de travail.",
-            "format": "uuid"
-          },
-          "sub_position_id": {
-            "type": "string",
-            "description": "Identifiant unique de la sous-position du quart de travail.",
-            "format": "uuid"
-          },
-          "leave_type_id": {
-            "type": "string",
-            "description": "Identifiant unique du type de congé quart de travail.",
-            "format": "uuid"
-          },
-          "open": {
+          "on_call": {
             "type": "boolean",
-            "description": "Si le quart de travail est ouvert."
-          },
-          "recurring": {
-            "type": "boolean",
-            "description": "Si le quart de travail est recurrent."
+            "description": "Si le quart de travail est sur appel."
           },
           "time_off": {
             "type": "boolean",
             "description": "Si le quart de travail est un congé."
           },
-          "paid": {
+          "all_day": {
             "type": "boolean",
-            "description": "Si le quart de travail est est un congé payé."
+            "description": "Si le quart de travail est toute la journée."
           },
           "single_clock": {
             "type": "boolean",
@@ -8464,31 +8475,40 @@
             "type": "boolean",
             "description": "Si le quart de travail est pointe automatiquement l'employé."
           },
-          "on_call": {
+          "hide_end_at": {
             "type": "boolean",
-            "description": "Si le quart de travail est sur appel."
+            "description": "Si la fin du quart de travail est cachée aux membres."
           },
-          "all_day": {
+          "paid": {
             "type": "boolean",
-            "description": "Si le quart de travail est toute la journée."
+            "description": "Si le quart de travail est est un congé payé."
           },
-          "reminder": {
-            "type": "string",
-            "description": "Informations supplémentaires du quart de travail."
+          "recurring": {
+            "type": "boolean",
+            "description": "Si le quart de travail est recurrent."
+          },
+          "open": {
+            "type": "boolean",
+            "description": "Si le quart de travail est ouvert."
           },
           "open_quantity": {
             "type": "integer",
             "description": "Nombre de quart de travail disponible.",
             "format": "int32"
           },
-          "hide_end_at": {
-            "type": "boolean",
-            "description": "Si la fin du quart de travail est cachée aux membres."
+          "leave_type_id": {
+            "type": "string",
+            "description": "Identifiant unique du type de congé quart de travail.",
+            "format": "uuid"
           },
           "leave_value": {
             "type": "integer",
             "description": "Durée du congé.",
             "format": "int32"
+          },
+          "reminder": {
+            "type": "string",
+            "description": "Informations supplémentaires du quart de travail."
           },
           "publish": {
             "type": "boolean",
@@ -8599,35 +8619,33 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée de création d'une entrée de temps.",
         "properties": {
-          "unpaid_break": {
-            "type": "integer",
-            "description": "Minutes de pause non payées.",
-            "format": "int32"
+          "start_at": {
+            "type": "string",
+            "description": "La date et l'heure du début de l'entrée de temps.",
+            "format": "date-time"
           },
-          "paid_break": {
-            "type": "integer",
-            "description": "Minutes de pause payées.",
-            "format": "int32"
+          "end_at": {
+            "type": "string",
+            "description": "La date et l'heure de la fin de l'entrée de temps.",
+            "format": "date-time"
+          },
+          "start_at_time": {
+            "type": "string",
+            "description": "Heure à laquelle l'entrée de temps commence."
+          },
+          "end_at_time": {
+            "type": "string",
+            "description": "Heure à laquelle l'entrée de temps termine."
           },
           "overwritten_length_minutes": {
             "type": "integer",
             "description": "La longueur personnalisée de l'entrée de temps.",
             "format": "int32"
           },
-          "position_id": {
+          "date": {
             "type": "string",
-            "description": "ID de position.",
-            "format": "uuid"
-          },
-          "site_id": {
-            "type": "string",
-            "description": "ID de la succursale.",
-            "format": "uuid"
-          },
-          "member_site_position_id": {
-            "type": "string",
-            "description": "ID du 'member_site_position'.",
-            "format": "uuid"
+            "description": "La date de l'entrée de temps.",
+            "format": "date"
           },
           "time_off": {
             "type": "boolean",
@@ -8647,20 +8665,39 @@
             "type": "boolean",
             "description": "Si le congé est payé."
           },
-          "date": {
+          "time_off_resource_id": {
             "type": "string",
-            "description": "La date de l'entrée de temps.",
-            "format": "date"
+            "description": "L'identifiant unique de la ressource associée.",
+            "format": "uuid"
           },
-          "start_at": {
-            "type": "string",
-            "description": "La date et l'heure du début de l'entrée de temps.",
-            "format": "date-time"
+          "unpaid_break": {
+            "type": "integer",
+            "description": "Minutes de pause non payées.",
+            "format": "int32"
           },
-          "end_at": {
+          "paid_break": {
+            "type": "integer",
+            "description": "Minutes de pause payées.",
+            "format": "int32"
+          },
+          "member_site_position_id": {
             "type": "string",
-            "description": "La date et l'heure de la fin de l'entrée de temps.",
-            "format": "date-time"
+            "description": "ID du 'member_site_position'.",
+            "format": "uuid"
+          },
+          "site_id": {
+            "type": "string",
+            "description": "ID de la succursale.",
+            "format": "uuid"
+          },
+          "position_id": {
+            "type": "string",
+            "description": "ID de position.",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Les notes d'entrée de temps."
           },
           "start_at_clock_notes": {
             "type": "string",
@@ -8670,10 +8707,15 @@
             "type": "string",
             "description": "Note laissée par l'employé lors du pointage de sortie."
           },
-          "break_started_at": {
+          "start_at_clock_job_site_id": {
             "type": "string",
-            "description": "La date et l'heure du début de la pause.",
-            "format": "date-time"
+            "description": "L'identifiant unique du lieu de travail où l'employé a pointé son entrée.",
+            "format": "uuid"
+          },
+          "end_at_clock_job_site_id": {
+            "type": "string",
+            "description": "L'identifiant unique du lieu de travail où l'employé a pointé sa sortie.",
+            "format": "uuid"
           },
           "rate_regular": {
             "type": "number",
@@ -8690,32 +8732,10 @@
             "description": "Le taux du temps supplémentaires 2 pour l'entrée de temps.",
             "format": "float"
           },
-          "notes": {
+          "break_started_at": {
             "type": "string",
-            "description": "Les notes d'entrée de temps."
-          },
-          "end_at_clock_job_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du lieu de travail où l'employé a pointé sa sortie.",
-            "format": "uuid"
-          },
-          "time_off_resource_id": {
-            "type": "string",
-            "description": "L'identifiant unique de la ressource associée.",
-            "format": "uuid"
-          },
-          "start_at_time": {
-            "type": "string",
-            "description": "Heure à laquelle l'entrée de temps commence."
-          },
-          "end_at_time": {
-            "type": "string",
-            "description": "Heure à laquelle l'entrée de temps termine."
-          },
-          "start_at_clock_job_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du lieu de travail où l'employé a pointé son entrée.",
-            "format": "uuid"
+            "description": "La date et l'heure du début de la pause.",
+            "format": "date-time"
           },
           "member_id": {
             "type": "string",
@@ -8728,35 +8748,33 @@
         "type": "object",
         "description": "Une description détaillée des paramètres d'entrée de mise à jour d'une entrée de temps.",
         "properties": {
-          "unpaid_break": {
-            "type": "integer",
-            "description": "Minutes de pause non payées.",
-            "format": "int32"
+          "start_at": {
+            "type": "string",
+            "description": "La date et l'heure du début de l'entrée de temps.",
+            "format": "date-time"
           },
-          "paid_break": {
-            "type": "integer",
-            "description": "Minutes de pause payées.",
-            "format": "int32"
+          "end_at": {
+            "type": "string",
+            "description": "La date et l'heure de la fin de l'entrée de temps.",
+            "format": "date-time"
+          },
+          "start_at_time": {
+            "type": "string",
+            "description": "Heure à laquelle l'entrée de temps commence."
+          },
+          "end_at_time": {
+            "type": "string",
+            "description": "Heure à laquelle l'entrée de temps termine."
           },
           "overwritten_length_minutes": {
             "type": "integer",
             "description": "La longueur personnalisée de l'entrée de temps.",
             "format": "int32"
           },
-          "position_id": {
+          "date": {
             "type": "string",
-            "description": "ID de position.",
-            "format": "uuid"
-          },
-          "site_id": {
-            "type": "string",
-            "description": "ID de la succursale.",
-            "format": "uuid"
-          },
-          "member_site_position_id": {
-            "type": "string",
-            "description": "ID du 'member_site_position'.",
-            "format": "uuid"
+            "description": "La date de l'entrée de temps.",
+            "format": "date"
           },
           "time_off": {
             "type": "boolean",
@@ -8776,20 +8794,39 @@
             "type": "boolean",
             "description": "Si le congé est payé."
           },
-          "date": {
+          "time_off_resource_id": {
             "type": "string",
-            "description": "La date de l'entrée de temps.",
-            "format": "date"
+            "description": "L'identifiant unique de la ressource associée.",
+            "format": "uuid"
           },
-          "start_at": {
-            "type": "string",
-            "description": "La date et l'heure du début de l'entrée de temps.",
-            "format": "date-time"
+          "unpaid_break": {
+            "type": "integer",
+            "description": "Minutes de pause non payées.",
+            "format": "int32"
           },
-          "end_at": {
+          "paid_break": {
+            "type": "integer",
+            "description": "Minutes de pause payées.",
+            "format": "int32"
+          },
+          "member_site_position_id": {
             "type": "string",
-            "description": "La date et l'heure de la fin de l'entrée de temps.",
-            "format": "date-time"
+            "description": "ID du 'member_site_position'.",
+            "format": "uuid"
+          },
+          "site_id": {
+            "type": "string",
+            "description": "ID de la succursale.",
+            "format": "uuid"
+          },
+          "position_id": {
+            "type": "string",
+            "description": "ID de position.",
+            "format": "uuid"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Les notes d'entrée de temps."
           },
           "start_at_clock_notes": {
             "type": "string",
@@ -8799,10 +8836,15 @@
             "type": "string",
             "description": "Note laissée par l'employé lors du pointage de sortie."
           },
-          "break_started_at": {
+          "start_at_clock_job_site_id": {
             "type": "string",
-            "description": "La date et l'heure du début de la pause.",
-            "format": "date-time"
+            "description": "L'identifiant unique du lieu de travail où l'employé a pointé son entrée.",
+            "format": "uuid"
+          },
+          "end_at_clock_job_site_id": {
+            "type": "string",
+            "description": "L'identifiant unique du lieu de travail où l'employé a pointé sa sortie.",
+            "format": "uuid"
           },
           "rate_regular": {
             "type": "number",
@@ -8819,32 +8861,10 @@
             "description": "Le taux du temps supplémentaires 2 pour l'entrée de temps.",
             "format": "float"
           },
-          "notes": {
+          "break_started_at": {
             "type": "string",
-            "description": "Les notes d'entrée de temps."
-          },
-          "end_at_clock_job_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du lieu de travail où l'employé a pointé sa sortie.",
-            "format": "uuid"
-          },
-          "time_off_resource_id": {
-            "type": "string",
-            "description": "L'identifiant unique de la ressource associée.",
-            "format": "uuid"
-          },
-          "start_at_time": {
-            "type": "string",
-            "description": "Heure à laquelle l'entrée de temps commence."
-          },
-          "end_at_time": {
-            "type": "string",
-            "description": "Heure à laquelle l'entrée de temps termine."
-          },
-          "start_at_clock_job_site_id": {
-            "type": "string",
-            "description": "L'identifiant unique du lieu de travail où l'employé a pointé son entrée.",
-            "format": "uuid"
+            "description": "La date et l'heure du début de la pause.",
+            "format": "date-time"
           }
         }
       },
@@ -8852,14 +8872,30 @@
         "type": "object",
         "description": "Description détaillée des paramètres d'entrée de mise à jour d'un utilisateur.",
         "properties": {
+          "locale": {
+            "type": "string",
+            "description": "La langue de l'utilisateur."
+          },
+          "time_format": {
+            "type": "integer",
+            "description": "Le format d'heure de l'utilisateur, 12 ou 24.",
+            "format": "int32"
+          },
+          "time_zone_name": {
+            "type": "string",
+            "description": "Le fuseau horaire de l'utilisateur."
+          },
           "email": {
             "type": "string",
             "description": "Courriel de l'utilisateur.",
             "format": "email"
           },
-          "email_notifications": {
-            "type": "boolean",
-            "description": "Si l'utilisateur reçoit des notifications par e-mail."
+          "disabled_notifications": {
+            "type": "array",
+            "description": "Une liste des notifications que cet utilisateur a désactivées.",
+            "items": {
+              "type": "string"
+            }
           },
           "sms_notifications": {
             "type": "boolean",
@@ -8873,30 +8909,14 @@
             "type": "string",
             "description": "Le numéro de téléphone auquel l'utilisateur reçoit les notifications par SMS."
           },
-          "disabled_notifications": {
-            "type": "array",
-            "description": "Une liste des notifications que cet utilisateur a désactivées.",
-            "items": {
-              "type": "string"
-            }
+          "email_notifications": {
+            "type": "boolean",
+            "description": "Si l'utilisateur reçoit des notifications par e-mail."
           },
           "shift_reminder_time": {
             "type": "integer",
             "description": "Lorsque l'utilisateur reçoit un rappel d'un quart de travail à venir, en minutes.",
             "format": "int32"
-          },
-          "locale": {
-            "type": "string",
-            "description": "La langue de l'utilisateur."
-          },
-          "time_format": {
-            "type": "integer",
-            "description": "Le format d'heure de l'utilisateur, 12 ou 24.",
-            "format": "int32"
-          },
-          "time_zone_name": {
-            "type": "string",
-            "description": "Le fuseau horaire de l'utilisateur."
           },
           "profile_attributes": {
             "$ref": "#/components/schemas/ProfileUpdateAttributes"
@@ -8953,113 +8973,6 @@
       }
     },
     "responses": {
-      "HRPrivateDataSuccessOne": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      },
-      "EmptySuccess": {
-        "description": "Succès",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object"
-            }
-          }
-        }
-      },
-      "NotFoundFailure": {
-        "description": "Erreur - Introuvable",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Errors"
-            }
-          }
-        }
-      },
-      "InputParamsFailure": {
-        "description": "Erreur - Paramètres d'entrée invalides",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Errors"
-            }
-          }
-        }
-      },
-      "QueryParamFailure": {
-        "description": "Erreur - Paramètres de requête invalides",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Errors"
-            }
-          }
-        }
-      },
-      "PathParamFailure": {
-        "description": "Erreur - Chemin d'accès invalide",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Errors"
-            }
-          }
-        }
-      },
-      "ActivitySuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Activity"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
-                }
-              }
-            }
-          }
-        }
-      },
-      "AvailabilitySuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Availability"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
-                }
-              }
-            }
-          }
-        }
-      },
       "AvailabilityListRequestSuccessMany": {
         "description": "Success",
         "content": {
@@ -9090,42 +9003,6 @@
               "properties": {
                 "data": {
                   "$ref": "#/components/schemas/AvailabilityListRequest"
-                }
-              }
-            }
-          }
-        }
-      },
-      "AvailabilityListSuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/AvailabilityList"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
-                }
-              }
-            }
-          }
-        }
-      },
-      "AvailabilityListSuccessOne": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "$ref": "#/components/schemas/AvailabilityList"
                 }
               }
             }
@@ -9204,7 +9081,7 @@
           }
         }
       },
-      "BreakSuccessMany": {
+      "PositionSuccessMany": {
         "description": "Success",
         "content": {
           "application/json": {
@@ -9214,7 +9091,28 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Break"
+                    "$ref": "#/components/schemas/Position"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "SiteSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Site"
                   }
                 },
                 "pagination": {
@@ -9369,27 +9267,6 @@
           }
         }
       },
-      "MemberSiteSuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MemberSite"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
-                }
-              }
-            }
-          }
-        }
-      },
       "MemberTimeBankTransactionSuccessMany": {
         "description": "Success",
         "content": {
@@ -9420,27 +9297,6 @@
               "properties": {
                 "data": {
                   "$ref": "#/components/schemas/MemberTimeBankTransaction"
-                }
-              }
-            }
-          }
-        }
-      },
-      "MemberTimeBankSuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/MemberTimeBank"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
                 }
               }
             }
@@ -9483,6 +9339,99 @@
           }
         }
       },
+      "AvailabilityListSuccessOne": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/components/schemas/AvailabilityList"
+                }
+              }
+            }
+          }
+        }
+      },
+      "AvailabilityListSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AvailabilityList"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MemberSiteSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberSite"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "MemberTimeBankSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MemberTimeBank"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "HRPrivateDataSuccessOne": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
       "PayrollSuccessMany": {
         "description": "Success",
         "content": {
@@ -9513,27 +9462,6 @@
               "properties": {
                 "data": {
                   "$ref": "#/components/schemas/Payroll"
-                }
-              }
-            }
-          }
-        }
-      },
-      "PositionSuccessMany": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Position"
-                  }
-                },
-                "pagination": {
-                  "$ref": "#/components/schemas/CommonPagination"
                 }
               }
             }
@@ -9663,24 +9591,6 @@
           }
         }
       },
-      "ResourceSuccessManyWithoutPagination": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Resource"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
       "ResourceSuccessMany": {
         "description": "Success",
         "content": {
@@ -9717,7 +9627,7 @@
           }
         }
       },
-      "SchedulerProjectionSuccessManyWithoutPagination": {
+      "ResourceSuccessManyWithoutPagination": {
         "description": "Success",
         "content": {
           "application/json": {
@@ -9727,7 +9637,7 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/SchedulerProjection"
+                    "$ref": "#/components/schemas/Resource"
                   }
                 }
               }
@@ -9771,22 +9681,7 @@
           }
         }
       },
-      "SessionSuccessOne": {
-        "description": "Success",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "data": {
-                  "$ref": "#/components/schemas/Session"
-                }
-              }
-            }
-          }
-        }
-      },
-      "ShiftSuccessManyWithoutPagination": {
+      "SchedulerProjectionSuccessManyWithoutPagination": {
         "description": "Success",
         "content": {
           "application/json": {
@@ -9796,8 +9691,23 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Shift"
+                    "$ref": "#/components/schemas/SchedulerProjection"
                   }
+                }
+              }
+            }
+          }
+        }
+      },
+      "SessionSuccessOne": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/components/schemas/Session"
                 }
               }
             }
@@ -9840,7 +9750,7 @@
           }
         }
       },
-      "SiteSuccessMany": {
+      "ActivitySuccessMany": {
         "description": "Success",
         "content": {
           "application/json": {
@@ -9850,11 +9760,50 @@
                 "data": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Site"
+                    "$ref": "#/components/schemas/Activity"
                   }
                 },
                 "pagination": {
                   "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "BreakSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Break"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ShiftSuccessManyWithoutPagination": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Shift"
+                  }
                 }
               }
             }
@@ -10031,6 +9980,56 @@
                   "$ref": "#/components/schemas/HRField"
                 }
               }
+            }
+          }
+        }
+      },
+      "EmptySuccess": {
+        "description": "Succès",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      },
+      "NotFoundFailure": {
+        "description": "Erreur - Introuvable",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            }
+          }
+        }
+      },
+      "InputParamsFailure": {
+        "description": "Erreur - Paramètres d'entrée invalides",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            }
+          }
+        }
+      },
+      "QueryParamFailure": {
+        "description": "Erreur - Paramètres de requête invalides",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            }
+          }
+        }
+      },
+      "PathParamFailure": {
+        "description": "Erreur - Chemin d'accès invalide",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
             }
           }
         }
@@ -10224,15 +10223,6 @@
           }
         }
       },
-      "ResourceBulkCreate": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ResourceBulkCreate"
-            }
-          }
-        }
-      },
       "ResourceCreate": {
         "content": {
           "application/json": {
@@ -10247,6 +10237,15 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/ResourceUpdate"
+            }
+          }
+        }
+      },
+      "ResourceBulkCreate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ResourceBulkCreate"
             }
           }
         }
@@ -10305,20 +10304,20 @@
           }
         }
       },
-      "ShiftUpdate": {
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/ShiftUpdate"
-            }
-          }
-        }
-      },
       "ShiftDelete": {
         "content": {
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/ShiftDelete"
+            }
+          }
+        }
+      },
+      "ShiftUpdate": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ShiftUpdate"
             }
           }
         }
