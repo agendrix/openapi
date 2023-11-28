@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.0.1
+  version: 1.0.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -197,8 +197,8 @@ tags:
   description: Opération sur les paies
 - name: Positions
   description: Une position représente une position disponible dans l'organisation.
-    Un employé peut se voir attribuer plusieures positions pour chaque succursale
-    dont il fait partie.
+    Un employé peut se voir attribuer plusieurs positions pour chaque succursale dont
+    il fait partie.
 - name: PremiumEntries
   description: Opération sur les entrées de prime
 - name: Premiums
@@ -220,9 +220,9 @@ tags:
     puisse le voir. Les modifications apportées à un quart futur existant créeront
     une nouvelle version du quart en tant que brouillon. Une fois le quart publié,
     il remplacera son ancienne version dans l''horaire de l''employé. Il en va de
-    même pour la suppression, le transfert, etc. Les quarts dans le passés sont automatiquement
+    même pour la suppression, le transfert, etc. Les quarts dans le passé sont automatiquement
     publiés. Il est possible d''ajouter ''publish : true'' aux requêtes d''écriture
-    pour publier automatiquement un quart après qu''il a été modifié via l''API.'
+    pour publier automatiquement un quart après qu''il ait été modifié via l''API.'
 - name: Sites
   description: Une succursale représente l'une des succursales de l'organisation.
     Un gestionnaire gère des succursales spécifiques.
@@ -1823,41 +1823,42 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: La status utilisé afin de filtrer la requête. Doit être 'draft'
+        description: La status utilisé afin de filtrer la requête. Doit être'draft'
           ou 'published'.
         schema:
           type: string
       - name: search[from]
         in: query
-        description: La date et heure de début utilisées afin de filtrer la requête.
-          Requis si updated_since et updated_until ne sont pas fournis.
+        description: La date de début utilisé afin de filtrer la requête. Demmander
+          si  updated_since et updated_until ne sont pas fournit.
         schema:
           type: string
       - name: search[to]
         in: query
-        description: La date et heure de fin utilisées afin de filtrer la requête.
-          L'interval maximal entre 'from' et 'to' doit être égal ou plus petit que
-          31 jours. Tous les quarts qui superposent cet interval seront retournés.
+        description: La date et l'heure de fin utilisées afin de filtrer la requête.
+          L'intervalle maximal entre 'from' et 'to' doit être égal à ou plus petit
+          que 31 jours. Tous les quarts qui chevauchent cet intervalle seront retournés.
           Requis si updated_since et updated_until ne sont pas fournis.
         schema:
           type: string
       - name: search[updated_since]
         in: query
-        description: La valeur 'updated_since', la date et heure utilisées afin de
-          filtrer la requête.
+        description: La valeur 'updated_since', la date et heure utilisé afin de filtrer
+          la requête.
         schema:
           type: string
       - name: search[updated_until]
         in: query
-        description: La valeur 'updated_until', la date et heure utilisées afin de
-          filtrer la requête.
+        description: La valeur 'updated_until', la date et heure utilisé afin de filtrer
+          la requête.
         schema:
           type: string
       - name: search[with_deleted]
         in: query
         description: Inclure les quarts de travail archivé dans le résultat paginé.
           Utilisable seulement si les filtres 'updated_since' et 'updated_until' sont
-          présents.
+          présent.Includes archived shifts into the paginated result. Only usable
+          with updated_since and updated_until filters.
         schema:
           type: string
       responses:

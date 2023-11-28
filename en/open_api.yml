@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.0.1
+  version: 1.0.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -194,7 +194,7 @@ tags:
   description: Member time bank transactions operations
 - name: Members
   description: A member is the entity that links a user to an organization. A user
-    has one member by organization they are part of in Agendrix.
+    has one member per organization they are part of in Agendrix.
 - name: Payrolls
   description: Payrolls operations
 - name: Positions
@@ -215,22 +215,22 @@ tags:
 - name: Shifts
   description: 'The shifts are the data that populates the scheduler. Is it important
     to note that the scheduler is composed of draft and published shifts. An employee
-    in Agendrix will only see published shifts in its schedule. When an administrator
+    in Agendrix will only see published shifts in their schedule. When an administrator
     or manager creates a future shift, it will be as a draft. The shift needs to be
     published for the employee to see it. Making modifications to an existing future
     shift will create a new shift version as draft. Once the shift is published, it
     will replace its older version in the employee schedule. This is also true for
-    deletion, transfer, etc. Shifts in the past are automatically published. It is
-    possible to add ''publish: true'' to write requests to automatically publish a
-    shift after it has been modified through the API.'
+    deletions, transfers, etc. Shifts in the past are automatically published. It
+    is possible to add ''publish: true'' to write requests to automatically publish
+    a shift after it has been modified through the API.'
 - name: Sites
-  description: A site represents one of the organization's site. A manager will manage
+  description: A site represents one of the organization's sites. A manager will manage
     specific sites.
 - name: TimeBanks
   description: Time banks operations
 - name: TimeEntries
   description: The time entries are the finalized entries of an employee. They are
-    generated from shifts, leave requests, clock in and clock and so on.
+    generated from shifts, leave requests, clock-in and clock-out, and so on.
 - name: TransferRequests
   description: Transfer requests operations
 - name: Users
@@ -1822,8 +1822,8 @@ paths:
       - name: search[to]
         in: query
         description: The to date time used for the search applied on the query. The
-          maximun range between 'from' and 'to' must be equal or lower than 31 days.
-          Every shifts overlapping this range will be returned. Required if updated_since
+          maximum range between 'from' and 'to' must be equal to or less than 31 days.
+          Every shift overlapping this range will be returned. Required if updated_since
           and updated_until are not provided.
         schema:
           type: string
