@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.0.2
+  version: 1.1.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -695,6 +695,20 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/EmptySuccess"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/documents/{id}":
+    get:
+      summary: Obtenir un document.
+      description: Retourne le document lié à l'identifiant.
+      tags:
+      - Documents
+      operationId: show_document
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/DocumentSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests/{id}/approve":
@@ -1823,14 +1837,14 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: La status utilisé afin de filtrer la requête. Doit être'draft'
+        description: Le statut utilisé afin de filtrer la requête. Doit être 'draft'
           ou 'published'.
         schema:
           type: string
       - name: search[from]
         in: query
-        description: La date de début utilisé afin de filtrer la requête. Demmander
-          si  updated_since et updated_until ne sont pas fournit.
+        description: La date et l'heure de début utilisées afin de filtrer la requête.
+          Requis si updated_since et updated_until ne sont pas fournis.
         schema:
           type: string
       - name: search[to]
@@ -1843,22 +1857,21 @@ paths:
           type: string
       - name: search[updated_since]
         in: query
-        description: La valeur 'updated_since', la date et heure utilisé afin de filtrer
-          la requête.
+        description: La valeur 'updated_since', la date et heure utilisées afin de
+          filtrer la requête.
         schema:
           type: string
       - name: search[updated_until]
         in: query
-        description: La valeur 'updated_until', la date et heure utilisé afin de filtrer
-          la requête.
+        description: La valeur 'updated_until', la date et heure utilisées afin de
+          filtrer la requête.
         schema:
           type: string
       - name: search[with_deleted]
         in: query
         description: Inclure les quarts de travail archivé dans le résultat paginé.
           Utilisable seulement si les filtres 'updated_since' et 'updated_until' sont
-          présent.Includes archived shifts into the paginated result. Only usable
-          with updated_since and updated_until filters.
+          présents.
         schema:
           type: string
       responses:
@@ -2493,6 +2506,152 @@ paths:
           "$ref": "#/components/responses/UserSuccessOne"
         400:
           "$ref": "#/components/responses/InputParamsFailure"
+  "/drive/files":
+    post:
+      summary: Créer un fichier.
+      description: Créer un fichier à partir du corps de la requête.
+      tags:
+      - DriveFiles
+      operationId: create_drive_file
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveFileCreate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+  "/drive/files/{id}":
+    put:
+      summary: Modifier un fichier.
+      description: Modifier un fichier à partir du corps de la requête.
+      tags:
+      - DriveFiles
+      operationId: update_drive_file
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveFileUpdate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+    delete:
+      summary: Supprimer un fichier
+      description: Supprime le fichier lié à l'identifiant.
+      tags:
+      - DriveFiles
+      operationId: delete_drive_file
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/EmptySuccess"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/drive/folders":
+    post:
+      summary: Créer un dossier.
+      description: Créer un dossier à partir du corps de la requête.
+      tags:
+      - DriveFolders
+      operationId: create_drive_folder
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveFolderCreate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+  "/drive/folders/{id}":
+    put:
+      summary: Modifier un dossier.
+      description: Modifier un dossier à partir du corps de la requête.
+      tags:
+      - DriveFolders
+      operationId: update_drive_folder
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveFolderUpdate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+    delete:
+      summary: Supprimer un dossier
+      description: Supprime le dossier lié à l'identifiant.
+      tags:
+      - DriveFolders
+      operationId: delete_drive_folder
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/EmptySuccess"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/drive/items":
+    get:
+      summary: Obtenir les fichiers et dossiers paginés.
+      description: Retourne les fichiers et dossiers paginés.
+      tags:
+      - DriveItems
+      operationId: index_drive_item
+      parameters:
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[member_id]
+        in: query
+        description: L'identifiant d'un employé utilisé comme filtre sur la requête.
+        schema:
+          type: string
+      - name: search[with_deleted]
+        in: query
+        description: Inclue les fichiers/dossiers archivés dans le résultat paginé.
+        schema:
+          type: string
+      - name: search[only_deleted]
+        in: query
+        description: Exclue les fichiers/dossiers actifs du résultat paginé.
+        schema:
+          type: string
+      - name: search[folder_id]
+        in: query
+        description: L'identifiant d'un dossier utilisé comme filtre sur la requête.
+        schema:
+          type: string
+      - name: search[type]
+        in: query
+        description: Le type d'objet utilisé comme filtre sur la requête. Peut être
+          'file' ou 'folder'
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/drive/items/{id}":
+    get:
+      summary: Obtenir un objet.
+      description: Retourne un objet par id.
+      tags:
+      - DriveItems
+      operationId: show_drive_item
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/hr/fields":
     get:
       summary: Obtenir les champs de ressources humaines paginés.
@@ -2969,6 +3128,32 @@ components:
         updated_at:
           type: string
           description: La date et l'heure de la dernière modification.
+          format: date-time
+    Document:
+      type: object
+      description: Une description détaillée d'un document, représentant un fichier
+        externe.
+      properties:
+        id:
+          type: string
+          description: Identifiant unique du document.
+          format: uuid
+        file_content_type:
+          type: string
+          description: Le type de fichier relié au document.
+        file_size:
+          type: integer
+          description: La taille du fichier relié au document.
+          format: int32
+        file_name:
+          type: string
+          description: Le nom du fichier.
+        file_url:
+          type: string
+          description: Le lien pour accéder au fichier.
+        created_at:
+          type: string
+          description: La date et l'heure de création.
           format: date-time
     LeaveType:
       type: object
@@ -4806,6 +4991,68 @@ components:
           type: string
           description: Si le commentaire est privé ou non. Doit être 'private' ou
             'public'.
+    DriveItem:
+      type: object
+      description: Une description détaillée d'un fichier ou dossier.
+      properties:
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
+        member_id:
+          type: string
+          description: L'identifiant de l'employé à qui l'objet est associé.
+          format: uuid
+        creator_id:
+          type: string
+          description: L'identifiant du créateur de l'objet.
+          format: uuid
+        folder_id:
+          type: string
+          description: L'identifiant du dossier parent de l'objet.
+          format: uuid
+        type:
+          type: string
+          description: Le type de l'objet. Peut être 'file' ou 'folder'.
+        name:
+          type: string
+          description: Le nom de l'objet.
+        role:
+          type: string
+          description: Le rôle requis pour avoir accès à l'objet. Peut être 'member',
+            'supervisor', 'manager' ou 'admin'.
+        member_viewable:
+          type: boolean
+          description: Vrai si l'objet est accessible à l'employé.
+        deleted_at:
+          type: string
+          description: Date et heure de la suppression de l'objet.
+          format: date-time
+        created_at:
+          type: string
+          description: Date et heure de création de l'objet.
+          format: date-time
+        updated_at:
+          type: string
+          description: Date et heure de la dernière modification de l'objet.
+          format: date-time
+        body:
+          type: string
+          description: Le contenu d'un fichier texte interne.
+        note:
+          type: string
+          description: La note d'un fichier.
+        comments_count:
+          type: integer
+          description: Le nombre de commentaires sur un fichier.
+          format: int32
+        document:
+          "$ref": "#/components/schemas/Document"
+        body_documents:
+          type: array
+          description: Des documents associés au contenu d'un fichier texte interne.
+          items:
+            "$ref": "#/components/schemas/Document"
     HRField:
       type: object
       description: Une description détaillée d'un champ de ressources humaines.
@@ -6614,6 +6861,106 @@ components:
           format: int32
         profile_attributes:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
+    DriveFileCreate:
+      required:
+      - member_id
+      - name
+      - role
+      type: object
+      description: Une description détaillée des paramètres d'entrée pour la création
+        d'un fichier.
+      properties:
+        name:
+          type: string
+          description: Le nom du fichier.
+        member_viewable:
+          type: boolean
+          description: Vrai si le fichier est accessible à l'employé.
+        role:
+          type: string
+          description: Le rôle requis pour avoir accès au fichier. Peut être 'member',
+            'supervisor', 'manager' ou 'admin'.
+        folder_id:
+          type: string
+          description: L'identifiant du dossier parent.
+          format: uuid
+        body:
+          type: string
+          description: Le contenu d'un fichier interne.
+        note:
+          type: string
+          description: La note du fichier.
+        member_id:
+          type: string
+          description: L'identifiant de l'employé à qui le fichier est associé.
+          format: uuid
+        file:
+          type: string
+          description: Un fichier externe à téléverser.
+          format: binary
+    DriveFileUpdate:
+      type: object
+      description: Une description détaillée des paramètres d'entrée pour la modification
+        d'un fichier.
+      properties:
+        name:
+          type: string
+          description: Le nom du fichier.
+        member_viewable:
+          type: boolean
+          description: Vrai si le fichier est accessible à l'employé.
+        role:
+          type: string
+          description: Le rôle requis pour avoir accès au fichier. Peut être 'member',
+            'supervisor', 'manager' ou 'admin'.
+        folder_id:
+          type: string
+          description: L'identifiant du dossier parent.
+          format: uuid
+        body:
+          type: string
+          description: Le contenu d'un fichier interne.
+        note:
+          type: string
+          description: La note du fichier.
+    DriveFolderCreate:
+      required:
+      - member_id
+      - name
+      - role
+      type: object
+      description: Une description détaillée des paramètres d'entrée pour la création
+        d'un dossier.
+      properties:
+        name:
+          type: string
+          description: Le nom du dossier.
+        member_viewable:
+          type: boolean
+          description: Vrai si le dossier et son contenu est accessible à l'employé.
+        role:
+          type: string
+          description: Le rôle requis pour avoir accès au dossier et son contenu.
+            Peut être 'member', 'supervisor', 'manager' ou 'admin'.
+        member_id:
+          type: string
+          description: L'identifiant de l'employé à qui le dossier est associé.
+          format: uuid
+    DriveFolderUpdate:
+      type: object
+      description: Une description détaillée des paramètres d'entrée pour la modification
+        d'un dossier.
+      properties:
+        name:
+          type: string
+          description: Le nom du dossier.
+        member_viewable:
+          type: boolean
+          description: Vrai si le dossier et son contenu est accessible à l'employé.
+        role:
+          type: string
+          description: Le rôle requis pour avoir accès au dossier et son contenu.
+            Peut être 'member', 'supervisor', 'manager' ou 'admin'.
     ResourceBulkCreate:
       required:
       - resources
@@ -6786,6 +7133,15 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Comment"
+    DocumentSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/Document"
     LeaveRequestSuccessMany:
       description: Success
       content:
@@ -7246,6 +7602,28 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/User"
+    DriveItemSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/DriveItem"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    DriveItemSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/DriveItem"
     HRFieldSuccessMany:
       description: Success
       content:
@@ -7501,6 +7879,26 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/UserUpdate"
+    DriveFileCreate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFileCreate"
+    DriveFileUpdate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFileUpdate"
+    DriveFolderCreate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFolderCreate"
+    DriveFolderUpdate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFolderUpdate"
   securitySchemes:
     oauth:
       type: oauth2

@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.0.2
+  version: 1.1.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -688,6 +688,20 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/EmptySuccess"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/documents/{id}":
+    get:
+      summary: Get one document.
+      description: Return the document's id holder.
+      tags:
+      - Documents
+      operationId: show_document
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/DocumentSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests/{id}/approve":
@@ -2474,6 +2488,151 @@ paths:
           "$ref": "#/components/responses/UserSuccessOne"
         400:
           "$ref": "#/components/responses/InputParamsFailure"
+  "/drive/files":
+    post:
+      summary: Create a file.
+      description: Create a file from the body.
+      tags:
+      - DriveFiles
+      operationId: create_drive_file
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveFileCreate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+  "/drive/files/{id}":
+    put:
+      summary: Update a file.
+      description: Update a file from the body.
+      tags:
+      - DriveFiles
+      operationId: update_drive_file
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveFileUpdate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+    delete:
+      summary: Delete a file.
+      description: Delete the file's id holder.
+      tags:
+      - DriveFiles
+      operationId: delete_drive_file
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/EmptySuccess"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/drive/folders":
+    post:
+      summary: Create a folder.
+      description: Create a folder from the body.
+      tags:
+      - DriveFolders
+      operationId: create_drive_folder
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveFolderCreate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+  "/drive/folders/{id}":
+    put:
+      summary: Update a folder.
+      description: Update a folder from the body.
+      tags:
+      - DriveFolders
+      operationId: update_drive_folder
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveFolderUpdate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+    delete:
+      summary: Delete a folder.
+      description: Delete the folder's id holder.
+      tags:
+      - DriveFolders
+      operationId: delete_drive_folder
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/EmptySuccess"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/drive/items":
+    get:
+      summary: Get paginated files and folders.
+      description: Return paginated files dans folders.
+      tags:
+      - DriveItems
+      operationId: index_drive_item
+      parameters:
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[member_id]
+        in: query
+        description: The member_id used for the search applied on the query.
+        schema:
+          type: string
+      - name: search[with_deleted]
+        in: query
+        description: Includes archived files/folders into the paginated result.
+        schema:
+          type: string
+      - name: search[only_deleted]
+        in: query
+        description: Excludes active files/folders from the paginated result.
+        schema:
+          type: string
+      - name: search[folder_id]
+        in: query
+        description: The folder_id used for the search applied on the query.
+        schema:
+          type: string
+      - name: search[type]
+        in: query
+        description: The item type. Valid values are folder and file.
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/drive/items/{id}":
+    get:
+      summary: Get one item.
+      description: Return the item's id holder.
+      tags:
+      - DriveItems
+      operationId: show_drive_item
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveItemSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/hr/fields":
     get:
       summary: Get paginated human resource fields.
@@ -2947,6 +3106,32 @@ components:
         updated_at:
           type: string
           description: When the comment was last updated.
+          format: date-time
+    Document:
+      type: object
+      description: A detailed description of a document, representing an external
+        file uploaded to Agendrix.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        file_content_type:
+          type: string
+          description: The document's file type.
+        file_size:
+          type: integer
+          description: The document's file size.
+          format: int32
+        file_name:
+          type: string
+          description: The document's file name.
+        file_url:
+          type: string
+          description: The URL of the uploaded file.
+        created_at:
+          type: string
+          description: When the document was created.
           format: date-time
     LeaveType:
       type: object
@@ -4743,6 +4928,68 @@ components:
         type:
           type: string
           description: If the comment is private or not. Must be 'private' or 'public'.
+    DriveItem:
+      type: object
+      description: A detailed description of a file or folder.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        member_id:
+          type: string
+          description: The item member's id.
+          format: uuid
+        creator_id:
+          type: string
+          description: The item creator's id.
+          format: uuid
+        folder_id:
+          type: string
+          description: The parent folder's id.
+          format: uuid
+        type:
+          type: string
+          description: The item's type. Can either be folder or file.
+        name:
+          type: string
+          description: The name of the item.
+        role:
+          type: string
+          description: The required role to see the item. Can either be member, supervisor,
+            manager or admin.
+        member_viewable:
+          type: boolean
+          description: Set to true if the member can see this file.
+        deleted_at:
+          type: string
+          description: When the item was last deleted.
+          format: date-time
+        created_at:
+          type: string
+          description: When the item was last created.
+          format: date-time
+        updated_at:
+          type: string
+          description: When the item was last updated.
+          format: date-time
+        body:
+          type: string
+          description: If the item is an internal text file, contains the body.
+        note:
+          type: string
+          description: The file's note.
+        comments_count:
+          type: integer
+          description: The number of comments on the file.
+          format: int32
+        document:
+          "$ref": "#/components/schemas/Document"
+        body_documents:
+          type: array
+          description: The embedded documents in the text file.
+          items:
+            "$ref": "#/components/schemas/Document"
     HRField:
       type: object
       description: A detailed description of a human resource field.
@@ -6491,6 +6738,104 @@ components:
           format: int32
         profile_attributes:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
+    DriveFileCreate:
+      required:
+      - member_id
+      - name
+      - role
+      type: object
+      description: A detailed description of a file's creation input parameters.
+      properties:
+        name:
+          type: string
+          description: The name of the file.
+        member_viewable:
+          type: boolean
+          description: Set to true if the member can see this file.
+        role:
+          type: string
+          description: The required role to see the file. Can either be member, supervisor,
+            manager or admin.
+        folder_id:
+          type: string
+          description: The parent folder's id.
+          format: uuid
+        body:
+          type: string
+          description: An internal text file's content.
+        note:
+          type: string
+          description: The file's note.
+        member_id:
+          type: string
+          description: The file member's id.
+          format: uuid
+        file:
+          type: string
+          description: An external file to upload.
+          format: binary
+    DriveFileUpdate:
+      type: object
+      description: A detailed description of a file's update input parameters.
+      properties:
+        name:
+          type: string
+          description: The name of the file.
+        member_viewable:
+          type: boolean
+          description: Set to true if the member can see this file.
+        role:
+          type: string
+          description: The required role to see the file. Can either be member, supervisor,
+            manager or admin.
+        folder_id:
+          type: string
+          description: The parent folder's id.
+          format: uuid
+        body:
+          type: string
+          description: An internal text file's content.
+        note:
+          type: string
+          description: The file's note.
+    DriveFolderCreate:
+      required:
+      - member_id
+      - name
+      - role
+      type: object
+      description: A detailed description of a folder's creation input parameters.
+      properties:
+        name:
+          type: string
+          description: The name of the folder.
+        member_viewable:
+          type: boolean
+          description: Set to true if the member can see this folder and all of its
+            contents.
+        role:
+          type: string
+          description: The required role to see the folder and all of its contents.
+            Can either be member, supervisor, manager or admin.
+        member_id:
+          type: string
+          description: The folder member's id.
+          format: uuid
+    DriveFolderUpdate:
+      type: object
+      description: A detailed description of a folder's update input parameters.
+      properties:
+        name:
+          type: string
+          description: The name of the folder.
+        member_viewable:
+          type: boolean
+          description: Set to true if the member can see this folder and all of its
+            contents.
+        role:
+          type: string
+          description: The required role to see the folder and all of its contents.
+            Can either be member, supervisor, manager or admin.
     ResourceBulkCreate:
       required:
       - resources
@@ -6662,6 +7007,15 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Comment"
+    DocumentSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/Document"
     LeaveRequestSuccessMany:
       description: Success
       content:
@@ -7122,6 +7476,28 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/User"
+    DriveItemSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/DriveItem"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    DriveItemSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/DriveItem"
     HRFieldSuccessMany:
       description: Success
       content:
@@ -7376,6 +7752,26 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/UserUpdate"
+    DriveFileCreate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFileCreate"
+    DriveFileUpdate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFileUpdate"
+    DriveFolderCreate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFolderCreate"
+    DriveFolderUpdate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFolderUpdate"
   securitySchemes:
     oauth:
       type: oauth2
