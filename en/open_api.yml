@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.1.1
+  version: 1.2.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -208,6 +208,8 @@ tags:
   description: Publications operations
 - name: Resources
   description: Resources operations
+- name: RoleDefinitions
+  description: Role definitions operations
 - name: SchedulerProjections
   description: Scheduler projections operations
 - name: Session
@@ -1636,6 +1638,36 @@ paths:
           "$ref": "#/components/responses/ResourceSuccessManyWithoutPagination"
         400:
           "$ref": "#/components/responses/InputParamsFailure"
+  "/role_definitions":
+    get:
+      summary: Get paginated role definitions.
+      description: Return paginated role definitions.
+      tags:
+      - RoleDefinitions
+      operationId: index_role_definition
+      parameters:
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      responses:
+        200:
+          "$ref": "#/components/responses/RoleDefinitionSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/role_definitions/{id}":
+    get:
+      summary: Get one role definition.
+      description: Return the role definition's id holder.
+      tags:
+      - RoleDefinitions
+      operationId: show_role_definition
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/RoleDefinitionSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/scheduler_projections":
     get:
       summary: Get paginated scheduler projections.
@@ -2581,7 +2613,7 @@ paths:
   "/drive/items":
     get:
       summary: Get paginated files and folders.
-      description: Return paginated files dans folders.
+      description: Return paginated files and folders.
       tags:
       - DriveItems
       operationId: index_drive_item
@@ -2596,7 +2628,7 @@ paths:
           type: string
       - name: search[with_deleted]
         in: query
-        description: Includes archived files/folders into the paginated result.
+        description: Includes archived files/folders in the paginated result.
         schema:
           type: string
       - name: search[only_deleted]
@@ -2709,7 +2741,7 @@ components:
           description: The activity's key.
         created_at:
           type: string
-          description: When the activitie was created.
+          description: When the activity was created.
           format: date-time
         updated_at:
           type: string
@@ -3402,7 +3434,11 @@ components:
         role:
           type: string
           description: The member's role in this site. Can either be member, supervisor
-            or manager.
+            or manager. Also called hierarchical level.
+        role_definition_id:
+          type: string
+          description: The role definition's unique identifier.
+          format: uuid
         supervisor_position_ids:
           type: array
           description: Which position ids in the current site does the member supervise.
@@ -3594,6 +3630,12 @@ components:
         full_name:
           type: string
           description: The profile's full name.
+        nickname:
+          type: string
+          description: The profile's nickname.
+        display_name:
+          type: string
+          description: The profile's display name.
         email:
           type: string
           description: The profile's email.
@@ -3658,8 +3700,8 @@ components:
           description: The member's identification number.
         highest_role:
           type: string
-          description: The highest role associated to this user. Can either be member,
-            supervisor or manager.
+          description: The highest hierarchical level associated to this user. Can
+            either be member, supervisor or manager.
         visible_rates:
           type: boolean
           description: Whether this member can see rates and costs, depending on the
@@ -4052,6 +4094,40 @@ components:
         created_at:
           type: string
           description: When the publication was created.
+          format: date-time
+    RoleDefinition:
+      type: object
+      description: A detailed description of a role definition.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        name:
+          type: string
+          description: The role definition's name.
+        default:
+          type: boolean
+          description: If the definition is the default for this particular role.
+        role:
+          type: string
+          description: The defined role.
+        disabled_features:
+          type: array
+          description: Features disabled for this role.
+          items:
+            type: string
+        created_at:
+          type: string
+          description: When the role definition was created.
+          format: date-time
+        updated_at:
+          type: string
+          description: When the role definition was last updated.
+          format: date-time
+        deleted_at:
+          type: string
+          description: When the role definition was archived.
           format: date-time
     SchedulerProjection:
       type: object
@@ -4956,18 +5032,18 @@ components:
           description: The name of the item.
         role:
           type: string
-          description: The required role to see the item. Can either be member, supervisor,
-            manager or admin.
+          description: The role required to see the item. Can either be member, supervisor,
+            manager, or admin.
         member_viewable:
           type: boolean
           description: Set to true if the member can see this file.
         deleted_at:
           type: string
-          description: When the item was last deleted.
+          description: When the item was deleted.
           format: date-time
         created_at:
           type: string
-          description: When the item was last created.
+          description: When the item was created.
           format: date-time
         updated_at:
           type: string
@@ -5403,7 +5479,11 @@ components:
         role:
           type: string
           description: The member's role in this site. Can either be member, supervisor
-            or manager.
+            or manager. Also called hierarchical level.
+        role_definition_id:
+          type: string
+          description: The role definition's unique identifier.
+          format: uuid
         rate_single_base:
           type: number
           description: The member's rate for regular hours for all positions in this
@@ -5446,7 +5526,11 @@ components:
         role:
           type: string
           description: The member's role in this site. Can either be member, supervisor
-            or manager.
+            or manager. Also called hierarchical level.
+        role_definition_id:
+          type: string
+          description: The role definition's unique identifier.
+          format: uuid
         rate_single_base:
           type: number
           description: The member's rate for regular hours for all positions in this
@@ -5506,6 +5590,9 @@ components:
         last_name:
           type: string
           description: The profile's last name.
+        nickname:
+          type: string
+          description: The profile's nickname.
         birthdate:
           type: string
           description: The profile's birthdate.
@@ -5666,6 +5753,9 @@ components:
         last_name:
           type: string
           description: The profile's last name.
+        nickname:
+          type: string
+          description: The profile's nickname.
         birthdate:
           type: string
           description: The profile's birthdate.
@@ -6754,8 +6844,8 @@ components:
           description: Set to true if the member can see this file.
         role:
           type: string
-          description: The required role to see the file. Can either be member, supervisor,
-            manager or admin.
+          description: The role required to see the file. Can either be member, supervisor,
+            manager, or admin.
         folder_id:
           type: string
           description: The parent folder's id.
@@ -6786,8 +6876,8 @@ components:
           description: Set to true if the member can see this file.
         role:
           type: string
-          description: The required role to see the file. Can either be member, supervisor,
-            manager or admin.
+          description: The role required to see the file. Can either be member, supervisor,
+            manager, or admin.
         folder_id:
           type: string
           description: The parent folder's id.
@@ -6815,8 +6905,8 @@ components:
             contents.
         role:
           type: string
-          description: The required role to see the folder and all of its contents.
-            Can either be member, supervisor, manager or admin.
+          description: The role required to see the folder and all of its contents.
+            Can either be member, supervisor, manager, or admin.
         member_id:
           type: string
           description: The folder member's id.
@@ -6834,8 +6924,8 @@ components:
             contents.
         role:
           type: string
-          description: The required role to see the folder and all of its contents.
-            Can either be member, supervisor, manager or admin.
+          description: The role required to see the folder and all of its contents.
+            Can either be member, supervisor, manager, or admin.
     ResourceBulkCreate:
       required:
       - resources
@@ -7291,6 +7381,28 @@ components:
                 type: array
                 items:
                   "$ref": "#/components/schemas/Resource"
+    RoleDefinitionSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/RoleDefinition"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    RoleDefinitionSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/RoleDefinition"
     SchedulerProjectionSuccessMany:
       description: Success
       content:

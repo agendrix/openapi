@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.1.1
+  version: 1.2.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -207,6 +207,8 @@ tags:
   description: Opérations sur les publications
 - name: Resources
   description: Opération sur les ressources
+- name: RoleDefinitions
+  description: Opérations sur les définitions de rôles
 - name: SchedulerProjections
   description: Opération sur les prévisions du planificateur d'horaires
 - name: Session
@@ -483,7 +485,7 @@ paths:
           type: string
       - name: search[with_deleted]
         in: query
-        description: Inclue les positions archivées dans le résultat paginé.
+        description: Inclure les positions archivées dans le résultat paginé.
         schema:
           type: string
       - name: search[only_deleted]
@@ -700,7 +702,7 @@ paths:
   "/documents/{id}":
     get:
       summary: Obtenir un document.
-      description: Retourne le document lié à l'identifiant.
+      description: Retourne le document relié à l'identifiant.
       tags:
       - Documents
       operationId: show_document
@@ -995,7 +997,7 @@ paths:
           type: string
       - name: search[with_deleted]
         in: query
-        description: Inclue les membres archivés dans le résultat paginé.
+        description: Inclure les membres archivés dans le résultat paginé.
         schema:
           type: string
       - name: search[only_deleted]
@@ -1186,7 +1188,7 @@ paths:
           type: string
       - name: search[with_deleted]
         in: query
-        description: Inclue les positions archivées dans le résultat paginé.
+        description: Inclure les positions archivées dans le résultat paginé.
         schema:
           type: string
       - name: search[only_deleted]
@@ -1339,7 +1341,7 @@ paths:
           type: string
       - name: search[with_deleted]
         in: query
-        description: Inclue les positions archivées dans le résultat paginé.
+        description: Inclure les positions archivées dans le résultat paginé.
         schema:
           type: string
       - name: search[only_deleted]
@@ -1538,7 +1540,7 @@ paths:
       - "$ref": "#/components/parameters/QueryPageSize"
       - name: search[with_deleted]
         in: query
-        description: Inclus les ressources archivé dans le résultat paginé.
+        description: Inclure les ressources archivées dans le résultat paginé.
         schema:
           type: string
       - name: search[only_deleted]
@@ -1646,6 +1648,36 @@ paths:
           "$ref": "#/components/responses/ResourceSuccessManyWithoutPagination"
         400:
           "$ref": "#/components/responses/InputParamsFailure"
+  "/role_definitions":
+    get:
+      summary: Obtenir les définition de rôles paginées.
+      description: Retourne les définition de rôles paginées.
+      tags:
+      - RoleDefinitions
+      operationId: index_role_definition
+      parameters:
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      responses:
+        200:
+          "$ref": "#/components/responses/RoleDefinitionSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/role_definitions/{id}":
+    get:
+      summary: Obtenir une définition de rôle.
+      description: Retourne une définition de rôles selon l'identifiant unique.
+      tags:
+      - RoleDefinitions
+      operationId: show_role_definition
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/RoleDefinitionSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/scheduler_projections":
     get:
       summary: Obtenir les prévisions du planificateur d'horaire paginées.
@@ -1837,14 +1869,14 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: Le statut utilisé afin de filtrer la requête. Doit être 'draft'
+        description: La status utilisé afin de filtrer la requête. Doit être'draft'
           ou 'published'.
         schema:
           type: string
       - name: search[from]
         in: query
-        description: La date et l'heure de début utilisées afin de filtrer la requête.
-          Requis si updated_since et updated_until ne sont pas fournis.
+        description: La date de début utilisé afin de filtrer la requête. Demmander
+          si  updated_since et updated_until ne sont pas fournit.
         schema:
           type: string
       - name: search[to]
@@ -1857,19 +1889,19 @@ paths:
           type: string
       - name: search[updated_since]
         in: query
-        description: La valeur 'updated_since', la date et heure utilisées afin de
-          filtrer la requête.
+        description: La valeur 'updated_since', la date et heure utilisé afin de filtrer
+          la requête.
         schema:
           type: string
       - name: search[updated_until]
         in: query
-        description: La valeur 'updated_until', la date et heure utilisées afin de
-          filtrer la requête.
+        description: La valeur 'updated_until', la date et heure utilisé afin de filtrer
+          la requête.
         schema:
           type: string
       - name: search[with_deleted]
         in: query
-        description: Inclure les quarts de travail archivé dans le résultat paginé.
+        description: Inclure les quarts de travail archivés dans le résultat paginé.
           Utilisable seulement si les filtres 'updated_since' et 'updated_until' sont
           présents.
         schema:
@@ -2073,7 +2105,7 @@ paths:
       - "$ref": "#/components/parameters/QueryPageSize"
       - name: search[with_deleted]
         in: query
-        description: Inclus les ressources archivé dans le résultat paginé.
+        description: Inclure les ressources archivées dans le résultat paginé.
         schema:
           type: string
       - name: search[only_deleted]
@@ -2182,7 +2214,7 @@ paths:
           "$ref": "#/components/responses/InputParamsFailure"
     delete:
       summary: Supprimer une succursale.
-      description: Supprime une succursale avec l'identifiant unique correspondant.
+      description: Supprime la succursale associée à cet identifiant unique.
       tags:
       - Sites
       operationId: delete_site
@@ -2321,7 +2353,7 @@ paths:
           type: string
       - name: search[with_deleted]
         in: query
-        description: Filtre qui inclus les entrées archivées.
+        description: Inclure les entrées de temps archivées dans le résultat paginé.
         schema:
           type: string
       - name: search[only_deleted]
@@ -2539,8 +2571,8 @@ paths:
         400:
           "$ref": "#/components/responses/InputParamsFailure"
     delete:
-      summary: Supprimer un fichier
-      description: Supprime le fichier lié à l'identifiant.
+      summary: Supprimer un fichier.
+      description: Supprimer le dossier associé à l'identifiant.
       tags:
       - DriveFiles
       operationId: delete_drive_file
@@ -2584,8 +2616,8 @@ paths:
         400:
           "$ref": "#/components/responses/InputParamsFailure"
     delete:
-      summary: Supprimer un dossier
-      description: Supprime le dossier lié à l'identifiant.
+      summary: Supprimer un dossier.
+      description: Supprimer le dossier lié à l'identifiant.
       tags:
       - DriveFolders
       operationId: delete_drive_folder
@@ -2609,28 +2641,28 @@ paths:
       - "$ref": "#/components/parameters/QueryPageSize"
       - name: search[member_id]
         in: query
-        description: L'identifiant d'un employé utilisé comme filtre sur la requête.
+        description: L'identifiant d'un membre utilisé comme filtre sur la requête.
         schema:
           type: string
       - name: search[with_deleted]
         in: query
-        description: Inclue les fichiers/dossiers archivés dans le résultat paginé.
+        description: Inclure les fichiers et dossiers archivés dans le résultat paginé.
         schema:
           type: string
       - name: search[only_deleted]
         in: query
-        description: Exclue les fichiers/dossiers actifs du résultat paginé.
+        description: Exclure les fichiers et dossiers non archivés du résultat paginé.
         schema:
           type: string
       - name: search[folder_id]
         in: query
-        description: L'identifiant d'un dossier utilisé comme filtre sur la requête.
+        description: L'identifiant du dossier utilisé comme filtre sur la requête.
         schema:
           type: string
       - name: search[type]
         in: query
         description: Le type d'objet utilisé comme filtre sur la requête. Peut être
-          'file' ou 'folder'
+          'file' ou 'folder'.
         schema:
           type: string
       responses:
@@ -2912,11 +2944,12 @@ components:
           format: uuid
         created_by:
           type: string
-          description: The unique identifier of the member who created the thread.
+          description: L'identifiant unique du membre ayant créé cette publication.
           format: uuid
         updated_by:
           type: string
-          description: The unique identifier of the last member who updated the thread.
+          description: L'identifiant unique du dernier membre ayant modifié cette
+            publication.
           format: uuid
         title:
           type: string
@@ -3010,7 +3043,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         length:
           type: integer
@@ -3047,7 +3080,7 @@ components:
       properties:
         id:
           type: string
-          description: Identifiant unique pour l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         member_id:
           type: string
@@ -3131,29 +3164,29 @@ components:
           format: date-time
     Document:
       type: object
-      description: Une description détaillée d'un document, représentant un fichier
-        externe.
+      description: Une description détaillée d'un document, c'est-à-dire un fichier
+        externe téléversé sur Agendrix.
       properties:
         id:
           type: string
-          description: Identifiant unique du document.
+          description: Identifiant unique de l'objet.
           format: uuid
         file_content_type:
           type: string
           description: Le type de fichier relié au document.
         file_size:
           type: integer
-          description: La taille du fichier relié au document.
+          description: La taille de fichier relié au document.
           format: int32
         file_name:
           type: string
-          description: Le nom du fichier.
+          description: Le nom de fichier relié document.
         file_url:
           type: string
           description: Le lien pour accéder au fichier.
         created_at:
           type: string
-          description: La date et l'heure de création.
+          description: Date et heure de création du document.
           format: date-time
     LeaveType:
       type: object
@@ -3190,7 +3223,7 @@ components:
           description: Nom de la ressource.
         'no':
           type: string
-          description: L'identifiant unique raccourcit de la ressource.
+          description: L'identifiant unique raccourci de la ressource.
         description:
           type: string
           description: Description de la ressource.
@@ -3241,7 +3274,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         paid_weekdays:
           type: array
@@ -3257,7 +3290,7 @@ components:
       properties:
         id:
           type: string
-          description: Identifiant unique pour l'objet de demande de congé.
+          description: Identifiant unique de l'objet.
           format: uuid
         member_id:
           type: string
@@ -3383,7 +3416,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         position_id:
           type: string
@@ -3416,7 +3449,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         site_id:
           type: string
@@ -3425,7 +3458,11 @@ components:
         role:
           type: string
           description: Le rôle du membre dans la succursale. Il peut être employé,
-            superviseur ou gestionnaire.
+            superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
+        role_definition_id:
+          type: string
+          description: L'identifiant unique de la définition de rôle.
+          format: uuid
         supervisor_position_ids:
           type: array
           description: Les identifiants uniques des positions supervisées par le membre
@@ -3462,7 +3499,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         member_id:
           type: string
@@ -3572,7 +3609,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         member_id:
           type: string
@@ -3623,7 +3660,13 @@ components:
           description: Le nom de famille du profil.
         full_name:
           type: string
-          description: Le Nom  complet du profil.
+          description: Le Nom complet du profil.
+        nickname:
+          type: string
+          description: Le prénom usuel du profil.
+        display_name:
+          type: string
+          description: Le nom d'affichage du profil.
         email:
           type: string
           description: L'adresse e-mail du profil.
@@ -3673,7 +3716,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         user_id:
           type: string
@@ -3688,8 +3731,8 @@ components:
           description: Le nombre identificateur du membre.
         highest_role:
           type: string
-          description: Le plus haut rôle de l'utilisateur. Peut être 'member', 'supervisor'
-            ou 'manager'.
+          description: Le plus haut niveau hiérarchique de l'utilisateur. Peut être
+            'member', 'supervisor' ou 'manager'.
         visible_rates:
           type: boolean
           description: Si le membre peut voir les taux et coûts, dépendament des paramètres
@@ -3713,7 +3756,7 @@ components:
             en mots.
         main_position_id:
           type: string
-          description: L'idendifiant unique de la position principale du membre.
+          description: L'identifiant unique de la position principale du membre.
           format: uuid
         main_site_id:
           type: string
@@ -4094,6 +4137,40 @@ components:
           type: string
           description: Moment de création de la publication.
           format: date-time
+    RoleDefinition:
+      type: object
+      description: Description détaillée d'une définition de rôle.
+      properties:
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
+        name:
+          type: string
+          description: Le nom de la définition de rôle.
+        default:
+          type: boolean
+          description: Si c'est la définition par défaut du rôle.
+        role:
+          type: string
+          description: Le rôle défini.
+        disabled_features:
+          type: array
+          description: Les fonctionnalitées désactivée pour ce rôle.
+          items:
+            type: string
+        created_at:
+          type: string
+          description: Moment de création de la définition de rôle.
+          format: date-time
+        updated_at:
+          type: string
+          description: Moment de la dernière mise à jour de la définition de rôle.
+          format: date-time
+        deleted_at:
+          type: string
+          description: Moment de l'archivation de la définition de rôle.
+          format: date-time
     SchedulerProjection:
       type: object
       description: Description d'une prévision du planificateur d'horaires.
@@ -4142,7 +4219,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         email:
           type: string
@@ -4417,11 +4494,11 @@ components:
           format: int32
         original_shift_id:
           type: string
-          description: L'original shift id du quart.
+          description: L'ID du quart de travail original.
           format: uuid
         new_version_id:
           type: string
-          description: Le new version shift id du quart.
+          description: L'ID de la nouvelle version du quart de travail.
           format: uuid
         rate_base:
           type: number
@@ -4459,7 +4536,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         name:
           type: string
@@ -4490,7 +4567,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         name:
           type: string
@@ -4517,7 +4594,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         unpaid_break:
           type: integer
@@ -4591,7 +4668,7 @@ components:
           format: int32
         time_off_leave_type_id:
           type: string
-          description: L'ID du type de congé.
+          description: L'identifiant unique du type de congé.
           format: uuid
         time_off_paid:
           type: boolean
@@ -4701,7 +4778,7 @@ components:
       properties:
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         member_id:
           type: string
@@ -4941,7 +5018,7 @@ components:
           description: Si la pause est payée ou non.
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         _destroy:
           type: boolean
@@ -4993,7 +5070,7 @@ components:
             'public'.
     DriveItem:
       type: object
-      description: Une description détaillée d'un fichier ou dossier.
+      description: Une description détaillée d'un fichier ou d'un dossier.
       properties:
         id:
           type: string
@@ -5001,7 +5078,7 @@ components:
           format: uuid
         member_id:
           type: string
-          description: L'identifiant de l'employé à qui l'objet est associé.
+          description: L'identifiant du membre auquel l'objet est associé.
           format: uuid
         creator_id:
           type: string
@@ -5023,10 +5100,10 @@ components:
             'supervisor', 'manager' ou 'admin'.
         member_viewable:
           type: boolean
-          description: Vrai si l'objet est accessible à l'employé.
+          description: Vrai si l'objet est accessible au membre.
         deleted_at:
           type: string
-          description: Date et heure de la suppression de l'objet.
+          description: Date et heure de suppression de l'objet.
           format: date-time
         created_at:
           type: string
@@ -5034,23 +5111,23 @@ components:
           format: date-time
         updated_at:
           type: string
-          description: Date et heure de la dernière modification de l'objet.
+          description: La date et l'heure de dernière modification de l'objet.
           format: date-time
         body:
           type: string
           description: Le contenu d'un fichier texte interne.
         note:
           type: string
-          description: La note d'un fichier.
+          description: La note du fichier.
         comments_count:
           type: integer
-          description: Le nombre de commentaires sur un fichier.
+          description: Le nombre de commentaires associés au fichier.
           format: int32
         document:
           "$ref": "#/components/schemas/Document"
         body_documents:
           type: array
-          description: Des documents associés au contenu d'un fichier texte interne.
+          description: Les documents associés au contenu d'un fichier texte externe.
           items:
             "$ref": "#/components/schemas/Document"
     HRField:
@@ -5059,7 +5136,7 @@ components:
       properties:
         id:
           type: string
-          description: Identifiant unique pour l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         name:
           type: string
@@ -5185,7 +5262,7 @@ components:
             format: int32
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
     LeaveRequestUpdate:
       type: object
@@ -5423,7 +5500,7 @@ components:
           format: float
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         _destroy:
           type: boolean
@@ -5462,7 +5539,7 @@ components:
           format: uuid
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         _destroy:
           type: boolean
@@ -5483,7 +5560,11 @@ components:
         role:
           type: string
           description: Le rôle du membre dans la succursale. Il peut être employé,
-            superviseur ou gestionnaire.
+            superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
+        role_definition_id:
+          type: string
+          description: L'identifiant unique de la définition de rôle.
+          format: uuid
         rate_single_base:
           type: number
           description: Le taux horaire régulier du membre pour toutes ses positions
@@ -5527,7 +5608,11 @@ components:
         role:
           type: string
           description: Le rôle du membre dans la succursale. Il peut être employé,
-            superviseur ou gestionnaire.
+            superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
+        role_definition_id:
+          type: string
+          description: L'identifiant unique de la définition de rôle.
+          format: uuid
         rate_single_base:
           type: number
           description: Le taux horaire régulier du membre pour toutes ses positions
@@ -5549,7 +5634,7 @@ components:
             (simple), ou chaque position assignée a son propre taux horaire (position).
         id:
           type: string
-          description: Identificateur unique de l'objet.
+          description: Identifiant unique de l'objet.
           format: uuid
         _destroy:
           type: boolean
@@ -5587,6 +5672,9 @@ components:
         last_name:
           type: string
           description: Le nom de famille du profil.
+        nickname:
+          type: string
+          description: Le prénom usuel du profil.
         birthdate:
           type: string
           description: La date de naissance du profil.
@@ -5681,7 +5769,7 @@ components:
           format: uuid
         main_site_id:
           type: string
-          description: L'identifiant unique du succursale principale du membre.
+          description: L'identifiant unique de la succursale principale du membre.
           format: uuid
         admin:
           type: boolean
@@ -5755,6 +5843,9 @@ components:
         last_name:
           type: string
           description: Le nom de famille du profil.
+        nickname:
+          type: string
+          description: Le prénom usuel du profil.
         birthdate:
           type: string
           description: La date de naissance du profil.
@@ -5846,7 +5937,7 @@ components:
           format: uuid
         main_site_id:
           type: string
-          description: L'identifiant unique du succursale principale du membre.
+          description: L'identifiant unique de la succursale principale du membre.
           format: uuid
         admin:
           type: boolean
@@ -6110,7 +6201,7 @@ components:
       properties:
         resource_id:
           type: string
-          description: Identifiant unique des ressources.
+          description: Identifiant unique de la ressource.
           format: uuid
     ResourceShiftUpdateAttributes:
       required:
@@ -6121,7 +6212,7 @@ components:
       properties:
         resource_id:
           type: string
-          description: Identifiant unique des ressources.
+          description: Identifiant unique de la ressource.
           format: uuid
         id:
           type: string
@@ -6139,7 +6230,7 @@ components:
       properties:
         'no':
           type: string
-          description: L'identifiant unique raccourcit de la ressource.
+          description: L'identifiant unique raccourci de la ressource.
         name:
           type: string
           description: Nom de la ressource.
@@ -6189,7 +6280,7 @@ components:
       properties:
         'no':
           type: string
-          description: L'identifiant unique raccourcit de la ressource.
+          description: L'identifiant unique raccourci de la ressource.
         name:
           type: string
           description: Nom de la ressource.
@@ -6253,7 +6344,7 @@ components:
           format: float
         site_id:
           type: string
-          description: Identificateur unique de la succursale d'une prévision du planificateur
+          description: Identifiant unique de la succursale d'une prévision du planificateur
             d'horaires.
           format: uuid
         date:
@@ -6291,7 +6382,7 @@ components:
           format: float
         site_id:
           type: string
-          description: Identificateur unique de la succursale d'une prévision du planificateur
+          description: Identifiant unique de la succursale d'une prévision du planificateur
             d'horaires.
           format: uuid
         date:
@@ -6648,7 +6739,7 @@ components:
           format: int32
         time_off_leave_type_id:
           type: string
-          description: L'ID du type de congé.
+          description: L'identifiant unique du type de congé.
           format: uuid
         time_off_paid:
           type: boolean
@@ -6752,7 +6843,7 @@ components:
           format: int32
         time_off_leave_type_id:
           type: string
-          description: L'ID du type de congé.
+          description: L'identifiant unique du type de congé.
           format: uuid
         time_off_paid:
           type: boolean
@@ -6892,7 +6983,7 @@ components:
           description: La note du fichier.
         member_id:
           type: string
-          description: L'identifiant de l'employé à qui le fichier est associé.
+          description: L'identifiant du membre auquel le fichier est associé.
           format: uuid
         file:
           type: string
@@ -6944,7 +7035,7 @@ components:
             Peut être 'member', 'supervisor', 'manager' ou 'admin'.
         member_id:
           type: string
-          description: L'identifiant de l'employé à qui le dossier est associé.
+          description: L'identifiant du membre auquel le dossier est associé.
           format: uuid
     DriveFolderUpdate:
       type: object
@@ -7417,6 +7508,28 @@ components:
                 type: array
                 items:
                   "$ref": "#/components/schemas/Resource"
+    RoleDefinitionSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/RoleDefinition"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    RoleDefinitionSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/RoleDefinition"
     SchedulerProjectionSuccessMany:
       description: Success
       content:
@@ -7680,7 +7793,7 @@ components:
     PathId:
       name: id
       in: path
-      description: Identifiant unique pour cet objet.
+      description: Identifiant unique de l'objet.
       required: true
       schema:
         type: string

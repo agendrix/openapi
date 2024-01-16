@@ -3,7 +3,7 @@
   "info": {
     "title": "Agendrix API",
     "description": "\nCette page contient une description détaillée de l'API publique d'Agendrix. Ci-dessous, vous trouverez une section « Pour commencer » résumant les principales étapes  pour effectuer votre premier appel à l'API, ainsi qu'une section OAUth 2.0 décrivant le processus d'authentification nécessaire afin de récupérer un jeton d'accès obligatoire. Vous pouvez également accéder à l'information concernant les en-têtes, les réponses et les erreurs de l'API. Chaque point de terminaison est ensuite décrit, regroupé par leur modèle de base de données. Autorisations, paramètres, réponses, tout ce dont vous avez besoin est là. Profitez-en!\n\n# Pour commencer\nCe guide décrit comment effectuer votre premier appel à l'API publique d'Agendrix.\n\n## Créer une application\nCréer une application générera vos clés de développement pour un environnement de test où vous pouvez effectuer tous les tests que vous souhaitez, ainsi qu'un environnement de production. Il est possible d'utiliser l'application pour vous-même ou pour vos clients.\n  - Depuis la section [Applications](./applications), cliquez sur le bouton « Nouvelle application » et choisissez un nom pour votre nouvelle application.\n  - Vous avez maintenant été redirigé vers les informations générales de votre application. Vous pouvez y ajouter une description, une icône et modifier le nom de votre application. Vous pouvez également voir l'état d'approbation de votre application. Celle-ci doit être approuvée avant de pouvoir être utilisée en production.\n  - Vous pouvez récupérer vos identifiants de développement et de production dans leurs sections respectives. Vous pouvez régénérer vos secrets, gérer vos adresses URIs de redirection et vos portées.\n\nVotre Client ID et votre Client Secret sont obligatoires afin de récupérer vos jetons OAuth 2.0. Les adresses URIs de redirection le sont également - au moins un.\n\n## Développement\nL'environnement de test est utilisé pour effectuer des essais. Votre application n'a pas besoin d'être approuvée pour utiliser cet environnement. Lorsque vous utilisez la sandbox, n'oubliez pas de changer vos appels en conséquence - sandbox.agendrix.net/oauth au lieu de app.agendrix.com/oauth et api.sandbox.agendrix.net au lieu de api.agendrix.com.\n\nPour vous connecter à l'environnement de test, suivez ces étapes:\n  - Depuis la section [Applications](./applications), cliquez sur votre application;\n  - Accédez à l'onglet « Développement »;\n  - Cliquez sur le lien « Se connecter à l'environnement de test ».\n\n## Obtenir un jeton d'accès OAuth 2.0\nVous avez besoin d'un jeton d'accès pour accéder à l'API Agendrix. Le moyen le plus simple de le faire est via [l'aire de jeux](./playground) OAuth 2.0. Il y a également une explication détaillée du processus dans la section OAuth 2.0 ci-dessous.\n\n## Faire un appel à l'API\nMaintenant que vous avez un jeton d'accès, vous pouvez l'utiliser pour faire toute sorte d'appels en ajoutant l'en-tête « Autorisation à la requête », à condition que vos identifiants incluent les portées requises pour un point de terminaison précis.\n\n# Ressources\nCette section regroupe les différentes ressources téléchargeables de l'API d'Agendrix.\n\n## OAS 3\nUn document Open API Specification est une description détaillée et précise d'une API, depuis ses schémas de sécurité jusqu'à ses points de terminaison. Il a de nombreuses utilisations - notre propre [document](https://github.com/agendrix/openapi/blob/main/fr/open_api.yml) génère une grande partie de cette documentation, ainsi que la collection Postman. L'écosystème Open API est riche, mature et est largement utilisé par la communauté. Pour en savoir plus sur l'OAS, cliquez <a href='https://github.com/OAI/OpenAPI-Specification' target='_blank'>ici</a>.\n\n## Exemples\nNous avons également mis en place des <a href='https://github.com/agendrix/public-api-integration-examples' target='_blank'>exemples</a> d'intégration de base avec notre API en Javascript et Ruby.\nCes exemples comprennent le processus complet OAuth ainsi que la gestion des jetons et bien sûr, la réalisation des requêtes à l'API.\n\n# OAuth 2.0\nAgendrix utilise le protocole OAuth 2.0 pour l'autorisation. Dès qu'une application est créée, elle peut être utilisée pour demander des jetons d'accès et de rafraîchissement. Le jeton d'accès est valide pour une période de 2 heures et doit être rafraîchi par la suite avec le jeton de rafraîchissement. Le jeton d'accès peut ensuite être utilisé pour effectuer des appels à l'API. Pour une démonstration intéractive du processus, veuillez utiliser l'aire de jeux OAuth 2.0.\n\n## Préparer la requête d'autorisation\nLa première étape consiste à préparer la requête d'autorisation en utilisant le Client ID et l'un des URIs de redirection définis pour l'application - ou le client. Les portées sont « read » par défaut lorsqu'elles ne sont pas spécifiées.\n```\nhttps://app.agendrix.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=read+write\n```\n\n## Rediriger l'utilisateur\nUne fois que l'utilisateur est redirigé à la requête d'autorisation, il doit donner son approbation pour partager ses données avec l'application et choisir l'organisation pour laquelle il souhaite le faire. La requête d'autorisation est ensuite traitée par le serveur OAuth 2.0.\n\n## Gérer la réponse du serveur OAuth 2.0\nSi la requête d'autorisation est valide, le serveur OAuth 2.0 envoie un code d'autorisation à l'URI de redirection spécifié dans la requête. Ce code peut être utilisé pour préparer la requête visant à récupérer les jetons d'accès et de rafraîchissement.\n\n## Échanger le code d'autorisation pour des jetons\nLa dernière étape consiste simplement à échanger le code d'autorisation reçu contre les jetons. Le Client ID, le Client Secret, l'URI de redirection et le type de contribution - qui est toujours *authorization_code* - doivent être inclus dans la requête. Le serveur OAuth 2.0 envoie ensuite le jeton d'accès et de rafraîchissement à l'URI de redirection défini.\n```\ncurl --request POST 'https://app.agendrix.com/oauth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n  \"client_id\": \"{CLIENT_ID}\",\n  \"client_secret\": \"{CLIENT_SECRET}\",\n  \"redirect_uri\": \"{REDIRECT_URI}\",\n  \"grant_type\": \"authorization_code\",\n  \"code\": \"{AUTORIZATION_CODE}\"\n}'\n```\n\n## Échanger le jeton de rafraîchissement pour de nouveaux jetons\nLe jeton d'accès récupéré expirera éventuellement - sa durée de vie est de 2 heures. Plutôt que de faire le processus d'autorisation à nouveau, le jeton de rafraîchissement peut être utilisé pour demander de nouveaux jetons d'accès et de rafraîchissement. Le type de contribution devient *refresh_token* et celui-ci doit être inclus dans la requête avec le Client ID, le Client Secret ainsi que l'URI de redirection. Un sous-ensemble de la portée du jeton d'accès d'origine peut également être inclus dans la requête.\n```\ncurl --request POST 'https://app.agendrix.com/oauth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n  \"client_id\": \"{CLIENT_ID}\",\n  \"client_secret\": \"{CLIENT_SECRET}\",\n  \"redirect_uri\": \"{REDIRECT_URI}\",\n  \"grant_type\": \"refresh_token\",\n  \"refresh_token\": \"{REFRESH_TOKEN}\",\n}'\n```\n\nLes jetons de rafraîchissement deviennent invalides une fois utilisés, mais n'expirent pas. Vous pouvez répéter le processus de rafraîchissement aussi longtemps que nécessaire.\n\n# Rôle du propriétaire du jeton\nLes données renvoyées par l'API seront limitées au rôle du propriétaire du jeton. Cela signifie que si un jeton d'accès a été généré à l'aide d'une autorisation d'accès d'un gestionnaire, les données renvoyées par l'API seront limitées aux positions et aux sites gérés par l'utilisateur. Les actions seront également limitées par le rôle du propriétaire. Si vous souhaitez récupérer toutes les données relatives à une organisation, le jeton utilisé doit être généré par un administrateur de l'organisation.\n\n# En-têtes\nDes en-têtes spécifiques doivent être définis pour interagir avec l'API. Certains en-têtes contiennent également des informations pertinentes.\n\n## Requêtes\nToutes requêtes effectuées vers l'API publique d'Agendrix requièrent deux en-têtes spécifiques. Le premier est l'en-tête Content-Type. Il doit toujours être réglé à *application/json*, car c'est le format pris en charge par l'API. Le deuxième est l'en-tête Authorization, dans lequel vous devez ajouter votre jeton d'accès en tant que *Bearer*. Vous pouvez voir un exemple de requête curl classique dans la section [Effectuer un appel API](./documentation#section/Effectuer-un-appel-API).\n\n## Responses\nToutes les réponses de l'API sont en JSON; alors, elles ont toutes l'en-tête Content-Type réglé sur *application/json*. Dans le cas spécifique où le nombre de requêtes à l'API dépasse le taux [limite](./documentation#section/Taux-limite), les en-têtes RateLimit-Limit, RateLimit-Remaining et RateLimit-Reset sont ajoutés aux en-têtes de la réponse. Ils représentent respectivement le taux limite de requêtes autorisées, le nombre restant de requêtes autorisées - qui est toujours égal à 0 dans ce cas - et le nombre de secondes avant la réinitialisation du taux limite.\n\n# Taux limite\nLe taux limite actuel de l'API est réglée à 360 requêtes par minute. Tant que cette limite est respectée et que la requête est valide ainsi que son jeton d'accès, elle est traitée par l'API.\n\n# Actions de masse\n## Limite du nombre d'éléments\nLe nombre d'éléments limite est actuellement 1000 par requête. Tout comme le taux limite, tant que le nombre d'éléments limite est respecté et que la requête ainsi que son jeton d'accès sont valides, elle est traitée par l'API.\n\n# Effectuer un appel API\nUne fois que vous avez le jeton d'accès, passer un appel à l'API publique d'Agendrix est plutôt simple. Il s'agit d'une requête HTTP classique. Tout ce que vous avez à faire est d'ajouter les en-têtes requis ainsi que les paramètres de corps et de requête - en fonction du type de requête -, comme vous pouvez le voir dans l'exemple ci-dessous.\n```\ncurl --request POST 'https://api.agendrix.com/v1/positions' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--data-raw '{\n    \"name\": \"A position name\"\n}'\n```\n\n# Réponses\nToutes les réponses sont en JSON. La structure des réponses varie légèrement en fonction du contexte.\n\n## Réponses paginées\nLes réponses paginées contiennent toujours les champs « données » et « pagination ». Le champ « données » représente les données requises renvoyées par l'API - pour les réponses paginées, il s'agit d'une liste d'objets. Le champ « pagination » représente les métadonnées de pagination de la réponse. Le champ « pagination » contient la valeur de tri, les valeurs de recherche, la taille de la page, la limite de taille de page, les pages actuelle, suivante, précédente, dernière, première et totale, le nombre total d'objets et finalement, si la page demandée est hors de portée.\n\n## Autres réponses\nToutes les autres réponses contiennent toujours les champs « données » et « erreurs ». Le champ « données » représente, encore une fois, les données renvoyées par l'API - mais directement en tant qu'objet cette fois-ci - et sera nul s'il contient des erreurs. Le champ « erreurs » est une liste d'objets décrivant l'erreur avec les champs source, message court et/ou message long. Le champ « erreurs » est nul si la requête est traitée sans erreurs.\n\n# Erreurs\n## Erreurs non autorisées - Code 401\nDifférents types d'erreurs non autorisées peuvent survenir lors de l'utilisation de l'API :\n  - Jeton invalide\n  - Jeton expiré\n  - Jeton révoqué\n  - Jeton inconnu\n  - Application non approuvée\n  - Opération non autorisée (Votre utilisateur Agendrix ne détient pas les droits pour effectuer l'action)\n\n## Erreur interdite - Code 403\nLorsque le jeton ne possède pas la portée requise pour effectuer l'action.\n\n## Erreur de taux limite - Code 429\nLorsque la limite de fréquence de 180 requêtes par minute n'est pas respectée, une erreur de limite de fréquence est retournée. L'en-tête *RateLimit-Reset* spécifie combien de temps il reste avant qu'une autre demande puisse être effectuée.\n\n## Erreur interne du serveur - Code 500\nWLorsqu'une erreur inattendue survient sur le serveur, l'API renvoie une erreur interne du serveur.\n\n## Erreur non trouvée - Code 404\nCela peut se produire pour chaque point de terminaison qui doit récupérer un enregistrement existant - requêtes GET et PUT -, à l'exception d'une mise à jour en masse\n\n## Erreur de paramètre de requête - Code 400\nDifférents types d'erreurs de paramètres de requête peuvent être déclenchés par l'API :\n  - Si un paramètre requis est manquant\n  - Si un paramètre a un format incorrect (i.e. dates)\n  - Si un paramètre a une valeur incorrecte (i.e. trier ou rechercher des valeurs)\n\n  Cela ne peut se produire que pour les points de terminaison paginés - requêtes GET.\n\n## Erreur de paramètres d'entrée - Code 400\nSi un *payload* ne respecte pas le schéma spécifié dans la documentation, l'API retournera une erreur de paramètres d'entrée. Cela ne peut se produire que pour des requêtes POST et PUT.\n\n## Erreur de paramètre de route - Code 400\nCeci peut uniquement se produire pour les points de terminaison qui nécessitent des paramètres inhabituels dans leur route - i.e. la liste de disponibilité d'un membre affichée par date : `/members/{id}/availability_lists/{date}`.\n\n# Aide\n## Nous contacter\nN'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.",
-    "version": "1.1.1"
+    "version": "1.2.0"
   },
   "servers": [
     {
@@ -82,6 +82,10 @@
     {
       "name": "Resources",
       "description": "Opération sur les ressources"
+    },
+    {
+      "name": "RoleDefinitions",
+      "description": "Opérations sur les définitions de rôles"
     },
     {
       "name": "SchedulerProjections",
@@ -503,7 +507,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclue les positions archivées dans le résultat paginé.",
+            "description": "Inclure les positions archivées dans le résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -861,7 +865,7 @@
     "/documents/{id}": {
       "get": {
         "summary": "Obtenir un document.",
-        "description": "Retourne le document lié à l'identifiant.",
+        "description": "Retourne le document relié à l'identifiant.",
         "tags": [
           "Documents"
         ],
@@ -1336,7 +1340,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclue les membres archivés dans le résultat paginé.",
+            "description": "Inclure les membres archivés dans le résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -1655,7 +1659,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclue les positions archivées dans le résultat paginé.",
+            "description": "Inclure les positions archivées dans le résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -1906,7 +1910,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclue les positions archivées dans le résultat paginé.",
+            "description": "Inclure les positions archivées dans le résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -2237,7 +2241,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclus les ressources archivé dans le résultat paginé.",
+            "description": "Inclure les ressources archivées dans le résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -2407,6 +2411,58 @@
           },
           "400": {
             "$ref": "#/components/responses/InputParamsFailure"
+          }
+        }
+      }
+    },
+    "/role_definitions": {
+      "get": {
+        "summary": "Obtenir les définition de rôles paginées.",
+        "description": "Retourne les définition de rôles paginées.",
+        "tags": [
+          "RoleDefinitions"
+        ],
+        "operationId": "index_role_definition",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/QueryPage"
+          },
+          {
+            "$ref": "#/components/parameters/QueryLimit"
+          },
+          {
+            "$ref": "#/components/parameters/QueryPageSize"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/RoleDefinitionSuccessMany"
+          },
+          "400": {
+            "$ref": "#/components/responses/QueryParamFailure"
+          }
+        }
+      }
+    },
+    "/role_definitions/{id}": {
+      "get": {
+        "summary": "Obtenir une définition de rôle.",
+        "description": "Retourne une définition de rôles selon l'identifiant unique.",
+        "tags": [
+          "RoleDefinitions"
+        ],
+        "operationId": "show_role_definition",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/PathId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/RoleDefinitionSuccessOne"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundFailure"
           }
         }
       }
@@ -2702,7 +2758,7 @@
           {
             "name": "search[status]",
             "in": "query",
-            "description": "Le statut utilisé afin de filtrer la requête. Doit être 'draft' ou 'published'.",
+            "description": "La status utilisé afin de filtrer la requête. Doit être'draft' ou 'published'.",
             "schema": {
               "type": "string"
             }
@@ -2710,7 +2766,7 @@
           {
             "name": "search[from]",
             "in": "query",
-            "description": "La date et l'heure de début utilisées afin de filtrer la requête. Requis si updated_since et updated_until ne sont pas fournis.",
+            "description": "La date de début utilisé afin de filtrer la requête. Demmander si  updated_since et updated_until ne sont pas fournit.",
             "schema": {
               "type": "string"
             }
@@ -2726,7 +2782,7 @@
           {
             "name": "search[updated_since]",
             "in": "query",
-            "description": "La valeur 'updated_since', la date et heure utilisées afin de filtrer la requête.",
+            "description": "La valeur 'updated_since', la date et heure utilisé afin de filtrer la requête.",
             "schema": {
               "type": "string"
             }
@@ -2734,7 +2790,7 @@
           {
             "name": "search[updated_until]",
             "in": "query",
-            "description": "La valeur 'updated_until', la date et heure utilisées afin de filtrer la requête.",
+            "description": "La valeur 'updated_until', la date et heure utilisé afin de filtrer la requête.",
             "schema": {
               "type": "string"
             }
@@ -2742,7 +2798,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclure les quarts de travail archivé dans le résultat paginé. Utilisable seulement si les filtres 'updated_since' et 'updated_until' sont présents.",
+            "description": "Inclure les quarts de travail archivés dans le résultat paginé. Utilisable seulement si les filtres 'updated_since' et 'updated_until' sont présents.",
             "schema": {
               "type": "string"
             }
@@ -3072,7 +3128,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclus les ressources archivé dans le résultat paginé.",
+            "description": "Inclure les ressources archivées dans le résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -3250,7 +3306,7 @@
       },
       "delete": {
         "summary": "Supprimer une succursale.",
-        "description": "Supprime une succursale avec l'identifiant unique correspondant.",
+        "description": "Supprime la succursale associée à cet identifiant unique.",
         "tags": [
           "Sites"
         ],
@@ -3471,7 +3527,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Filtre qui inclus les entrées archivées.",
+            "description": "Inclure les entrées de temps archivées dans le résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -3817,8 +3873,8 @@
         }
       },
       "delete": {
-        "summary": "Supprimer un fichier",
-        "description": "Supprime le fichier lié à l'identifiant.",
+        "summary": "Supprimer un fichier.",
+        "description": "Supprimer le dossier associé à l'identifiant.",
         "tags": [
           "DriveFiles"
         ],
@@ -3888,8 +3944,8 @@
         }
       },
       "delete": {
-        "summary": "Supprimer un dossier",
-        "description": "Supprime le dossier lié à l'identifiant.",
+        "summary": "Supprimer un dossier.",
+        "description": "Supprimer le dossier lié à l'identifiant.",
         "tags": [
           "DriveFolders"
         ],
@@ -3930,7 +3986,7 @@
           {
             "name": "search[member_id]",
             "in": "query",
-            "description": "L'identifiant d'un employé utilisé comme filtre sur la requête.",
+            "description": "L'identifiant d'un membre utilisé comme filtre sur la requête.",
             "schema": {
               "type": "string"
             }
@@ -3938,7 +3994,7 @@
           {
             "name": "search[with_deleted]",
             "in": "query",
-            "description": "Inclue les fichiers/dossiers archivés dans le résultat paginé.",
+            "description": "Inclure les fichiers et dossiers archivés dans le résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -3946,7 +4002,7 @@
           {
             "name": "search[only_deleted]",
             "in": "query",
-            "description": "Exclue les fichiers/dossiers actifs du résultat paginé.",
+            "description": "Exclure les fichiers et dossiers non archivés du résultat paginé.",
             "schema": {
               "type": "string"
             }
@@ -3954,7 +4010,7 @@
           {
             "name": "search[folder_id]",
             "in": "query",
-            "description": "L'identifiant d'un dossier utilisé comme filtre sur la requête.",
+            "description": "L'identifiant du dossier utilisé comme filtre sur la requête.",
             "schema": {
               "type": "string"
             }
@@ -3962,7 +4018,7 @@
           {
             "name": "search[type]",
             "in": "query",
-            "description": "Le type d'objet utilisé comme filtre sur la requête. Peut être 'file' ou 'folder'",
+            "description": "Le type d'objet utilisé comme filtre sur la requête. Peut être 'file' ou 'folder'.",
             "schema": {
               "type": "string"
             }
@@ -4350,12 +4406,12 @@
           },
           "created_by": {
             "type": "string",
-            "description": "The unique identifier of the member who created the thread.",
+            "description": "L'identifiant unique du membre ayant créé cette publication.",
             "format": "uuid"
           },
           "updated_by": {
             "type": "string",
-            "description": "The unique identifier of the last member who updated the thread.",
+            "description": "L'identifiant unique du dernier membre ayant modifié cette publication.",
             "format": "uuid"
           },
           "title": {
@@ -4470,7 +4526,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "length": {
@@ -4515,7 +4571,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identifiant unique pour l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "member_id": {
@@ -4622,11 +4678,11 @@
       },
       "Document": {
         "type": "object",
-        "description": "Une description détaillée d'un document, représentant un fichier externe.",
+        "description": "Une description détaillée d'un document, c'est-à-dire un fichier externe téléversé sur Agendrix.",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identifiant unique du document.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "file_content_type": {
@@ -4635,12 +4691,12 @@
           },
           "file_size": {
             "type": "integer",
-            "description": "La taille du fichier relié au document.",
+            "description": "La taille de fichier relié au document.",
             "format": "int32"
           },
           "file_name": {
             "type": "string",
-            "description": "Le nom du fichier."
+            "description": "Le nom de fichier relié document."
           },
           "file_url": {
             "type": "string",
@@ -4648,7 +4704,7 @@
           },
           "created_at": {
             "type": "string",
-            "description": "La date et l'heure de création.",
+            "description": "Date et heure de création du document.",
             "format": "date-time"
           }
         }
@@ -4697,7 +4753,7 @@
           },
           "no": {
             "type": "string",
-            "description": "L'identifiant unique raccourcit de la ressource."
+            "description": "L'identifiant unique raccourci de la ressource."
           },
           "description": {
             "type": "string",
@@ -4762,7 +4818,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "paid_weekdays": {
@@ -4781,7 +4837,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identifiant unique pour l'objet de demande de congé.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "member_id": {
@@ -4944,7 +5000,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "position_id": {
@@ -4985,7 +5041,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "site_id": {
@@ -4995,7 +5051,12 @@
           },
           "role": {
             "type": "string",
-            "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
+            "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire. Aussi appelé niveau hiérarchique."
+          },
+          "role_definition_id": {
+            "type": "string",
+            "description": "L'identifiant unique de la définition de rôle.",
+            "format": "uuid"
           },
           "supervisor_position_ids": {
             "type": "array",
@@ -5040,7 +5101,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "member_id": {
@@ -5174,7 +5235,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "member_id": {
@@ -5238,7 +5299,15 @@
           },
           "full_name": {
             "type": "string",
-            "description": "Le Nom  complet du profil."
+            "description": "Le Nom complet du profil."
+          },
+          "nickname": {
+            "type": "string",
+            "description": "Le prénom usuel du profil."
+          },
+          "display_name": {
+            "type": "string",
+            "description": "Le nom d'affichage du profil."
           },
           "email": {
             "type": "string",
@@ -5303,7 +5372,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "user_id": {
@@ -5322,7 +5391,7 @@
           },
           "highest_role": {
             "type": "string",
-            "description": "Le plus haut rôle de l'utilisateur. Peut être 'member', 'supervisor' ou 'manager'."
+            "description": "Le plus haut niveau hiérarchique de l'utilisateur. Peut être 'member', 'supervisor' ou 'manager'."
           },
           "visible_rates": {
             "type": "boolean",
@@ -5350,7 +5419,7 @@
           },
           "main_position_id": {
             "type": "string",
-            "description": "L'idendifiant unique de la position principale du membre.",
+            "description": "L'identifiant unique de la position principale du membre.",
             "format": "uuid"
           },
           "main_site_id": {
@@ -5822,6 +5891,51 @@
           }
         }
       },
+      "RoleDefinition": {
+        "type": "object",
+        "description": "Description détaillée d'une définition de rôle.",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Identifiant unique de l'objet.",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "description": "Le nom de la définition de rôle."
+          },
+          "default": {
+            "type": "boolean",
+            "description": "Si c'est la définition par défaut du rôle."
+          },
+          "role": {
+            "type": "string",
+            "description": "Le rôle défini."
+          },
+          "disabled_features": {
+            "type": "array",
+            "description": "Les fonctionnalitées désactivée pour ce rôle.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "created_at": {
+            "type": "string",
+            "description": "Moment de création de la définition de rôle.",
+            "format": "date-time"
+          },
+          "updated_at": {
+            "type": "string",
+            "description": "Moment de la dernière mise à jour de la définition de rôle.",
+            "format": "date-time"
+          },
+          "deleted_at": {
+            "type": "string",
+            "description": "Moment de l'archivation de la définition de rôle.",
+            "format": "date-time"
+          }
+        }
+      },
       "SchedulerProjection": {
         "type": "object",
         "description": "Description d'une prévision du planificateur d'horaires.",
@@ -5879,7 +5993,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "email": {
@@ -6225,12 +6339,12 @@
           },
           "original_shift_id": {
             "type": "string",
-            "description": "L'original shift id du quart.",
+            "description": "L'ID du quart de travail original.",
             "format": "uuid"
           },
           "new_version_id": {
             "type": "string",
-            "description": "Le new version shift id du quart.",
+            "description": "L'ID de la nouvelle version du quart de travail.",
             "format": "uuid"
           },
           "rate_base": {
@@ -6279,7 +6393,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "name": {
@@ -6320,7 +6434,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "name": {
@@ -6355,7 +6469,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "unpaid_break": {
@@ -6444,7 +6558,7 @@
           },
           "time_off_leave_type_id": {
             "type": "string",
-            "description": "L'ID du type de congé.",
+            "description": "L'identifiant unique du type de congé.",
             "format": "uuid"
           },
           "time_off_paid": {
@@ -6584,7 +6698,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "member_id": {
@@ -6895,7 +7009,7 @@
           },
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "_destroy": {
@@ -6957,7 +7071,7 @@
       },
       "DriveItem": {
         "type": "object",
-        "description": "Une description détaillée d'un fichier ou dossier.",
+        "description": "Une description détaillée d'un fichier ou d'un dossier.",
         "properties": {
           "id": {
             "type": "string",
@@ -6966,7 +7080,7 @@
           },
           "member_id": {
             "type": "string",
-            "description": "L'identifiant de l'employé à qui l'objet est associé.",
+            "description": "L'identifiant du membre auquel l'objet est associé.",
             "format": "uuid"
           },
           "creator_id": {
@@ -6993,11 +7107,11 @@
           },
           "member_viewable": {
             "type": "boolean",
-            "description": "Vrai si l'objet est accessible à l'employé."
+            "description": "Vrai si l'objet est accessible au membre."
           },
           "deleted_at": {
             "type": "string",
-            "description": "Date et heure de la suppression de l'objet.",
+            "description": "Date et heure de suppression de l'objet.",
             "format": "date-time"
           },
           "created_at": {
@@ -7007,7 +7121,7 @@
           },
           "updated_at": {
             "type": "string",
-            "description": "Date et heure de la dernière modification de l'objet.",
+            "description": "La date et l'heure de dernière modification de l'objet.",
             "format": "date-time"
           },
           "body": {
@@ -7016,11 +7130,11 @@
           },
           "note": {
             "type": "string",
-            "description": "La note d'un fichier."
+            "description": "La note du fichier."
           },
           "comments_count": {
             "type": "integer",
-            "description": "Le nombre de commentaires sur un fichier.",
+            "description": "Le nombre de commentaires associés au fichier.",
             "format": "int32"
           },
           "document": {
@@ -7028,7 +7142,7 @@
           },
           "body_documents": {
             "type": "array",
-            "description": "Des documents associés au contenu d'un fichier texte interne.",
+            "description": "Les documents associés au contenu d'un fichier texte externe.",
             "items": {
               "$ref": "#/components/schemas/Document"
             }
@@ -7041,7 +7155,7 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "Identifiant unique pour l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "name": {
@@ -7197,7 +7311,7 @@
           },
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           }
         }
@@ -7476,7 +7590,7 @@
           },
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "_destroy": {
@@ -7524,7 +7638,7 @@
           },
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "_destroy": {
@@ -7548,7 +7662,12 @@
           },
           "role": {
             "type": "string",
-            "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
+            "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire. Aussi appelé niveau hiérarchique."
+          },
+          "role_definition_id": {
+            "type": "string",
+            "description": "L'identifiant unique de la définition de rôle.",
+            "format": "uuid"
           },
           "rate_single_base": {
             "type": "number",
@@ -7599,7 +7718,12 @@
           },
           "role": {
             "type": "string",
-            "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire."
+            "description": "Le rôle du membre dans la succursale. Il peut être employé, superviseur ou gestionnaire. Aussi appelé niveau hiérarchique."
+          },
+          "role_definition_id": {
+            "type": "string",
+            "description": "L'identifiant unique de la définition de rôle.",
+            "format": "uuid"
           },
           "rate_single_base": {
             "type": "number",
@@ -7622,7 +7746,7 @@
           },
           "id": {
             "type": "string",
-            "description": "Identificateur unique de l'objet.",
+            "description": "Identifiant unique de l'objet.",
             "format": "uuid"
           },
           "_destroy": {
@@ -7680,6 +7804,10 @@
           "last_name": {
             "type": "string",
             "description": "Le nom de famille du profil."
+          },
+          "nickname": {
+            "type": "string",
+            "description": "Le prénom usuel du profil."
           },
           "birthdate": {
             "type": "string",
@@ -7792,7 +7920,7 @@
           },
           "main_site_id": {
             "type": "string",
-            "description": "L'identifiant unique du succursale principale du membre.",
+            "description": "L'identifiant unique de la succursale principale du membre.",
             "format": "uuid"
           },
           "admin": {
@@ -7881,6 +8009,10 @@
           "last_name": {
             "type": "string",
             "description": "Le nom de famille du profil."
+          },
+          "nickname": {
+            "type": "string",
+            "description": "Le prénom usuel du profil."
           },
           "birthdate": {
             "type": "string",
@@ -7989,7 +8121,7 @@
           },
           "main_site_id": {
             "type": "string",
-            "description": "L'identifiant unique du succursale principale du membre.",
+            "description": "L'identifiant unique de la succursale principale du membre.",
             "format": "uuid"
           },
           "admin": {
@@ -8325,7 +8457,7 @@
         "properties": {
           "resource_id": {
             "type": "string",
-            "description": "Identifiant unique des ressources.",
+            "description": "Identifiant unique de la ressource.",
             "format": "uuid"
           }
         }
@@ -8339,7 +8471,7 @@
         "properties": {
           "resource_id": {
             "type": "string",
-            "description": "Identifiant unique des ressources.",
+            "description": "Identifiant unique de la ressource.",
             "format": "uuid"
           },
           "id": {
@@ -8362,7 +8494,7 @@
         "properties": {
           "no": {
             "type": "string",
-            "description": "L'identifiant unique raccourcit de la ressource."
+            "description": "L'identifiant unique raccourci de la ressource."
           },
           "name": {
             "type": "string",
@@ -8428,7 +8560,7 @@
         "properties": {
           "no": {
             "type": "string",
-            "description": "L'identifiant unique raccourcit de la ressource."
+            "description": "L'identifiant unique raccourci de la ressource."
           },
           "name": {
             "type": "string",
@@ -8515,7 +8647,7 @@
           },
           "site_id": {
             "type": "string",
-            "description": "Identificateur unique de la succursale d'une prévision du planificateur d'horaires.",
+            "description": "Identifiant unique de la succursale d'une prévision du planificateur d'horaires.",
             "format": "uuid"
           },
           "date": {
@@ -8561,7 +8693,7 @@
           },
           "site_id": {
             "type": "string",
-            "description": "Identificateur unique de la succursale d'une prévision du planificateur d'horaires.",
+            "description": "Identifiant unique de la succursale d'une prévision du planificateur d'horaires.",
             "format": "uuid"
           },
           "date": {
@@ -9028,7 +9160,7 @@
           },
           "time_off_leave_type_id": {
             "type": "string",
-            "description": "L'ID du type de congé.",
+            "description": "L'identifiant unique du type de congé.",
             "format": "uuid"
           },
           "time_off_paid": {
@@ -9157,7 +9289,7 @@
           },
           "time_off_leave_type_id": {
             "type": "string",
-            "description": "L'ID du type de congé.",
+            "description": "L'identifiant unique du type de congé.",
             "format": "uuid"
           },
           "time_off_paid": {
@@ -9329,7 +9461,7 @@
           },
           "member_id": {
             "type": "string",
-            "description": "L'identifiant de l'employé à qui le fichier est associé.",
+            "description": "L'identifiant du membre auquel le fichier est associé.",
             "format": "uuid"
           },
           "file": {
@@ -9393,7 +9525,7 @@
           },
           "member_id": {
             "type": "string",
-            "description": "L'identifiant de l'employé à qui le dossier est associé.",
+            "description": "L'identifiant du membre auquel le dossier est associé.",
             "format": "uuid"
           }
         }
@@ -10153,6 +10285,42 @@
           }
         }
       },
+      "RoleDefinitionSuccessMany": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/RoleDefinition"
+                  }
+                },
+                "pagination": {
+                  "$ref": "#/components/schemas/CommonPagination"
+                }
+              }
+            }
+          }
+        }
+      },
+      "RoleDefinitionSuccessOne": {
+        "description": "Success",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "data": {
+                  "$ref": "#/components/schemas/RoleDefinition"
+                }
+              }
+            }
+          }
+        }
+      },
       "SchedulerProjectionSuccessMany": {
         "description": "Success",
         "content": {
@@ -10583,7 +10751,7 @@
       "PathId": {
         "name": "id",
         "in": "path",
-        "description": "Identifiant unique pour cet objet.",
+        "description": "Identifiant unique de l'objet.",
         "required": true,
         "schema": {
           "type": "string"
