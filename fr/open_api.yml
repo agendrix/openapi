@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.2.0
+  version: 1.2.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1650,8 +1650,8 @@ paths:
           "$ref": "#/components/responses/InputParamsFailure"
   "/role_definitions":
     get:
-      summary: Obtenir les définition de rôles paginées.
-      description: Retourne les définition de rôles paginées.
+      summary: Obtenir les définitions de rôles paginées.
+      description: Retourne les définitions de rôles paginées.
       tags:
       - RoleDefinitions
       operationId: index_role_definition
@@ -1667,7 +1667,7 @@ paths:
   "/role_definitions/{id}":
     get:
       summary: Obtenir une définition de rôle.
-      description: Retourne une définition de rôles selon l'identifiant unique.
+      description: Retourne une définition de rôle selon l'identifiant unique.
       tags:
       - RoleDefinitions
       operationId: show_role_definition
@@ -3457,8 +3457,8 @@ components:
           format: uuid
         role:
           type: string
-          description: Le rôle du membre dans la succursale. Il peut être employé,
-            superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
+          description: Le rôle de l'utilisateur au sein de la succursale. Il peut
+            être employé, superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
         role_definition_id:
           type: string
           description: L'identifiant unique de la définition de rôle.
@@ -3660,7 +3660,7 @@ components:
           description: Le nom de famille du profil.
         full_name:
           type: string
-          description: Le Nom complet du profil.
+          description: Le Nom  complet du profil.
         nickname:
           type: string
           description: Le prénom usuel du profil.
@@ -4156,20 +4156,20 @@ components:
           description: Le rôle défini.
         disabled_features:
           type: array
-          description: Les fonctionnalitées désactivée pour ce rôle.
+          description: Les fonctionnalités désactivées pour ce rôle.
           items:
             type: string
         created_at:
           type: string
-          description: Moment de création de la définition de rôle.
+          description: Le moment de création de la définition de rôle.
           format: date-time
         updated_at:
           type: string
-          description: Moment de la dernière mise à jour de la définition de rôle.
+          description: Le dernier moment de modification de la définition de rôle.
           format: date-time
         deleted_at:
           type: string
-          description: Moment de l'archivation de la définition de rôle.
+          description: Le moment de l'archivage de la définition de rôle.
           format: date-time
     SchedulerProjection:
       type: object
@@ -4494,11 +4494,11 @@ components:
           format: int32
         original_shift_id:
           type: string
-          description: L'ID du quart de travail original.
+          description: L'original shift id du quart.
           format: uuid
         new_version_id:
           type: string
-          description: L'ID de la nouvelle version du quart de travail.
+          description: Le new version shift id du quart.
           format: uuid
         rate_base:
           type: number
@@ -5559,8 +5559,8 @@ components:
           format: uuid
         role:
           type: string
-          description: Le rôle du membre dans la succursale. Il peut être employé,
-            superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
+          description: Le rôle de l'utilisateur au sein de la succursale. Il peut
+            être employé, superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
         role_definition_id:
           type: string
           description: L'identifiant unique de la définition de rôle.
@@ -5607,8 +5607,8 @@ components:
           format: uuid
         role:
           type: string
-          description: Le rôle du membre dans la succursale. Il peut être employé,
-            superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
+          description: Le rôle de l'utilisateur au sein de la succursale. Il peut
+            être employé, superviseur ou gestionnaire. Aussi appelé niveau hiérarchique.
         role_definition_id:
           type: string
           description: L'identifiant unique de la définition de rôle.

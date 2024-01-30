@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.2.0
+  version: 1.2.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -3433,7 +3433,7 @@ components:
           format: uuid
         role:
           type: string
-          description: The member's role in this site. Can either be member, supervisor
+          description: The member's role for this site. Can either be member, supervisor
             or manager. Also called hierarchical level.
         role_definition_id:
           type: string
@@ -4108,7 +4108,7 @@ components:
           description: The role definition's name.
         default:
           type: boolean
-          description: If the definition is the default for this particular role.
+          description: If this is the default definition for this particular role.
         role:
           type: string
           description: The defined role.
@@ -5478,7 +5478,7 @@ components:
           format: uuid
         role:
           type: string
-          description: The member's role in this site. Can either be member, supervisor
+          description: The member's role for this site. Can either be member, supervisor
             or manager. Also called hierarchical level.
         role_definition_id:
           type: string
@@ -5525,7 +5525,7 @@ components:
           format: uuid
         role:
           type: string
-          description: The member's role in this site. Can either be member, supervisor
+          description: The member's role for this site. Can either be member, supervisor
             or manager. Also called hierarchical level.
         role_definition_id:
           type: string
