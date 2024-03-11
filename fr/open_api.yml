@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.2.1
+  version: 1.2.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1070,7 +1070,7 @@ paths:
   "/members/{id}/availability_lists/{date}":
     get:
       summary: Obtenir une seule liste de disponibilités.
-      description: Retourne la liste de disponibilités à la date spécifiée.
+      description: Retourne une liste de disponibilités approuvée à la date spécifiée.
       tags:
       - Members
       operationId: show_availability_list
