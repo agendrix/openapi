@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.2.2
+  version: 1.3.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -193,6 +193,8 @@ tags:
 - name: Members
   description: Un membre est l'entité qui relie un utilisateur à une organisation.
     Un utilisateur a un membre par organisation dont il fait partie dans Agendrix.
+- name: OpenShiftRequests
+  description: Opérations sur les demandes de quart à combler
 - name: Payrolls
   description: Opération sur les paies
 - name: Positions
@@ -1070,7 +1072,7 @@ paths:
   "/members/{id}/availability_lists/{date}":
     get:
       summary: Obtenir une seule liste de disponibilités.
-      description: Retourne une liste de disponibilités approuvée à la date spécifiée.
+      description: Retourne une liste de disponibilités approuvées à la date spécifiée.
       tags:
       - Members
       operationId: show_availability_list
@@ -1242,6 +1244,83 @@ paths:
           "$ref": "#/components/responses/SiteSuccessMany"
         400:
           "$ref": "#/components/responses/QueryParamFailure"
+  "/open_shift_requests/{id}/approve":
+    put:
+      summary: Approuver une demande de quart à combler
+      description: Assigne le quart à combler à un ou plusieurs employés volontaires,
+        selon la quantité disponible.
+      tags:
+      - OpenShiftRequests
+      operationId: approve_open_shift_request
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftRequestSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/open_shift_requests/{id}/cancel":
+    put:
+      summary: Annuler une demande de quart à combler
+      description: Supprime le quart à combler et annule la demande.
+      tags:
+      - OpenShiftRequests
+      operationId: cancel_open_shift_request
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftRequestSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/open_shift_requests":
+    get:
+      summary: Obtenir les demandes de quart à combler paginées.
+      description: Retourne les demandes de quart à combler paginées.
+      tags:
+      - OpenShiftRequests
+      operationId: index_open_shift_request
+      parameters:
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[shift_id]
+        in: query
+        description: L'identifiant d'un quart à combler utilisé comme filte sur la
+          requête.
+        schema:
+          type: string
+      - name: search[with_volunteers]
+        in: query
+        description: Lorsque 'true' est envoyé, seules les demandes avec volontaires
+          seront retournées.
+        schema:
+          type: string
+      - name: search[status]
+        in: query
+        description: Le statut de la requête. Les valeurs valides sont 'approved',
+          'canceled', 'expired' and 'pending'.
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftRequestSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/open_shift_requests/{id}":
+    get:
+      summary: Obtenir une demande de quart à combler.
+      description: Retourne la demande de quart à combler lié à l'identifiant.
+      tags:
+      - OpenShiftRequests
+      operationId: show_open_shift_request
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftRequestSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/payrolls":
     get:
       summary: Obtenir la paie paginée.
@@ -3900,6 +3979,77 @@ components:
           description: Le hr_data du membre.
         profile:
           "$ref": "#/components/schemas/Profile"
+    OpenShiftRequestMember:
+      type: object
+      description: Une description détaillée d'un volontaire sur un quart à combler.
+      properties:
+        member_id:
+          type: string
+          description: L'identifiant de l'employé volontaire.
+          format: uuid
+        shift_id:
+          type: string
+          description: L'identifiant du quart résultant d'une assignation.
+          format: uuid
+        approved_at:
+          type: string
+          description: Le moment auquel le quart a été assigné à l'employé.
+          format: date-time
+        declined_at:
+          type: string
+          description: Le moment auquel l'offre de l'employé a été refusée.
+          format: date-time
+        created_at:
+          type: string
+          description: Le moment auquel l'employé s'est porté volontaire.
+          format: date-time
+    OpenShiftRequest:
+      type: object
+      description: Une description détaillée d'une demande de quart à combler.
+      properties:
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
+        shift_id:
+          type: string
+          description: L'identifiant du quart à combler.
+          format: uuid
+        members_count:
+          type: integer
+          description: Le nombre de volontaires pour le quart à combler.
+          format: int32
+        approved_by:
+          type: string
+          description: L'identifiant de l'approbateur lié à la demande.
+        canceled_by:
+          type: string
+          description: L'identifiant de l'annulateur(e) lié à la demande.
+        approved_at:
+          type: string
+          description: Le moment auquel la demande de quart à combler a été approuvée.
+          format: date-time
+        canceled_at:
+          type: string
+          description: Le moment auquel la demande de quart à combler a été annulée.
+          format: date-time
+        expired_at:
+          type: string
+          description: Le moment auquel la demande a expirée.
+          format: date-time
+        created_at:
+          type: string
+          description: La date et l'heure de création.
+          format: date-time
+        updated_at:
+          type: string
+          description: La date et l'heure de la dernière modification.
+          format: date-time
+        open_shift_request_members:
+          type: array
+          description: La liste des volontaires pour le quart à combler.
+          items:
+            "$ref": "#/components/schemas/OpenShiftRequestMember"
     Organization:
       type: object
       description: Une description détaillée d'une organization.
@@ -6044,6 +6194,18 @@ components:
           type: boolean
         total_count:
           type: integer
+    OpenShiftRequestApprove:
+      required:
+      - member_ids
+      type: object
+      description: Description détaillée des paramètres d'entrée d'approbation de
+        demande de quart à combler.
+      properties:
+        member_ids:
+          type: array
+          description: L'identifiant des employés retenus pour le quart à combler.
+          items:
+            type: string
     PayrollUpdate:
       type: object
       description: Description détaillée des paramètres d'entrer de la mise à jours
@@ -7378,6 +7540,28 @@ components:
             properties:
               data:
                 type: object
+    OpenShiftRequestSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/OpenShiftRequest"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    OpenShiftRequestSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/OpenShiftRequest"
     PayrollSuccessMany:
       description: Success
       content:

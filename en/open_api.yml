@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.2.2
+  version: 1.3.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -195,6 +195,8 @@ tags:
 - name: Members
   description: A member is the entity that links a user to an organization. A user
     has one member per organization they are part of in Agendrix.
+- name: OpenShiftRequests
+  description: Open shift requests operations
 - name: Payrolls
   description: Payrolls operations
 - name: Positions
@@ -1231,6 +1233,81 @@ paths:
           "$ref": "#/components/responses/SiteSuccessMany"
         400:
           "$ref": "#/components/responses/QueryParamFailure"
+  "/open_shift_requests/{id}/approve":
+    put:
+      summary: Approve an open shift request
+      description: Assign the open shift to one or many volunteers.
+      tags:
+      - OpenShiftRequests
+      operationId: approve_open_shift_request
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftRequestSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/open_shift_requests/{id}/cancel":
+    put:
+      summary: Cancel an open shift request
+      description: Change an open shift request status to canceled and delete the
+        corresponding open shift.
+      tags:
+      - OpenShiftRequests
+      operationId: cancel_open_shift_request
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftRequestSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/open_shift_requests":
+    get:
+      summary: Get paginated open shift requests.
+      description: Return paginated open shift requests.
+      tags:
+      - OpenShiftRequests
+      operationId: index_open_shift_request
+      parameters:
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[shift_id]
+        in: query
+        description: The shift_id used for the search applied on the query.
+        schema:
+          type: string
+      - name: search[with_volunteers]
+        in: query
+        description: Set to true to only return requests with volunteers.
+        schema:
+          type: string
+      - name: search[status]
+        in: query
+        description: The open shift requests status. Valid values are approved, canceled,
+          expired and pending.
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftRequestSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/open_shift_requests/{id}":
+    get:
+      summary: Get one open shift request.
+      description: Return the open shift request's id holder.
+      tags:
+      - OpenShiftRequests
+      operationId: show_open_shift_request
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftRequestSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/payrolls":
     get:
       summary: Get paginated payrolls.
@@ -3860,6 +3937,77 @@ components:
           description: The member's hr data.
         profile:
           "$ref": "#/components/schemas/Profile"
+    OpenShiftRequestMember:
+      type: object
+      description: A detailed description of an open shift's volunteer.
+      properties:
+        member_id:
+          type: string
+          description: The unique identifier for the employee who volunteered.
+          format: uuid
+        shift_id:
+          type: string
+          description: The unique identifier of the shift assigned to the employee.
+          format: uuid
+        approved_at:
+          type: string
+          description: The time at which the employee's volunteering has been approved.
+          format: date-time
+        declined_at:
+          type: string
+          description: The time at which the employee's volunteering has been declined.
+          format: date-time
+        created_at:
+          type: string
+          description: The time at which the employee volunteered.
+          format: date-time
+    OpenShiftRequest:
+      type: object
+      description: A detailed description of an open shift request.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        shift_id:
+          type: string
+          description: The open shift's id.
+          format: uuid
+        members_count:
+          type: integer
+          description: The number of employees who applied for this open shift.
+          format: int32
+        approved_by:
+          type: string
+          description: The open shift request's approver id.
+        canceled_by:
+          type: string
+          description: The open shift request's canceler's id.
+        approved_at:
+          type: string
+          description: The time at which the open shift request was approved.
+          format: date-time
+        canceled_at:
+          type: string
+          description: The time at which the open shift request was canceled.
+          format: date-time
+        expired_at:
+          type: string
+          description: The time at which the open shift request expires.
+          format: date-time
+        created_at:
+          type: string
+          description: When the open shift request was created.
+          format: date-time
+        updated_at:
+          type: string
+          description: When the open shift request was last updated.
+          format: date-time
+        open_shift_request_members:
+          type: array
+          description: The list of volunteers for this open shift.
+          items:
+            "$ref": "#/components/schemas/OpenShiftRequestMember"
     Organization:
       type: object
       description: A detailed description of an organization.
@@ -5946,6 +6094,18 @@ components:
           type: boolean
         total_count:
           type: integer
+    OpenShiftRequestApprove:
+      required:
+      - member_ids
+      type: object
+      description: A detailed description of an open shift request approval input
+        parameters.
+      properties:
+        member_ids:
+          type: array
+          description: The identifiers of the employees selected for this open shift.
+          items:
+            type: string
     PayrollUpdate:
       type: object
       description: A detailed description of a payroll's update input parameters.
@@ -7251,6 +7411,28 @@ components:
             properties:
               data:
                 type: object
+    OpenShiftRequestSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/OpenShiftRequest"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    OpenShiftRequestSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/OpenShiftRequest"
     PayrollSuccessMany:
       description: Success
       content:
