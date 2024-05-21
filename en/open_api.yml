@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.3.0
+  version: 1.4.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -184,6 +184,10 @@ tags:
   description: Clock logs operations
 - name: Comments
   description: Comments operations
+- name: DriveSignatureRequests
+  description: Drive signature requests operations
+- name: DriveSignatures
+  description: Drive signatures operations
 - name: LeaveRequests
   description: Leave requests operations
 - name: HRFields
@@ -1285,8 +1289,8 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: The open shift requests status. Valid values are approved, canceled,
-          expired and pending.
+        description: The open shift request's status. Valid values are approved, canceled,
+          expired, and pending.
         schema:
           type: string
       responses:
@@ -2742,6 +2746,130 @@ paths:
           "$ref": "#/components/responses/DriveItemSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+  "/drive/signature_requests":
+    get:
+      summary: Get paginated signature requests.
+      description: Get paginated signature requests.
+      tags:
+      - DriveSignatureRequests
+      operationId: index_drive_signature_request
+      parameters:
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[with_deleted]
+        in: query
+        description: Includes canceled signature requests in the paginated result.
+        schema:
+          type: string
+      - name: search[only_deleted]
+        in: query
+        description: Excludes active signature requests from the paginated result.
+        schema:
+          type: string
+      - name: search[creator_id]
+        in: query
+        description: Filter by id of the creator of the signature request.
+        schema:
+          type: string
+      - name: search[state]
+        in: query
+        description: 'Filter by state of the request. Options are: ''pending'', ''completed''
+          or ''canceled''.'
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveSignatureRequestSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+    post:
+      summary: Create a signature request.
+      description: Create a signature request with parameters.
+      tags:
+      - DriveSignatureRequests
+      operationId: create_drive_signature_request
+      requestBody:
+        "$ref": "#/components/requestBodies/DriveSignatureRequestCreate"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveSignatureRequestSuccessOne"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+  "/drive/signature_requests/{id}":
+    get:
+      summary: Get a signature request.
+      description: Return the signature request's id holder.
+      tags:
+      - DriveSignatureRequests
+      operationId: show_drive_signature_request
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveSignatureRequestSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/drive/signature_requests/{id}/cancel":
+    put:
+      summary: Cancel a signature request.
+      description: Cancel the signature request's id holder.
+      tags:
+      - DriveSignatureRequests
+      operationId: cancel_drive_signature_request
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveSignatureRequestSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/drive/signatures/{id}":
+    get:
+      summary: Get one signature.
+      description: Return the signature's id holder.
+      tags:
+      - DriveSignatures
+      operationId: show_drive_signature
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveSignatureSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/drive/signatures":
+    get:
+      summary: Get paginated signatures.
+      description: Return paginated signatures.
+      tags:
+      - DriveSignatures
+      operationId: index_drive_signature
+      parameters:
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[with_deleted]
+        in: query
+        description: Includes canceled signatures in the paginated result.
+        schema:
+          type: string
+      - name: search[only_deleted]
+        in: query
+        description: Excludes active signatures from the paginated result.
+        schema:
+          type: string
+      - name: search[state]
+        in: query
+        description: 'Filter by state of the signature. Options are: ''pending'' or
+          ''completed''.'
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/DriveSignatureSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
   "/hr/fields":
     get:
       summary: Get paginated human resource fields.
@@ -3943,7 +4071,7 @@ components:
       properties:
         member_id:
           type: string
-          description: The unique identifier for the employee who volunteered.
+          description: The unique identifier of the employee who volunteered.
           format: uuid
         shift_id:
           type: string
@@ -3951,15 +4079,15 @@ components:
           format: uuid
         approved_at:
           type: string
-          description: The time at which the employee's volunteering has been approved.
+          description: The time at which the shift was assigned to the volunteer.
           format: date-time
         declined_at:
           type: string
-          description: The time at which the employee's volunteering has been declined.
+          description: The time at which the employee's offer to volunteer was declined.
           format: date-time
         created_at:
           type: string
-          description: The time at which the employee volunteered.
+          description: The time at which the employee offered to volunteer.
           format: date-time
     OpenShiftRequest:
       type: object
@@ -5207,6 +5335,10 @@ components:
           type: integer
           description: The number of comments on the file.
           format: int32
+        new_version_id:
+          type: string
+          description: The new version's id.
+          format: uuid
         document:
           "$ref": "#/components/schemas/Document"
         body_documents:
@@ -5214,6 +5346,104 @@ components:
           description: The embedded documents in the text file.
           items:
             "$ref": "#/components/schemas/Document"
+    DriveSignature:
+      type: object
+      description: A detailed description of a signature.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the signature.
+          format: uuid
+        signature_request_id:
+          type: string
+          description: The identifier of the signature request associated with the
+            signature.
+          format: uuid
+        member_id:
+          type: string
+          description: The identifier of the member associated with the signature.
+          format: uuid
+        legal_name:
+          type: string
+          description: The legal name of the signing member.
+        ip_address:
+          type: string
+          description: The IP address of the device used to sign the document.
+        user_agent:
+          type: string
+          description: The browser information used to sign the document.
+        pss_signature:
+          type: string
+          description: Represents a cryptographic signature generated using the Probabilistic
+            Signature Scheme (PSS).
+        signed_at:
+          type: string
+          description: The date and time when the signature was applied.
+          format: date-time
+        consent_given_at:
+          type: string
+          description: The date and time when consent to the signature was given.
+          format: date-time
+        deleted_at:
+          type: string
+          description: Date and time of the signature cancellation.
+          format: date-time
+        created_at:
+          type: string
+          description: Date and time of the signature creation.
+          format: date-time
+        updated_at:
+          type: string
+          description: Date and time of the signature's last modification.
+          format: date-time
+    DriveSignatureRequest:
+      type: object
+      description: A detailed description of a signature request.
+      properties:
+        id:
+          type: string
+          description: Unique identifier of the signature request.
+          format: uuid
+        creator_id:
+          type: string
+          description: The identifier of the signature request's creator.
+          format: uuid
+        drive_file_id:
+          type: string
+          description: The identifier of the file being signed.
+          format: uuid
+        original_file_id:
+          type: string
+          description: The identifier of the file used to create the request.
+          format: uuid
+        original_document_hash:
+          type: string
+          description: Hash of the original document.
+        completed_at:
+          type: string
+          description: Date and time of the signature request's completion.
+          format: date-time
+        deleted_at:
+          type: string
+          description: Date and time of the signature request's cancellation.
+          format: date-time
+        created_at:
+          type: string
+          description: Date and time of the signature request's creation.
+          format: date-time
+        updated_at:
+          type: string
+          description: Date and time of the signature request's last modification.
+          format: date-time
+        drive_file:
+          "$ref": "#/components/schemas/DriveItem"
+        completion_certificate:
+          "$ref": "#/components/schemas/Document"
+        signatures:
+          type: array
+          description: The signatures associated with the signature request.
+          items:
+            "$ref": "#/components/schemas/DriveSignature"
     HRField:
       type: object
       description: A detailed description of a human resource field.
@@ -7086,6 +7316,25 @@ components:
           type: string
           description: The role required to see the folder and all of its contents.
             Can either be member, supervisor, manager, or admin.
+    DriveSignatureRequestCreate:
+      required:
+      - drive_file_id
+      - member_ids
+      type: object
+      description: A detailed description of the input parameters for creating a signature
+        request.
+      properties:
+        drive_file_id:
+          type: string
+          description: The identifier of the file to use.
+          format: uuid
+        member_ids:
+          type: array
+          description: The identifiers of the members who will need to sign. Between
+            one and four members allowed.
+          items:
+            type: string
+            format: uuid
     ResourceBulkCreate:
       required:
       - resources
@@ -7792,6 +8041,50 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/DriveItem"
+    DriveSignatureRequestSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/DriveSignatureRequest"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    DriveSignatureRequestSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/DriveSignatureRequest"
+    DriveSignatureSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                "$ref": "#/components/schemas/DriveSignature"
+    DriveSignatureSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/DriveSignature"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
     HRFieldSuccessMany:
       description: Success
       content:
@@ -8066,6 +8359,11 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/DriveFolderUpdate"
+    DriveSignatureRequestCreate:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveSignatureRequestCreate"
   securitySchemes:
     oauth:
       type: oauth2
