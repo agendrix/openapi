@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.4.0
+  version: 1.4.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -4038,9 +4038,9 @@ components:
             end time.
           format: int32
         payroll_seniority:
-          type: boolean
-          description: If the member uses total worked hours instead of date to calculate
-            seniority.
+          type: integer
+          description: The member's total worked minutes.
+          format: int32
         payroll_seniority_hours:
           type: number
           description: The member's total worked hours.
@@ -6104,9 +6104,9 @@ components:
             end time.
           format: int32
         payroll_seniority:
-          type: boolean
-          description: If the member uses total worked hours instead of date to calculate
-            seniority.
+          type: integer
+          description: The member's total worked minutes.
+          format: int32
         payroll_auto_update:
           type: boolean
           description: If the member doesn't have to clock in.
@@ -6264,9 +6264,9 @@ components:
             end time.
           format: int32
         payroll_seniority:
-          type: boolean
-          description: If the member uses total worked hours instead of date to calculate
-            seniority.
+          type: integer
+          description: The member's total worked minutes.
+          format: int32
         payroll_auto_update:
           type: boolean
           description: If the member doesn't have to clock in.

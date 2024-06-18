@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.4.0
+  version: 1.4.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2876,7 +2876,7 @@ paths:
           type: string
       - name: search[only_deleted]
         in: query
-        description: Exclue les signatures actives du résultat paginé.
+        description: Exclure les signatures actives du résultat paginé.
         schema:
           type: string
       - name: search[state]
@@ -4079,9 +4079,9 @@ components:
             de fin planifiée des quarts de travail.
           format: int32
         payroll_seniority:
-          type: boolean
-          description: Si le membre utilise la quantité totale d'heures travaillées
-            au lieu de la date pour calculer la séniorité.
+          type: integer
+          description: Le nombre total de minutes travaillées du membre.
+          format: int32
         payroll_seniority_hours:
           type: number
           description: Le nombre total d'heures travaillées du membre.
@@ -5436,7 +5436,7 @@ components:
           description: L'adresse IP de l'appareil utilisé pour signer le document.
         user_agent:
           type: string
-          description: Les informations du navigateur utilisées pour signer le document.
+          description: Les informations du navigateur utilisé pour signer le document.
         pss_signature:
           type: string
           description: Représente une signature cryptographique générée à l'aide du
@@ -6195,9 +6195,9 @@ components:
             de fin planifiée des quarts de travail.
           format: int32
         payroll_seniority:
-          type: boolean
-          description: Si le membre utilise la quantité totale d'heures travaillées
-            au lieu de la date pour calculer la séniorité.
+          type: integer
+          description: Le nombre total de minutes travaillées du membre.
+          format: int32
         payroll_auto_update:
           type: boolean
           description: Si le membre n'a pas besoin de pointer.
@@ -6363,9 +6363,9 @@ components:
             de fin planifiée des quarts de travail.
           format: int32
         payroll_seniority:
-          type: boolean
-          description: Si le membre utilise la quantité totale d'heures travaillées
-            au lieu de la date pour calculer la séniorité.
+          type: integer
+          description: Le nombre total de minutes travaillées du membre.
+          format: int32
         payroll_auto_update:
           type: boolean
           description: Si le membre n'a pas besoin de pointer.
