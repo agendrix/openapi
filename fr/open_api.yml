@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.4.1
+  version: 1.4.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -175,9 +175,9 @@ tags:
 - name: AvailabilityListRequests
   description: Opérations sur les demandes de disponibilités
 - name: BillboardTags
-  description: Opérations sur les catégories du fil d'actualités
+  description: Opérations sur les catégories du fil d'actualité
 - name: BillboardThreads
-  description: Opérations sur les publications du fil d'actualités
+  description: Opérations sur les publications du fil d'actualité
 - name: ClockLogs
   description: Opérations sur les registres de pointage
 - name: Comments
@@ -295,7 +295,7 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
   "/billboard_tags":
     get:
-      summary: Obtenir les catégories paginées du fil d'actualités.
+      summary: Obtenir les catégories paginées du fil d'actualité.
       description: Retourne une liste paginée de catégories du fil d'actulités.
       tags:
       - BillboardTags
@@ -310,8 +310,8 @@ paths:
         400:
           "$ref": "#/components/responses/QueryParamFailure"
     post:
-      summary: Créer une catégorie du fil d'actualités.
-      description: Créer une catégorie du fil d'actualités à partir du corps de la
+      summary: Créer une catégorie du fil d'actualité.
+      description: Créer une catégorie du fil d'actualité à partir du corps de la
         requête.
       tags:
       - BillboardTags
@@ -325,8 +325,8 @@ paths:
           "$ref": "#/components/responses/InputParamsFailure"
   "/billboard_tags/{id}":
     get:
-      summary: Obtenir une catégorie du fil d'actualités.
-      description: Retourne une catégorie du fil d'actualités par identifiant.
+      summary: Obtenir une catégorie du fil d'actualité.
+      description: Retourne une catégorie du fil d'actualité par identifiant.
       tags:
       - BillboardTags
       operationId: show_billboard_tag
@@ -338,8 +338,8 @@ paths:
         404:
           "$ref": "#/components/responses/NotFoundFailure"
     put:
-      summary: Modifier une catégorie du fil d'actualités.
-      description: Modifier une catégorie du fil d'actualités à partir du corps de
+      summary: Modifier une catégorie du fil d'actualité.
+      description: Modifier une catégorie du fil d'actualité à partir du corps de
         la requête.
       tags:
       - BillboardTags
@@ -356,7 +356,7 @@ paths:
         400:
           "$ref": "#/components/responses/InputParamsFailure"
     delete:
-      summary: Supprimer une catégorie du fil d'actualités.
+      summary: Supprimer une catégorie du fil d'actualité.
       description: Supprime une catégorie du fil d'actulités par identifiant.
       tags:
       - BillboardTags
@@ -370,8 +370,8 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
   "/billboard_threads":
     get:
-      summary: Obtenir les publications paginées du fil d'actualités.
-      description: Retourne la liste paginée des publications du fil d'actualités.
+      summary: Obtenir les publications paginées du fil d'actualité.
+      description: Retourne la liste paginée des publications du fil d'actualité.
       tags:
       - BillboardThreads
       operationId: index_billboard_thread
@@ -397,9 +397,9 @@ paths:
         400:
           "$ref": "#/components/responses/QueryParamFailure"
     post:
-      summary: Créer une publication du fil d'actualités.
-      description: Créer une publication du fil d'actualités à partir du corps de
-        la requête.
+      summary: Créer une publication du fil d'actualité.
+      description: Créer une publication du fil d'actualité à partir du corps de la
+        requête.
       tags:
       - BillboardThreads
       operationId: create_billboard_thread
@@ -425,9 +425,9 @@ paths:
         404:
           "$ref": "#/components/responses/NotFoundFailure"
     put:
-      summary: Modifier une publication du fil d'actualités.
-      description: Modifier une publication du fil d'actualités à partir du corps
-        de la requête.
+      summary: Modifier une publication du fil d'actualité.
+      description: Modifier une publication du fil d'actualité à partir du corps de
+        la requête.
       tags:
       - BillboardThreads
       operationId: update_billboard_thread
@@ -533,7 +533,7 @@ paths:
           "$ref": "#/components/responses/QueryParamFailure"
   "/billboard_threads/{id}/tags":
     get:
-      summary: Obtenir les catégories paginées du fil d'actualités.
+      summary: Obtenir les catégories paginées du fil d'actualité.
       description: Retourne une liste paginée de catégories du fil d'actulités.
       tags:
       - BillboardThreads
@@ -3097,7 +3097,7 @@ components:
             "$ref": "#/components/schemas/Availability"
     BillboardTag:
       type: object
-      description: Une description détaillée d'une catégorie du fil d'actualités.
+      description: Une description détaillée d'une catégorie du fil d'actualité.
       properties:
         id:
           type: string
@@ -3490,6 +3490,13 @@ components:
           items:
             type: integer
             format: int32
+        excluded_dates:
+          type: array
+          description: Les dates qui sont considérées comme non payées pour le congé.
+            Cet attribut a la priorité sur les paid_weekdays.
+          items:
+            type: string
+            format: date
     LeaveRequest:
       type: object
       description: Une description détaillée d'une demande de congé.
@@ -5089,7 +5096,7 @@ components:
       - name
       type: object
       description: Une description détaillée des paramètres d'entrée de création d'une
-        catégorie du fil d'actualités.
+        catégorie du fil d'actualité.
       properties:
         name:
           type: string
@@ -5099,7 +5106,7 @@ components:
       - name
       type: object
       description: Une description détaillée des paramètres d'entrée de mise à jour
-        d'une catégorie du fil d'actualités.
+        d'une catégorie du fil d'actualité.
       properties:
         name:
           type: string
@@ -5192,7 +5199,7 @@ components:
             type: string
         billboard_thread_tags_attributes:
           type: array
-          description: Une liste de catégories de publication du fil d'actualités.
+          description: Une liste de catégories de publication du fil d'actualité.
           items:
             "$ref": "#/components/schemas/BillboardThreadTagCreateAttributes"
     BillboardThreadUpdate:
@@ -5249,7 +5256,7 @@ components:
             type: string
         billboard_thread_tags_attributes:
           type: array
-          description: Une liste de catégories de publication du fil d'actualités.
+          description: Une liste de catégories de publication du fil d'actualité.
           items:
             oneOf:
             - "$ref": "#/components/schemas/BillboardThreadTagUpdateAttributes"
@@ -5626,7 +5633,6 @@ components:
     TimeOffPaymentConstraintUpdateAttributes:
       required:
       - id
-      - paid_weekdays
       type: object
       description: Une description détaillée des paramètres d'entrée de mise à jour
         d'une contrainte de congé.
@@ -5634,11 +5640,19 @@ components:
         paid_weekdays:
           type: array
           description: Les jours de la semaine qui sont considérés comme payés pour
-            le temps libre, avec 0 comme dimanche, jusqu'à 6 comme samedi. Une seule
-            occurrence de chaque jour peut être spécifiée.
+            le congé, où 0 représente dimanche, jusqu'à 6, qui représente samedi.
+            Une seule occurrence de chaque journée peut être spécifiée. Si cet attribut
+            est fourni mais pas les excluded_dates, les excluded_dates seront écrasées.
           items:
             type: integer
             format: int32
+        excluded_dates:
+          type: array
+          description: Les dates qui sont considérées comme non payées pour le congé.
+            Cet attribut a la priorité sur les paid_weekdays.
+          items:
+            type: string
+            format: date
         id:
           type: string
           description: Identifiant unique de l'objet.
@@ -6781,8 +6795,6 @@ components:
           description: Date d'une prévision du planificateur d'horaires.
           format: date
     TimeOffPaymentConstraintCreateAttributes:
-      required:
-      - paid_weekdays
       type: object
       description: Une description détaillée des paramètres d'entrée de création d'une
         contrainte de congé.
@@ -6790,11 +6802,19 @@ components:
         paid_weekdays:
           type: array
           description: Les jours de la semaine qui sont considérés comme payés pour
-            le temps libre, avec 0 comme dimanche, jusqu'à 6 comme samedi. Une seule
-            occurrence de chaque jour peut être spécifiée.
+            le congé, où 0 représente dimanche, jusqu'à 6, qui représente samedi.
+            Une seule occurrence de chaque journée peut être spécifiée. Si cet attribut
+            est fourni mais pas les excluded_dates, les excluded_dates seront écrasées.
           items:
             type: integer
             format: int32
+        excluded_dates:
+          type: array
+          description: Les dates qui sont considérées comme non payées pour le congé.
+            Cet attribut a la priorité sur les paid_weekdays.
+          items:
+            type: string
+            format: date
     ShiftCreate:
       required:
       - site_id

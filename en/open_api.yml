@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.4.1
+  version: 1.4.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2774,7 +2774,7 @@ paths:
           type: string
       - name: search[state]
         in: query
-        description: 'Filter by state of the request. Options are: ''pending'', ''completed''
+        description: 'Filter by state of the request. Options are: ''pending'', ''completed'',
           or ''canceled''.'
         schema:
           type: string
@@ -3465,6 +3465,13 @@ components:
           items:
             type: integer
             format: int32
+        excluded_dates:
+          type: array
+          description: The dates that are considered unpaid for the time off. This
+            attribute takes precedence over paid_weekdays.
+          items:
+            type: string
+            format: date
     LeaveRequest:
       type: object
       description: A detailed description of a leave request.
@@ -4039,7 +4046,7 @@ components:
           format: int32
         payroll_seniority:
           type: integer
-          description: The member's total worked minutes.
+          description: The member's total minutes worked.
           format: int32
         payroll_seniority_hours:
           type: number
@@ -5386,7 +5393,7 @@ components:
           format: date-time
         deleted_at:
           type: string
-          description: Date and time of the signature cancellation.
+          description: Date and time of the signature cancelation.
           format: date-time
         created_at:
           type: string
@@ -5425,7 +5432,7 @@ components:
           format: date-time
         deleted_at:
           type: string
-          description: Date and time of the signature request's cancellation.
+          description: Date and time of the signature request's cancelation.
           format: date-time
         created_at:
           type: string
@@ -5559,7 +5566,6 @@ components:
     TimeOffPaymentConstraintUpdateAttributes:
       required:
       - id
-      - paid_weekdays
       type: object
       description: A detailed description of a time off payment's update input parameters.
       properties:
@@ -5567,10 +5573,18 @@ components:
           type: array
           description: The days of the week that are considered paid for the time
             off, with 0 as Sunday, up to 6 as Saturday. Only one occurrence of each
-            day can be specified.
+            day can be specified. If this attribute is provided but not excluded_dates,
+            the excluded_dates will be overwritten.
           items:
             type: integer
             format: int32
+        excluded_dates:
+          type: array
+          description: The dates that are considered unpaid for the time off. This
+            attribute takes precedence over paid_weekdays.
+          items:
+            type: string
+            format: date
         id:
           type: string
           description: Unique identifier for the object.
@@ -6105,7 +6119,7 @@ components:
           format: int32
         payroll_seniority:
           type: integer
-          description: The member's total worked minutes.
+          description: The member's total minutes worked.
           format: int32
         payroll_auto_update:
           type: boolean
@@ -6265,7 +6279,7 @@ components:
           format: int32
         payroll_seniority:
           type: integer
-          description: The member's total worked minutes.
+          description: The member's total minutes worked.
           format: int32
         payroll_auto_update:
           type: boolean
@@ -6669,8 +6683,6 @@ components:
           description: The scheduler projection's date.
           format: date
     TimeOffPaymentConstraintCreateAttributes:
-      required:
-      - paid_weekdays
       type: object
       description: A detailed description of a time off payment's creation input parameters.
       properties:
@@ -6678,10 +6690,18 @@ components:
           type: array
           description: The days of the week that are considered paid for the time
             off, with 0 as Sunday, up to 6 as Saturday. Only one occurrence of each
-            day can be specified.
+            day can be specified. If this attribute is provided but not excluded_dates,
+            the excluded_dates will be overwritten.
           items:
             type: integer
             format: int32
+        excluded_dates:
+          type: array
+          description: The dates that are considered unpaid for the time off. This
+            attribute takes precedence over paid_weekdays.
+          items:
+            type: string
+            format: date
     ShiftCreate:
       required:
       - site_id
