@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.4.2
+  version: 1.5.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2071,6 +2071,21 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
         400:
           "$ref": "#/components/responses/InputParamsFailure"
+  "/shifts/{id}/toggle_tasks_completion":
+    put:
+      summary: Faire basculer l'état de complétion d'une tâche.
+      description: Faire basculer l'état de complétion d'une tâche pour un quart (si
+        le plan Plus est activé).
+      tags:
+      - ShiftTasks
+      operationId: toggle_shift_tasks
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/ShiftSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/shifts/{id}/activities":
     get:
       summary: Obtenir une liste paginée des activités.
@@ -2138,6 +2153,23 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/BreakSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/shifts/{id}/tasks":
+    get:
+      summary: Obtenir une liste paginée des tâches (si le plan Plus est activé).
+      description: Retourne une liste paginée des tâches.
+      tags:
+      - Shifts
+      operationId: index_shift_tasks
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      responses:
+        200:
+          "$ref": "#/components/responses/TaskSuccessMany"
         400:
           "$ref": "#/components/responses/QueryParamFailure"
   "/shifts/{id}/premium_entries":
@@ -3259,7 +3291,7 @@ components:
           type: integer
           description: Le décalage de la pause à partir du moment où elle commence,
             en minutes. Par exemple, une pause commençant à 7:30 pour un quart de
-            travail commençant à 7:00 aura une décalage de 30 minutes.
+            travail commençant à 7:00 aura un décalage de 30 minutes.
           format: int32
         paid:
           type: boolean
@@ -4846,6 +4878,41 @@ components:
           format: date-time
         location:
           "$ref": "#/components/schemas/Location"
+    Task:
+      type: object
+      description: Une description détaillée d'une tâche.
+      properties:
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
+        name:
+          type: string
+          description: Le nom de la tâche.
+        instructions:
+          type: string
+          description: Les instructions de la tâche.
+        offset:
+          type: integer
+          description: Le décalage de la tâche à partir du moment où elle commence,
+            en minutes. Par exemple, une tâche commençant à 7:30 pour un quart de
+            travail commençant à 7:00 aura un décalage de 30.
+          format: int32
+        start_at:
+          type: string
+          description: L'heure de début de la tâche.
+          format: date-time
+        completed:
+          type: boolean
+          description: Si la tâche a été terminée.
+        completed_at:
+          type: string
+          description: L'heure où la tâche a été terminée.
+          format: date-time
+        completed_by_id:
+          type: string
+          description: L'identifiant unique du membre ayant terminé cette tâche.
+          format: uuid
     TimeBank:
       type: object
       description: Une description détaillée d'une banque de temps.
@@ -5276,7 +5343,7 @@ components:
           type: integer
           description: Le décalage de la pause à partir du moment où elle commence,
             en minutes. Par exemple, une pause commençant à 7:30 pour un quart de
-            travail commençant à 7:00 aura une décalage de 30 minutes.
+            travail commençant à 7:00 aura un décalage de 30 minutes.
           format: int32
         paid:
           type: boolean
@@ -5296,7 +5363,7 @@ components:
           type: integer
           description: Le décalage de la pause à partir du moment où elle commence,
             en minutes. Par exemple, une pause commençant à 7:30 pour un quart de
-            travail commençant à 7:00 aura une décalage de 30 minutes.
+            travail commençant à 7:00 aura un décalage de 30 minutes.
           format: int32
         paid:
           type: boolean
@@ -6794,6 +6861,25 @@ components:
           type: string
           description: Date d'une prévision du planificateur d'horaires.
           format: date
+    TaskCreateAttributes:
+      required:
+      - name
+      type: object
+      description: Une description détaillée des paramètres d'entrée pour la création
+        d'une tâche.
+      properties:
+        name:
+          type: string
+          description: Le nom de la tâche.
+        instructions:
+          type: string
+          description: Les instructions de la tâche.
+        offset:
+          type: integer
+          description: Le décalage de la tâche à partir du moment où elle commence,
+            en minutes. Par exemple, une tâche commençant à 7:30 pour un quart de
+            travail commençant à 7:00 aura un décalage de 30.
+          format: int32
     TimeOffPaymentConstraintCreateAttributes:
       type: object
       description: Une description détaillée des paramètres d'entrée de création d'une
@@ -6928,6 +7014,11 @@ components:
           description: Pauses du quart de travail.
           items:
             "$ref": "#/components/schemas/BreakCreateAttributes"
+        tasks_attributes:
+          type: array
+          description: Les tâches du quart (si le plan Plus est activé).
+          items:
+            "$ref": "#/components/schemas/TaskCreateAttributes"
         time_off_payment_constraint_attributes:
           "$ref": "#/components/schemas/TimeOffPaymentConstraintCreateAttributes"
         leave_value_setting_attributes:
@@ -6945,6 +7036,18 @@ components:
         publish:
           type: boolean
           description: Si le quart doit être publié après avoir été supprimé.
+    ShiftToggleTasksCompletion:
+      required:
+      - tasks_attributes
+      type: object
+      description: Une description détaillée des paramètres d'entrée pour faire basculer
+        l'état de complétion des tâches d'un quart (si le plan Plus est activé).
+      properties:
+        tasks_attributes:
+          type: array
+          description: Une liste des tâches dont l'état de complétion basculera.
+          items:
+            "$ref": "#/components/schemas/TaskToggleCompletionAttributes"
     ShiftTransfer:
       type: object
       description: Une description détaillée des paramètres d'entrée de transfert
@@ -6962,6 +7065,33 @@ components:
         publish:
           type: boolean
           description: Si le quart devrait être publié après son transfert.
+    TaskUpdateAttributes:
+      required:
+      - id
+      type: object
+      description: Une description détaillée des paramètres d'entrée pour la modification
+        d'une tâche.
+      properties:
+        name:
+          type: string
+          description: Le nom de la tâche.
+        instructions:
+          type: string
+          description: Les instructions de la tâche.
+        offset:
+          type: integer
+          description: Le décalage de la tâche à partir du moment où elle commence,
+            en minutes. Par exemple, une tâche commençant à 7:30 pour un quart de
+            travail commençant à 7:00 aura un décalage de 30.
+          format: int32
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
+        _destroy:
+          type: boolean
+          description: Mettre à 'true' pour supprimer cet objet lors de la modification
+            de son parent.
     ShiftUpdate:
       type: object
       description: Description détaillée des paramètres de mise à jour d'un quart
@@ -7066,6 +7196,13 @@ components:
             oneOf:
             - "$ref": "#/components/schemas/BreakUpdateAttributes"
             - "$ref": "#/components/schemas/BreakCreateAttributes"
+        tasks_attributes:
+          type: array
+          description: Les tâches du quart (si le plan Plus est activé).
+          items:
+            oneOf:
+            - "$ref": "#/components/schemas/TaskUpdateAttributes"
+            - "$ref": "#/components/schemas/TaskCreateAttributes"
         time_off_payment_constraint_attributes:
           "$ref": "#/components/schemas/TimeOffPaymentConstraintUpdateAttributes"
         leave_value_setting_attributes:
@@ -7109,6 +7246,21 @@ components:
           description: Informations additionnelles sur la succursale.
         location_attributes:
           "$ref": "#/components/schemas/LocationUpdateAttributes"
+    TaskToggleCompletionAttributes:
+      required:
+      - id
+      - completed
+      type: object
+      description: Une description détaillée des paramètres d'entrée de basculement
+        de la complétion d'une tâche.
+      properties:
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
+        completed:
+          type: boolean
+          description: État de complétion de la tâche.
     TimeEntryCreate:
       required:
       - member_id
@@ -8070,6 +8222,19 @@ components:
                 type: array
                 items:
                   "$ref": "#/components/schemas/Break"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    TaskSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Task"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
     ShiftSuccessManyWithoutPagination:

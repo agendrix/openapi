@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.4.2
+  version: 1.5.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2055,6 +2055,20 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
         400:
           "$ref": "#/components/responses/InputParamsFailure"
+  "/shifts/{id}/toggle_tasks_completion":
+    put:
+      summary: Toggle task completion.
+      description: Toggle task completion for a shift (if the Plus plan is enabled).
+      tags:
+      - ShiftTasks
+      operationId: toggle_shift_tasks
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/ShiftSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/shifts/{id}/activities":
     get:
       summary: Get paginated activities.
@@ -2118,6 +2132,23 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/BreakSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/shifts/{id}/tasks":
+    get:
+      summary: Get paginated tasks (if the Plus plan is enabled).
+      description: Return paginated tasks.
+      tags:
+      - Shifts
+      operationId: index_shift_tasks
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      responses:
+        200:
+          "$ref": "#/components/responses/TaskSuccessMany"
         400:
           "$ref": "#/components/responses/QueryParamFailure"
   "/shifts/{id}/premium_entries":
@@ -3236,7 +3267,7 @@ components:
         offset:
           type: integer
           description: The break offset from the shift's start, in minutes. E.g.,
-            a break starting at 7:30 on a shift starting at 7:00 will have an offset
+            a break starting at 7:30 for a shift starting at 7:00 will have an offset
             of 30.
           format: int32
         paid:
@@ -4793,6 +4824,41 @@ components:
           format: date-time
         location:
           "$ref": "#/components/schemas/Location"
+    Task:
+      type: object
+      description: A detailed description of a task.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        name:
+          type: string
+          description: The task's name.
+        instructions:
+          type: string
+          description: The task's instructions.
+        offset:
+          type: integer
+          description: The task's offset from the shift's start time, in minutes.
+            E.g., a task starting at 7:30 for a shift starting at 7:00 will have an
+            offset of 30.
+          format: int32
+        start_at:
+          type: string
+          description: When the task starts.
+          format: date-time
+        completed:
+          type: boolean
+          description: If the task has been completed.
+        completed_at:
+          type: string
+          description: When the task was completed.
+          format: date-time
+        completed_by_id:
+          type: string
+          description: Unique identifier of the member who completed the task.
+          format: uuid
     TimeBank:
       type: object
       description: A detailed description of a time bank.
@@ -5214,7 +5280,7 @@ components:
         offset:
           type: integer
           description: The break offset from the shift's start, in minutes. E.g.,
-            a break starting at 7:30 on a shift starting at 7:00 will have an offset
+            a break starting at 7:30 for a shift starting at 7:00 will have an offset
             of 30.
           format: int32
         paid:
@@ -5233,7 +5299,7 @@ components:
         offset:
           type: integer
           description: The break offset from the shift's start, in minutes. E.g.,
-            a break starting at 7:30 on a shift starting at 7:00 will have an offset
+            a break starting at 7:30 for a shift starting at 7:00 will have an offset
             of 30.
           format: int32
         paid:
@@ -6682,6 +6748,24 @@ components:
           type: string
           description: The scheduler projection's date.
           format: date
+    TaskCreateAttributes:
+      required:
+      - name
+      type: object
+      description: A detailed description of a task's creation input parameters.
+      properties:
+        name:
+          type: string
+          description: The name of the task.
+        instructions:
+          type: string
+          description: The instructions of the task.
+        offset:
+          type: integer
+          description: The task's offset from the shift's start time, in minutes.
+            E.g., a task starting at 7:30 for a shift starting at 7:00 will have an
+            offset of 30.
+          format: int32
     TimeOffPaymentConstraintCreateAttributes:
       type: object
       description: A detailed description of a time off payment's creation input parameters.
@@ -6813,6 +6897,11 @@ components:
           description: The shift's breaks.
           items:
             "$ref": "#/components/schemas/BreakCreateAttributes"
+        tasks_attributes:
+          type: array
+          description: The shift's tasks (if the Plus plan is enabled).
+          items:
+            "$ref": "#/components/schemas/TaskCreateAttributes"
         time_off_payment_constraint_attributes:
           "$ref": "#/components/schemas/TimeOffPaymentConstraintCreateAttributes"
         leave_value_setting_attributes:
@@ -6829,6 +6918,18 @@ components:
         publish:
           type: boolean
           description: If the shift should be published after its deletion.
+    ShiftToggleTasksCompletion:
+      required:
+      - tasks_attributes
+      type: object
+      description: A detailed description of the input parameters for toggling the
+        completion of a shift's tasks (if the Plus plan is enabled).
+      properties:
+        tasks_attributes:
+          type: array
+          description: The list of tasks whose completion will be toggled.
+          items:
+            "$ref": "#/components/schemas/TaskToggleCompletionAttributes"
     ShiftTransfer:
       type: object
       description: A detailed description of a shift transfer input parameters.
@@ -6845,6 +6946,32 @@ components:
         publish:
           type: boolean
           description: If the shift should be published after its transfer.
+    TaskUpdateAttributes:
+      required:
+      - id
+      type: object
+      description: A detailed description of a task's update input parameters.
+      properties:
+        name:
+          type: string
+          description: The name of the task.
+        instructions:
+          type: string
+          description: The instructions of the task.
+        offset:
+          type: integer
+          description: The task's offset from the shift's start time, in minutes.
+            E.g., a task starting at 7:30 for a shift starting at 7:00 will have an
+            offset of 30.
+          format: int32
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        _destroy:
+          type: boolean
+          description: Set to true if you want to delete this object while updating
+            its parent
     ShiftUpdate:
       type: object
       description: A detailed description of a shift's update input parameters.
@@ -6947,6 +7074,13 @@ components:
             oneOf:
             - "$ref": "#/components/schemas/BreakUpdateAttributes"
             - "$ref": "#/components/schemas/BreakCreateAttributes"
+        tasks_attributes:
+          type: array
+          description: The shift's tasks (if the Plus plan is enabled).
+          items:
+            oneOf:
+            - "$ref": "#/components/schemas/TaskUpdateAttributes"
+            - "$ref": "#/components/schemas/TaskCreateAttributes"
         time_off_payment_constraint_attributes:
           "$ref": "#/components/schemas/TimeOffPaymentConstraintUpdateAttributes"
         leave_value_setting_attributes:
@@ -6990,6 +7124,21 @@ components:
           description: The site's additional information.
         location_attributes:
           "$ref": "#/components/schemas/LocationUpdateAttributes"
+    TaskToggleCompletionAttributes:
+      required:
+      - id
+      - completed
+      type: object
+      description: A detailed description of a task's completion status toggle input
+        parameters.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        completed:
+          type: boolean
+          description: Completion state of the task.
     TimeEntryCreate:
       required:
       - member_id
@@ -7942,6 +8091,19 @@ components:
                 type: array
                 items:
                   "$ref": "#/components/schemas/Break"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    TaskSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Task"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
     ShiftSuccessManyWithoutPagination:
