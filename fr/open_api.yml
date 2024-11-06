@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.5.0
+  version: 1.6.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2256,6 +2256,29 @@ paths:
           "$ref": "#/components/responses/ShiftSuccessManyWithoutPagination"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+  "/shifts/{id}/audience_members":
+    get:
+      summary: Obtenir une liste paginée des membres de l'audience d'un quart à combler.
+      description: Retourne une liste paginée des membres de l'audience d'un quart
+        à combler.
+      tags:
+      - Shifts
+      operationId: index_shift_open_shift_audience_members
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[query]
+        in: query
+        description: Termes de recherche afin de filtrer la requête.
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/OpenShiftAudienceMemberSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
   "/sites":
     get:
       summary: Obtenir les succursales paginées.
@@ -3655,6 +3678,18 @@ components:
           type: string
           description: La date et l'heure de la dernière modification.
           format: date-time
+    MemberShiftConflict:
+      type: object
+      description: Une description détaillée d'un conflit de quart d'un membre.
+      properties:
+        start_at:
+          type: string
+          description: Date et heure de début du quart de travail en conflit.
+          format: date-time
+        end_at:
+          type: string
+          description: Date et heure de fin du quart de travail en conflit.
+          format: date-time
     MemberSitePosition:
       type: object
       description: Une description détaillée de la position du membre dans la succursale.
@@ -3969,7 +4004,7 @@ components:
           format: uuid
         profile_id:
           type: string
-          description: L'identifiant unique du profile du membre.
+          description: L'identifiant unique du profil du membre.
           format: uuid
         identification_number:
           type: string
@@ -4035,30 +4070,30 @@ components:
             suppervisées par l'utilisateur courant.
         override_overtime:
           type: boolean
-          description: Si le membre possède des seuils d'heures supplémentaires personalisés.
+          description: Si le membre possède des seuils d'heures supplémentaires personnalisés.
         multi_level_overtime:
           type: boolean
-          description: Si les heures supplémentaires multi-niveau sont activées pour
+          description: Si les heures supplémentaires multi-niveaux sont activées pour
             le membre.
         overtime_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personalisé 1 du
+          description: Le seuil d'heures supplémentaires de jour personnalisé 1 du
             membre.
           format: float
         overtime_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaire de semaine personalisé 1 du
-            membre.
+          description: Le seuil d'heures supplémentaire de semaine personnalisé 1
+            du membre.
           format: float
         overtime_2_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personalisé 2 du
-            membre, si les heures supplémentaires multi-niveau sont activées.
+          description: Le seuil d'heures supplémentaires de jour personnalisé 2 du
+            membre, si les heures supplémentaires multi-niveaux sont activées.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de semaine personalisé 2
-            du membre, si les heures supplémentaires multi-niveau sont activées.
+          description: Le seuil d'heures supplémentaires de semaine personnalisé 2
+            du membre, si les heures supplémentaires multi-niveaux sont activées.
           format: float
         comments_count:
           type: integer
@@ -4145,6 +4180,55 @@ components:
           description: Le hr_data du membre.
         profile:
           "$ref": "#/components/schemas/Profile"
+    OpenShiftAudienceConfig:
+      type: object
+      description: Une description détaillée de la configuration de l'audience d'un
+        quart à combler.
+      properties:
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
+        send_by_seniority:
+          type: boolean
+          description: Si le quart à combler est envoyé par ordre d'ancienneté.
+        exclude_members_in_overtime:
+          type: boolean
+          description: Si les membres en situation d'heures supplémentaires sont exclus
+            de l'audience.
+        exclude_members_in_conflict:
+          type: boolean
+          description: Si les membres en conflit d'horaire sont exclus de l'audience.
+        excluded_member_ids:
+          type: array
+          description: Les identifiants uniques des membres manuellement exclus de
+            l'audience du quart à combler.
+          items:
+            type: string
+            format: uuid
+    OpenShiftAudienceMemberRequestState:
+      type: object
+      description: Une description détaillée de l'état d'un membre de l'audience.
+      properties:
+        state:
+          type: string
+          description: L'état du membre.
+        timestamp:
+          type: string
+          description: L'horodatage de l'état.
+          format: date-time
+    OpenShiftAudienceMember:
+      type: object
+      description: Une description détaillée d'un membre de l'audience d'un quart
+        à combler.
+      properties:
+        conflicts:
+          type: array
+          description: Les conflits de quarts de travail du membre.
+          items:
+            "$ref": "#/components/schemas/MemberShiftConflict"
+        request_state:
+          "$ref": "#/components/schemas/OpenShiftAudienceMemberRequestState"
     OpenShiftRequestMember:
       type: object
       description: Une description détaillée d'un volontaire pour un quart à combler.
@@ -4847,6 +4931,8 @@ components:
           type: string
           description: Date et heure d'archive du quart de travail.
           format: date-time
+        audience_config:
+          "$ref": "#/components/schemas/OpenShiftAudienceConfig"
     Site:
       type: object
       description: Description détaillée d'une succursale.
@@ -6190,10 +6276,10 @@ components:
           description: Informations additionnelles sur le membre.
         override_overtime:
           type: boolean
-          description: Si le membre possède des seuils d'heures supplémentaires personalisés.
+          description: Si le membre possède des seuils d'heures supplémentaires personnalisés.
         multi_level_overtime:
           type: boolean
-          description: Si les heures supplémentaires multi-niveau sont activées pour
+          description: Si les heures supplémentaires multi-niveaux sont activées pour
             le membre.
         override_spread_overtime:
           type: boolean
@@ -6201,23 +6287,23 @@ components:
             de l'organisation.
         overtime_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personalisé 1 du
+          description: Le seuil d'heures supplémentaires de jour personnalisé 1 du
             membre.
           format: float
         overtime_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaire de semaine personalisé 1 du
-            membre.
+          description: Le seuil d'heures supplémentaire de semaine personnalisé 1
+            du membre.
           format: float
         overtime_2_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personalisé 2 du
-            membre, si les heures supplémentaires multi-niveau sont activées.
+          description: Le seuil d'heures supplémentaires de jour personnalisé 2 du
+            membre, si les heures supplémentaires multi-niveaux sont activées.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de semaine personalisé 2
-            du membre, si les heures supplémentaires multi-niveau sont activées.
+          description: Le seuil d'heures supplémentaires de semaine personnalisé 2
+            du membre, si les heures supplémentaires multi-niveaux sont activées.
           format: float
         spread_overtime_enabled:
           type: boolean
@@ -6358,10 +6444,10 @@ components:
           description: Informations additionnelles sur le membre.
         override_overtime:
           type: boolean
-          description: Si le membre possède des seuils d'heures supplémentaires personalisés.
+          description: Si le membre possède des seuils d'heures supplémentaires personnalisés.
         multi_level_overtime:
           type: boolean
-          description: Si les heures supplémentaires multi-niveau sont activées pour
+          description: Si les heures supplémentaires multi-niveaux sont activées pour
             le membre.
         override_spread_overtime:
           type: boolean
@@ -6369,23 +6455,23 @@ components:
             de l'organisation.
         overtime_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personalisé 1 du
+          description: Le seuil d'heures supplémentaires de jour personnalisé 1 du
             membre.
           format: float
         overtime_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaire de semaine personalisé 1 du
-            membre.
+          description: Le seuil d'heures supplémentaire de semaine personnalisé 1
+            du membre.
           format: float
         overtime_2_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personalisé 2 du
-            membre, si les heures supplémentaires multi-niveau sont activées.
+          description: Le seuil d'heures supplémentaires de jour personnalisé 2 du
+            membre, si les heures supplémentaires multi-niveaux sont activées.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de semaine personalisé 2
-            du membre, si les heures supplémentaires multi-niveau sont activées.
+          description: Le seuil d'heures supplémentaires de semaine personnalisé 2
+            du membre, si les heures supplémentaires multi-niveaux sont activées.
           format: float
         spread_overtime_enabled:
           type: boolean
@@ -6504,6 +6590,56 @@ components:
           type: boolean
         total_count:
           type: integer
+    OpenShiftAudienceConfigCreateAttributes:
+      type: object
+      description: Une description détaillée des paramètres de création de la configuration
+        de l'audience d'un quart à combler.
+      properties:
+        send_by_seniority:
+          type: boolean
+          description: Si le quart à combler est envoyé par ordre d'ancienneté.
+        exclude_members_in_overtime:
+          type: boolean
+          description: Si les membres en situation d'heures supplémentaires sont exclus
+            de l'audience.
+        exclude_members_in_conflict:
+          type: boolean
+          description: Si les membres en conflit d'horaire sont exclus de l'audience.
+        excluded_member_ids:
+          type: array
+          description: Les identifiants uniques des membres manuellement exclus de
+            l'audience du quart à combler.
+          items:
+            type: string
+            format: uuid
+    OpenShiftAudienceConfigUpdateAttributes:
+      required:
+      - id
+      type: object
+      description: Une description détaillée des paramètres de modification de la
+        configuration de l'audience d'un quart à combler.
+      properties:
+        send_by_seniority:
+          type: boolean
+          description: Si le quart à combler est envoyé par ordre d'ancienneté.
+        exclude_members_in_overtime:
+          type: boolean
+          description: Si les membres en situation d'heures supplémentaires sont exclus
+            de l'audience.
+        exclude_members_in_conflict:
+          type: boolean
+          description: Si les membres en conflit d'horaire sont exclus de l'audience.
+        excluded_member_ids:
+          type: array
+          description: Les identifiants uniques des membres manuellement exclus de
+            l'audience du quart à combler.
+          items:
+            type: string
+            format: uuid
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
     OpenShiftRequestApprove:
       required:
       - member_ids
@@ -7028,6 +7164,8 @@ components:
           description: La prime manuel du quart de travail.
           items:
             "$ref": "#/components/schemas/PremiumEntryCreateAttributes"
+        audience_config_attributes:
+          "$ref": "#/components/schemas/OpenShiftAudienceConfigCreateAttributes"
     ShiftDelete:
       type: object
       description: Une description détaillée des paramètres d'entrée de suppression
@@ -7214,6 +7352,10 @@ components:
             oneOf:
             - "$ref": "#/components/schemas/PremiumEntryUpdateAttributes"
             - "$ref": "#/components/schemas/PremiumEntryCreateAttributes"
+        audience_config_attributes:
+          oneOf:
+          - "$ref": "#/components/schemas/OpenShiftAudienceConfigUpdateAttributes"
+          - "$ref": "#/components/schemas/OpenShiftAudienceConfigCreateAttributes"
     SiteCreate:
       required:
       - name
@@ -8248,6 +8390,19 @@ components:
                 type: array
                 items:
                   "$ref": "#/components/schemas/Shift"
+    OpenShiftAudienceMemberSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/OpenShiftAudienceMember"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
     SiteSuccessOne:
       description: Success
       content:
