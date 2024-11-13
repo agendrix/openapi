@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.6.0
+  version: 1.6.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1951,22 +1951,22 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: La status utilisé afin de filtrer la requête. Doit être'draft'
+        description: La status utilisé afin de filtrer la requête. Doit être 'draft'
           ou 'published'.
         schema:
           type: string
       - name: search[from]
         in: query
-        description: La date de début utilisé afin de filtrer la requête. Demmander
-          si  updated_since et updated_until ne sont pas fournit.
+        description: La date de début utilisée afin de filtrer la requête. Requis
+          si 'updated_since' et 'updated_until' ne sont pas fournis.
         schema:
           type: string
       - name: search[to]
         in: query
-        description: La date et l'heure de fin utilisées afin de filtrer la requête.
-          L'intervalle maximal entre 'from' et 'to' doit être égal à ou plus petit
-          que 31 jours. Tous les quarts qui chevauchent cet intervalle seront retournés.
-          Requis si updated_since et updated_until ne sont pas fournis.
+        description: La date de fin utilisée afin de filtrer la requête. L'intervalle
+          maximal entre 'from' et 'to' doit être égal à ou plus petit que 31 jours.
+          Tous les quarts qui chevauchent cet intervalle seront retournés. Requis
+          si 'updated_since' et 'updated_until' ne sont pas fournis.
         schema:
           type: string
       - name: search[updated_since]
@@ -2470,12 +2470,15 @@ paths:
           type: string
       - name: search[from]
         in: query
-        description: Filtre les résultats selon la date (à partir de).
+        description: Filtre les résultats selon la date (à partir de). Requis si 'updated_since',
+          'updated_until' ou 'member_id' ne sont pas fournis.
         schema:
           type: string
       - name: search[to]
         in: query
-        description: Filtre les résultats selon la date (jusqu'à).
+        description: Filtre les résultats selon la date (jusqu'à). L'intervalle maximal
+          entre 'from' et 'to' doit être égal à ou plus petit que 31 jours. Requis
+          si 'updated_since', 'updated_until' ou 'member_id' ne sont pas fournis.
         schema:
           type: string
       - name: search[updated_since]

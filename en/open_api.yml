@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.6.0
+  version: 1.6.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2451,12 +2451,15 @@ paths:
           type: string
       - name: search[from]
         in: query
-        description: The from date used for the search applied on the query.
+        description: The 'from' date used for the search applied on the query. Required
+          if 'updated_since', 'updated_until' or 'member_id' are not provided.
         schema:
           type: string
       - name: search[to]
         in: query
-        description: The to date used for the search applied on the query.
+        description: The 'to' date used for the search applied on the query. The maximum
+          range between 'from' and 'to' must be equal to or less than 31 days. Required
+          if 'updated_since', 'updated_until' or 'member_id' are not provided.
         schema:
           type: string
       - name: search[updated_since]
