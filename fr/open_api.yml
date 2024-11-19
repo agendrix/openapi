@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.6.1
+  version: 1.7.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1071,6 +1071,20 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/EmptySuccess"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+  "/members/{id}/restore":
+    put:
+      summary: Restaurer un membre supprimé.
+      description: Restaure un membre selon l'identificateur unique.
+      tags:
+      - Members
+      operationId: restore_member
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/MemberSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
   "/members/{id}/availability_lists/{date}":
