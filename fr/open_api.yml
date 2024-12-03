@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.7.0
+  version: 1.8.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1965,7 +1965,7 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: La status utilisé afin de filtrer la requête. Doit être 'draft'
+        description: La status utilisé afin de filtrer la requête. Doit être'draft'
           ou 'published'.
         schema:
           type: string
@@ -1977,10 +1977,10 @@ paths:
           type: string
       - name: search[to]
         in: query
-        description: La date de fin utilisée afin de filtrer la requête. L'intervalle
-          maximal entre 'from' et 'to' doit être égal à ou plus petit que 31 jours.
-          Tous les quarts qui chevauchent cet intervalle seront retournés. Requis
-          si 'updated_since' et 'updated_until' ne sont pas fournis.
+        description: La date et l'heure de fin utilisées afin de filtrer la requête.
+          L'intervalle maximal entre 'from' et 'to' doit être égal à ou plus petit
+          que 31 jours. Tous les quarts qui chevauchent cet intervalle seront retournés.
+          Requis si updated_since et updated_until ne sont pas fournis.
         schema:
           type: string
       - name: search[updated_since]
@@ -4837,6 +4837,9 @@ components:
         on_call:
           type: boolean
           description: Si le quart de travail est sur appel.
+        training:
+          type: boolean
+          description: Si le quart est une formation.
         all_day:
           type: boolean
           description: Si le quart de travail est toute la journée.
@@ -4932,7 +4935,14 @@ components:
           format: float
         resource_ids:
           type: array
-          description: The shift's resource ids.
+          description: Les identifiants uniques des ressources du quart.
+          items:
+            type: string
+            format: uuid
+        drive_file_ids:
+          type: array
+          description: Les identifiants uniques des fichiers de documents partagés
+            du quart.
           items:
             type: string
             format: uuid
@@ -5686,6 +5696,36 @@ components:
           description: Les signatures associées à la demande de signature.
           items:
             "$ref": "#/components/schemas/DriveSignature"
+    DriveFileShiftCreateAttributes:
+      required:
+      - drive_file_id
+      type: object
+      description: Description détaillée des paramètres de création d'un fichier de
+        quart.
+      properties:
+        drive_file_id:
+          type: string
+          description: L'identifiant unique du fichier dans les documents partagés.
+          format: uuid
+    DriveFileShiftUpdateAttributes:
+      required:
+      - id
+      type: object
+      description: Description détaillée des paramètres de mise à jour d'un fichier
+        de quart.
+      properties:
+        drive_file_id:
+          type: string
+          description: L'identifiant unique du fichier dans les documents partagés.
+          format: uuid
+        id:
+          type: string
+          description: Identifiant unique de l'objet.
+          format: uuid
+        _destroy:
+          type: boolean
+          description: Mettre à 'true' pour supprimer cet objet lors de la modification
+            de son parent.
     HRField:
       type: object
       description: Une description détaillée d'un champ de ressources humaines.
@@ -7106,6 +7146,9 @@ components:
         on_call:
           type: boolean
           description: Si le quart de travail est sur appel.
+        training:
+          type: boolean
+          description: Si le quart est une formation.
         time_off:
           type: boolean
           description: Si le quart de travail est un congé.
@@ -7162,6 +7205,11 @@ components:
           description: Resources du quart de travail.
           items:
             "$ref": "#/components/schemas/ResourceShiftCreateAttributes"
+        drive_file_shifts_attributes:
+          type: array
+          description: Les fichiers de documents partagés du quart.
+          items:
+            "$ref": "#/components/schemas/DriveFileShiftCreateAttributes"
         breaks_attributes:
           type: array
           description: Pauses du quart de travail.
@@ -7294,6 +7342,9 @@ components:
         on_call:
           type: boolean
           description: Si le quart de travail est sur appel.
+        training:
+          type: boolean
+          description: Si le quart est une formation.
         time_off:
           type: boolean
           description: Si le quart de travail est un congé.
@@ -7344,6 +7395,13 @@ components:
             oneOf:
             - "$ref": "#/components/schemas/ResourceShiftUpdateAttributes"
             - "$ref": "#/components/schemas/ResourceShiftCreateAttributes"
+        drive_file_shifts_attributes:
+          type: array
+          description: Les fichiers de documents partagés du quart.
+          items:
+            oneOf:
+            - "$ref": "#/components/schemas/DriveFileShiftUpdateAttributes"
+            - "$ref": "#/components/schemas/DriveFileShiftCreateAttributes"
         breaks_attributes:
           type: array
           description: Pauses du quart de travail.
