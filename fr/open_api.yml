@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.8.0
+  version: 1.9.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -3424,8 +3424,8 @@ components:
           format: uuid
         commentable_type:
           type: string
-          description: Le type d'objet commenté -  quart, demande de congé, publication
-            d'actualité, etc.
+          description: Le type d'objet commenté - Shift (quart), LeaveRequest (demande
+            de congé), BillboardThread (publication du fil d'actualité), etc.
         editable:
           type: boolean
           description: Si le commentaire est modifiable.
@@ -5096,6 +5096,10 @@ components:
           description: Le nombre total de temps supplémentaires dans l'entrée de temps,
             en minutes.
           format: int32
+        override_overtime:
+          type: boolean
+          description: Si des heures supplémentaires personnalisées ont été spécifiées
+            pour l'entrée de temps.
         premium_minutes:
           type: integer
           description: Le nombre de temps en prime dans l'entrée de temps, en minutes.
@@ -5503,8 +5507,8 @@ components:
           description: Le contenu du commentaire.
         commentable_type:
           type: string
-          description: Le type d'objet commenté -  quart, demande de congé, publication
-            d'actualité, etc.
+          description: Le type d'objet commenté - Shift (quart), LeaveRequest (demande
+            de congé), BillboardThread (publication du fil d'actualité), etc.
         commentable_id:
           type: string
           description: L'identifiant de l'objet commenté.
@@ -5523,8 +5527,8 @@ components:
           description: Le contenu du commentaire.
         commentable_type:
           type: string
-          description: Le type d'objet commenté -  quart, demande de congé, publication
-            d'actualité, etc.
+          description: Le type d'objet commenté - Shift (quart), LeaveRequest (demande
+            de congé), BillboardThread (publication du fil d'actualité), etc.
         commentable_id:
           type: string
           description: L'identifiant de l'objet commenté.
@@ -7687,6 +7691,20 @@ components:
           type: string
           description: La date et l'heure du début de la pause.
           format: date-time
+        override_overtime:
+          type: boolean
+          description: Si des heures supplémentaires personnalisées ont été spécifiées
+            pour l'entrée de temps.
+        overtime_1_minutes:
+          type: number
+          description: Le nombre de minutes de temps supplémentaire pour le niveau
+            1.
+          format: float
+        overtime_2_minutes:
+          type: number
+          description: Le nombre de minutes de temps supplémentaire pour le niveau
+            2.
+          format: float
     UserUpdate:
       type: object
       description: Description détaillée des paramètres d'entrée de mise à jour d'un
