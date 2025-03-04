@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.9.1
+  version: 1.9.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -3398,8 +3398,8 @@ components:
           format: uuid
         commentable_type:
           type: string
-          description: The type of the the commented resource - Shift, LeaveRequest,
-            BillboardThread, etc.
+          description: The type of the commented resource - Shift, LeaveRequest, BillboardThread,
+            etc.
         editable:
           type: boolean
           description: If the comment is editable.
@@ -5038,7 +5038,8 @@ components:
           format: int32
         override_overtime:
           type: boolean
-          description: If the time entry has manual values for overtime.
+          description: If custom overtime values have been specified for the time
+            entry.
         premium_minutes:
           type: integer
           description: The time entry's extra minutes granted by premiums.
@@ -5439,8 +5440,8 @@ components:
           description: The comment's body.
         commentable_type:
           type: string
-          description: The type of the the commented resource - Shift, LeaveRequest,
-            BillboardThread, etc.
+          description: The type of the commented resource - Shift, LeaveRequest, BillboardThread,
+            etc.
         commentable_id:
           type: string
           description: The id of the commented resource.
@@ -5457,8 +5458,8 @@ components:
           description: The comment's body.
         commentable_type:
           type: string
-          description: The type of the the commented resource - Shift, LeaveRequest,
-            BillboardThread, etc.
+          description: The type of the commented resource - Shift, LeaveRequest, BillboardThread,
+            etc.
         commentable_id:
           type: string
           description: The id of the commented resource.
@@ -7565,14 +7566,15 @@ components:
           format: date-time
         override_overtime:
           type: boolean
-          description: If the time entry has manual values for overtime.
+          description: If custom overtime values have been specified for the time
+            entry.
         overtime_1_minutes:
           type: number
-          description: The number of minutes of overtime for level 1.
+          description: The number of overtime minutes for level 1.
           format: float
         overtime_2_minutes:
           type: number
-          description: The number of minutes of overtime for level 2.
+          description: The number of overtime minutes for level 2.
           format: float
     UserUpdate:
       type: object
