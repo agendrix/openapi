@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.9.3
+  version: 1.10.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -204,7 +204,7 @@ tags:
 - name: Payrolls
   description: Payrolls operations
 - name: Positions
-  description: A position represents an available position in the organization. Employee
+  description: A position represents an available position in the organization. Employees
     can have multiple positions assigned for each site they are part of.
 - name: PremiumEntries
   description: Premium entries operations
@@ -2848,6 +2848,12 @@ paths:
           or ''canceled''.'
         schema:
           type: string
+      - name: search[type]
+        in: query
+        description: 'Filter by signature request type. Options are: ''member'', ''onboarding'',
+          or ''team_library''.'
+        schema:
+          type: string
       responses:
         200:
           "$ref": "#/components/responses/DriveSignatureRequestSuccessMany"
@@ -3020,7 +3026,7 @@ components:
           format: date-time
         updated_at:
           type: string
-          description: When the activitie was last updated.
+          description: When the activity was last updated.
           format: date-time
         parameters:
           type: object
@@ -3584,19 +3590,19 @@ components:
           format: int32
         start_at:
           type: string
-          description: The time at which the the leave request starts.
+          description: The time at which the leave request starts.
           format: date-time
         start_date:
           type: string
-          description: The date at which the the leave request starts.
+          description: The date at which the leave request starts.
           format: date
         end_at:
           type: string
-          description: The time at which the the leave request ends.
+          description: The time at which the leave request ends.
           format: date-time
         end_date:
           type: string
-          description: The date at which the the leave request ends.
+          description: The date at which the leave request ends.
           format: date
         approved_by:
           type: string
@@ -4026,7 +4032,7 @@ components:
           format: uuid
         last_invitation_method:
           type: string
-          description: The last method used to invite de member, sms or email.
+          description: The last method used to invite the member; SMS or email.
         admin:
           type: boolean
           description: If the member is an administrator of the organization.
@@ -4152,6 +4158,12 @@ components:
         hr_data:
           type: object
           description: The member's hr data.
+        default_leave_value:
+          type: integer
+          description: The member's default leave value, in minutes. Overrides the
+            organization's default leave value. Will only work if the member's hours
+            are computed in days.
+          format: int32
         profile:
           "$ref": "#/components/schemas/Profile"
     OpenShiftAudienceConfig:
@@ -4300,7 +4312,7 @@ components:
           description: The organization timezone's name.
         availabilities_need_approval:
           type: boolean
-          description: If the availabilities needs approvals or not.
+          description: If the availabilities need approvals or not.
         created_at:
           type: string
           description: When the organization was created.
@@ -5731,11 +5743,11 @@ components:
       properties:
         start_at:
           type: string
-          description: The time at which the the leave request starts.
+          description: The time at which the leave request starts.
           format: date-time
         end_at:
           type: string
-          description: The time at which the the leave request ends.
+          description: The time at which the leave request ends.
           format: date-time
         justification:
           type: string
@@ -5803,11 +5815,11 @@ components:
       properties:
         start_at:
           type: string
-          description: The time at which the the leave request starts.
+          description: The time at which the leave request starts.
           format: date-time
         end_at:
           type: string
-          description: The time at which the the leave request ends.
+          description: The time at which the leave request ends.
           format: date-time
         justification:
           type: string
@@ -6332,6 +6344,12 @@ components:
         payroll_auto_update:
           type: boolean
           description: If the member doesn't have to clock in.
+        default_leave_value:
+          type: integer
+          description: The member's default leave value, in minutes. Overrides the
+            organization's default leave value. Will only work if the member's attendance
+            is computed in days.
+          format: int32
         profile_attributes:
           "$ref": "#/components/schemas/ProfileCreateAttributes"
         member_sites_attributes:
@@ -6492,6 +6510,12 @@ components:
         payroll_auto_update:
           type: boolean
           description: If the member doesn't have to clock in.
+        default_leave_value:
+          type: integer
+          description: The member's default leave value, in minutes. Overrides the
+            organization's default leave value. Will only work if the member's attendance
+            is computed in days.
+          format: int32
         profile_attributes:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
         member_sites_attributes:
@@ -7619,7 +7643,6 @@ components:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
     DriveFileCreate:
       required:
-      - member_id
       - name
       - role
       type: object
@@ -7645,9 +7668,27 @@ components:
         note:
           type: string
           description: The file's note.
+        site_ids:
+          type: array
+          description: The site ids for which the file is visible, if the file is
+            a Team library file.
+          items:
+            type: string
+        position_ids:
+          type: array
+          description: The position ids for which the file is visible, if the file
+            is a Team library file.
+          items:
+            type: string
+        publish_action:
+          type: string
+          description: Determines whether the file should be published or drafted,
+            with the option to send a notification to the members concerned. Valid
+            values are 'publish', 'publish_and_notify', or 'draft'.
         member_id:
           type: string
-          description: The file member's id.
+          description: The file member's id. Leave blank to create a Team library
+            file.
           format: uuid
         file:
           type: string
@@ -7677,9 +7718,25 @@ components:
         note:
           type: string
           description: The file's note.
+        site_ids:
+          type: array
+          description: The site ids for which the file is visible, if the file is
+            a Team library file.
+          items:
+            type: string
+        position_ids:
+          type: array
+          description: The position ids for which the file is visible, if the file
+            is a Team library file.
+          items:
+            type: string
+        publish_action:
+          type: string
+          description: Determines whether the file should be published or drafted,
+            with the option to send a notification to the members concerned. Valid
+            values are 'publish', 'publish_and_notify', or 'draft'.
     DriveFolderCreate:
       required:
-      - member_id
       - name
       - role
       type: object
@@ -7696,9 +7753,22 @@ components:
           type: string
           description: The role required to see the folder and all of its contents.
             Can either be member, supervisor, manager, or admin.
+        site_ids:
+          type: array
+          description: The site ids for which the folder is visible, if the folder
+            is a Team library folder.
+          items:
+            type: string
+        position_ids:
+          type: array
+          description: The position ids for which the folder is visible, if the folder
+            is a Team library folder.
+          items:
+            type: string
         member_id:
           type: string
-          description: The folder member's id.
+          description: The folder member's id. Leave blank to create a Team library
+            folder.
           format: uuid
     DriveFolderUpdate:
       type: object
@@ -7715,10 +7785,21 @@ components:
           type: string
           description: The role required to see the folder and all of its contents.
             Can either be member, supervisor, manager, or admin.
+        site_ids:
+          type: array
+          description: The site ids for which the folder is visible, if the folder
+            is a Team library folder.
+          items:
+            type: string
+        position_ids:
+          type: array
+          description: The position ids for which the folder is visible, if the folder
+            is a Team library folder.
+          items:
+            type: string
     DriveSignatureRequestCreate:
       required:
       - drive_file_id
-      - member_ids
       type: object
       description: A detailed description of the input parameters for creating a signature
         request.
@@ -7730,7 +7811,8 @@ components:
         member_ids:
           type: array
           description: The identifiers of the members who will need to sign. Between
-            one and four members allowed.
+            one and four members allowed. This parameter is ignored if the file is
+            a Team library file, as the file's audience is used instead.
           items:
             type: string
             format: uuid
