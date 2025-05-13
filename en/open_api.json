@@ -3,7 +3,7 @@
   "info": {
     "title": "Agendrix API",
     "description": "\nThis page contains a detailed description of Agendrix's public API. Below, you will find a Get Started section resuming the main steps leading you to your first API call, as well as an OAuth 2.0 section, describing the authentication process necessary in order to retrieve a mandatory access token. You can also access information about the API headers, responses and errors. Each endpoint is then described, grouped by their database model. Authorizations, parameters, responses, everything you need is there. Enjoy!\n\n# Getting Started\nThis guide describes how to make your first call to Agendrix's Public API.\n\n## Create an Application\nCreating an application will generate your development keys, for a sandbox environment where you can do any test you want, and a production environment. You can use the application for yourself or your clients.\n  - From the [Applications](./applications) section, click on the New Application button, and choose a name for your new application.\n  - You have now been redirected to your app general information. You can add a description, an icon and edit your application name as well. You can also see the approval status of your application. Your application needs to be approved before it can be used in production.\n  - You can retrieve your development and production credentials in their respective sections. You can regenerate your secrets, manage your redirect URIs and your scopes.\n\nYour Client ID and Client Secret are mandatory in order to retrieve your OAuth 2.0 tokens. Redirect URIs are as well - at least one.\n\n## Sandbox\nThe sandbox environment is used for testing. Your application does not require to be approved to use this environment. When using the sandbox, do not forget to change your calls accordingly - sandbox.agendrix.net/oauth instead of app.agendrix.com/oauth and api.sandbox.agendrix.net instead of api.agendrix.com.\n\nTo sign in to the sandbox environment, follow these steps:\n  - From the [Applications](./applications) section, click on your application.\n  - Go to the Sandbox tab.\n  - Click the Sign in to the sandbox link.\n\n## Retrieve an OAuth 2.0 access token\nYou need an access token to access Agendrix API. The simpler way to do so is through the OAuth 2.0 [Playground](./playground). There is also a detailed explanation of the process in the OAuth 2.0 section below.\n\n## Make an API call\nNow that you have an access token, you can use this token to make any call you like by adding the Authorization header to the request, as long as your credentials include the required scopes for a specific endpoint.\n\n# Resources\nThis section regroups the different downloadable Agendrix's API resources.\n\n## OAS 3\nAn Open API Specification document is a detailed, precise description of an API, from its security schemes to its endpoints. It has a lot of uses - our own [document](https://github.com/agendrix/openapi/blob/main/en/open_api.yml) generates a large part of this documentation, as well as the Postman collection. The Open API ecosystem is rich and mature and is used widely by the community. For more on OAS, click <a href='https://github.com/OAI/OpenAPI-Specification' target='_blank'>here</a>.\n\n## Examples\nWe also implemented basic <a href='https://github.com/agendrix/public-api-integration-examples' target='_blank'>examples</a> of integration with our API in javascript and ruby.\nThose examples include the complete OAuth flow as well as tokens handling and of course, making requests to the API.\n\n# OAuth 2.0\nAgendrix uses OAuth 2.0 protocol for authorization. Once you create an application, it can be used to request access and refresh tokens. The access token is\nvalid for a period of 2 hours and needs to be refreshed afterward using the refresh token. The access token can then be used to make API calls. For an interactive\ndemonstration of the process, use the OAuth 2.0 Playground.\n\n## Prepare the Authorization Request\nThe first step is to prepare the authorization request using the Client ID and one of the redirect URIs defined for the application - or the client. Scopes default to read when not specified.\n```\nhttps://app.agendrix.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=read+write\n```\n\n## Redirect the User\nOnce the user is redirected to the authorization request, he needs to gives his approval sharing his data with the application, and choose the organization for which he wants to do so. The authorization request is then processed by the OAuth 2.0 server.\n\n## Handle the OAuth 2.0 Server Response\nIf the authorization request is valid, the OAuth 2.0 server sends an authorization code to the redirect URI specified in the authorization request. This code can be used to prepare the request to retrieve the access and refresh tokens.\n\n## Exchange the Authorization Code for Tokens\nThe final step is simply to exchange the authorization code received against the tokens. The Client ID, the Client Secret, the redirect URI and the grant type - which is always *authorization_code* - need to be included in the request. The OAuth 2.0 server then sends the access and refresh token to the redirect URI defined.\n```\ncurl --request POST 'https://app.agendrix.com/oauth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n  \"client_id\": \"{CLIENT_ID}\",\n  \"client_secret\": \"{CLIENT_SECRET}\",\n  \"redirect_uri\": \"{REDIRECT_URI}\",\n  \"grant_type\": \"authorization_code\",\n  \"code\": \"{AUTORIZATION_CODE}\"\n}'\n```\n\n## Exchange the Refresh Token for new tokens\nThe retrieved access token will eventually expire - it has a TTL of 2 hours. Instead of going through all the authorizing process again, the refresh token can be used to request new access and refresh tokens. The grant type becomes *refresh_token* and the refresh token must be included in the request, along with the Client ID, Client Secret and redirect URI. A subset of the original access token scopes can also be included in the request.\n```\ncurl --request POST 'https://app.agendrix.com/oauth/token' \\\n--header 'Content-Type: application/json' \\\n--data-raw '{\n  \"client_id\": \"{CLIENT_ID}\",\n  \"client_secret\": \"{CLIENT_SECRET}\",\n  \"redirect_uri\": \"{REDIRECT_URI}\",\n  \"grant_type\": \"refresh_token\",\n  \"refresh_token\": \"{REFRESH_TOKEN}\",\n}'\n```\n\nThe refresh tokens become invalid once used, but do not expire. You can repeat the refresh process as long as you need to.\n\n# Token's Owner Role\nThe data returned by the API will be scoped to the token's owner role. This means that if an access token was generated using an access grant of a manager, the data returned by the API will be scoped to the positions and sites managed by the user. Actions will also be limited by the owner's role. If you wish to retrieve all data related to an organization, the token used must be generated by an administrator of the organization.\n\n# Headers\nSpecific headers must be set in order to interact with the API. Some headers in the API's response also contain relevant information.\n\n## Requests\nAll requests made to the Agendrix's Public API must have two specific headers set. The first one is the Content-Type header. It must always be set to *application/json*, since it is the supported format by the API. The second one is the Authorization header, in which you must add your access token as *Bearer*. You can see an example of a classic curl request in the [Make an API Call](./documentation#section/Make-an-API-Call) section.\n\n## Responses\nAll responses from the API are in JSON; therefore, they all have the Content-Type header set to *application/json*. In the specific case the number of requests to the API is over the rate [limit](./documentation#section/Rate-Limiting), the headers RateLimit-Limit, RateLimit-Remaining and RateLimit-Reset are added to the response headers. They respectively represent the rate limit of requests allowed, the remaining number of requests allowed - which is always 0 in that case - and the amount of seconds before the rate limit resets.\n\n# Rate Limiting\nThe API's rate limiting is currently set to 360 requests per minute. As long as the rate limiting is respected and the request is valid as well as its access token, it is processed by API.\n\n# Bulk Actions\n## Bulk size limit\nThe bulk size limit is currently set to a 1000 per request. Just as the rate limiting, as long as the size limit is respected, and the request and its access token are valid, it is processed by the API.\n\n# Make an API Call\nOnce you have the access token, making a call to Agendrix's Public API is rather straightforward. It is a classic HTTP request. All you have to do is add the required headers as well as the body or the query params - depending on the type of request -, as you can see in the example below.\n```\ncurl --request POST 'https://api.agendrix.com/v1/positions' \\\n--header 'Content-Type: application/json' \\\n--header 'Authorization: Bearer {ACCESS_TOKEN}' \\\n--data-raw '{\n    \"name\": \"A position name\"\n}'\n```\n\n# Responses\nAll responses are in JSON. Responses structure vary slightly depending on the context.\n\n## Paginated Responses\nPaginated responses always contain the data and pagination fields. The data field represents the requested data returned by the API - for paginated responses, it is an array of objects. The pagination field represents the response pagination metadata. The pagination field contains the sort value, the search values, the page size, the limit on the page size, the current, next, previous, last, first and total pages, the total count of records and finally if the requested page is out of range.\n\n## Other Responses\nAll other responses always contain the data and errors fields. The data field represents once again the data returned by the API - but directly as an object this time - and will be null if there are errors. The errors field is an array of objects describing the error with a source, short message and/or long message fields. The errors field is null if the request is processed without errors.\n\n# Errors\n## Unauthorized Error - Code 401\nDifferent kind of unauthorized errors can happen while using the API:\n- Invalid token\n- Expired token\n- Revoked token\n- Unknown token\n- Unapproved application\n- Unauthorized operation (Your Agendrix user does not have the rights to perform the action)\n\n## Forbidden Error - Code 403\nWhen the token does not possess the required scope to perform the action.\n\n## Rate Limiting Error - Code 429\nWhen the rate limit of 180 requests per minute is not respected, a rate limit error is returned. The *RateLimit-Reset* header specifies how much time is left before another request can be made.\n\n## Internal Server Error - Code 500\nWhen an unexpected error occurs on the server, the API will return an internal server error.\n\n## Not Found Error - Code 404\nIt can happen for every endpoint that needs to retrieve an existing record - GET and PUT requests -, except for a bulk update.\n\n## Query Param Error - Code 400\nDifferent kind of query param errors can be triggered by the API:\n- If a required param is missing\n- If a param has the wrong format (i.e. dates)\n- If a param has the wrong value (i.e. sort or search values)\n\nIt can happen only for paginated endpoints - GET requests.\n\n## Input Params Error - Code 400\nIf a payload does not respect the schema specified in the documentation, the API will return an input params error. It can only occur for POST and PUT requests.\n\n## Path Param Error - Code 400\nIt can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.\n\n# Help\n## Contact us\nIf you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.",
-    "version": "1.10.0"
+    "version": "1.10.1"
   },
   "servers": [
     {
@@ -49,7 +49,7 @@
     },
     {
       "name": "LeaveRequests",
-      "description": "Leave requests operations"
+      "description": "Time off requests operations"
     },
     {
       "name": "HRFields",
@@ -57,7 +57,7 @@
     },
     {
       "name": "LeaveTypes",
-      "description": "Leave types operations"
+      "description": "Time off types operations"
     },
     {
       "name": "MemberTimeBankTransactions",
@@ -121,7 +121,7 @@
     },
     {
       "name": "TimeEntries",
-      "description": "The time entries are the finalized entries of an employee. They are generated from shifts, leave requests, clock-in and clock-out, and so on."
+      "description": "The time entries are the finalized entries of an employee. They are generated from shifts, time off requests, clock-in and clock-out, and so on."
     },
     {
       "name": "TransferRequests",
@@ -899,8 +899,8 @@
     },
     "/leave_requests/{id}/approve": {
       "put": {
-        "summary": "Approve a leave request",
-        "description": "Change a pending leave request status to approved",
+        "summary": "Approve a time off request",
+        "description": "Change a pending time off request status to approved",
         "tags": [
           "LeaveRequests"
         ],
@@ -922,8 +922,8 @@
     },
     "/leave_requests/{id}/cancel": {
       "put": {
-        "summary": "Cancel a leave request",
-        "description": "Change a leave request status to canceled",
+        "summary": "Cancel a time off request",
+        "description": "Change a time off request status to canceled",
         "tags": [
           "LeaveRequests"
         ],
@@ -945,8 +945,8 @@
     },
     "/leave_requests": {
       "get": {
-        "summary": "Get paginated leave requests.",
-        "description": "Return paginated leave requests.",
+        "summary": "Get paginated time off requests.",
+        "description": "Return paginated time off requests.",
         "tags": [
           "LeaveRequests"
         ],
@@ -980,7 +980,7 @@
           {
             "name": "search[status]",
             "in": "query",
-            "description": "The leave requests status. Valid values are approved, canceled, declined and pending.",
+            "description": "The time off requests status. Valid values are approved, canceled, declined and pending.",
             "schema": {
               "type": "string"
             }
@@ -996,8 +996,8 @@
         }
       },
       "post": {
-        "summary": "Create a leave request.",
-        "description": "Create a leave request from the body.",
+        "summary": "Create a time off request.",
+        "description": "Create a time off request from the body.",
         "tags": [
           "LeaveRequests"
         ],
@@ -1017,8 +1017,8 @@
     },
     "/leave_requests/{id}/decline": {
       "put": {
-        "summary": "Decline a pending leave request",
-        "description": "Change a leave request status to declined",
+        "summary": "Decline a pending time off request",
+        "description": "Change a time off request status to declined",
         "tags": [
           "LeaveRequests"
         ],
@@ -1040,8 +1040,8 @@
     },
     "/leave_requests/{id}": {
       "get": {
-        "summary": "Get one leave request.",
-        "description": "Return the leave request's id holder.",
+        "summary": "Get one time off request.",
+        "description": "Return the time off request's id holder.",
         "tags": [
           "LeaveRequests"
         ],
@@ -1061,8 +1061,8 @@
         }
       },
       "put": {
-        "summary": "Update a leave request.",
-        "description": "Update a leave request from the body.",
+        "summary": "Update a time off request.",
+        "description": "Update a time off request from the body.",
         "tags": [
           "LeaveRequests"
         ],
@@ -1090,8 +1090,8 @@
     },
     "/leave_types": {
       "get": {
-        "summary": "Get paginated leave types.",
-        "description": "Return paginated leave types.",
+        "summary": "Get paginated time off types.",
+        "description": "Return paginated time off types.",
         "tags": [
           "LeaveTypes"
         ],
@@ -1117,8 +1117,8 @@
         }
       },
       "post": {
-        "summary": "Create a leave type.",
-        "description": "Create a leave type from the body.",
+        "summary": "Create a time off type.",
+        "description": "Create a time off type from the body.",
         "tags": [
           "LeaveTypes"
         ],
@@ -1138,8 +1138,8 @@
     },
     "/leave_types/{id}": {
       "get": {
-        "summary": "Get one leave type.",
-        "description": "Return the leave type's id holder.",
+        "summary": "Get one time off type.",
+        "description": "Return the time off type's id holder.",
         "tags": [
           "LeaveTypes"
         ],
@@ -1159,8 +1159,8 @@
         }
       },
       "put": {
-        "summary": "Update a leave type.",
-        "description": "Update a leave type from the body.",
+        "summary": "Update a time off type.",
+        "description": "Update a time off type from the body.",
         "tags": [
           "LeaveTypes"
         ],
@@ -1186,8 +1186,8 @@
         }
       },
       "delete": {
-        "summary": "Delete a leave type.",
-        "description": "Delete the leave type's id holder.",
+        "summary": "Delete a time off type.",
+        "description": "Delete the time off type's id holder.",
         "tags": [
           "LeaveTypes"
         ],
@@ -1200,6 +1200,9 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/EmptySuccess"
+          },
+          "403": {
+            "$ref": "#/components/responses/ForbiddenFailure"
           },
           "404": {
             "$ref": "#/components/responses/NotFoundFailure"
@@ -4708,7 +4711,7 @@
           },
           "availability_list_id": {
             "type": "string",
-            "description": "The availabitlity list request's availability list id.",
+            "description": "The availability list request's availability list id.",
             "format": "uuid"
           },
           "expired_at": {
@@ -4794,7 +4797,7 @@
           },
           "availabilities": {
             "type": "array",
-            "description": "The availability list availabilities.",
+            "description": "The availability in the availability list.",
             "items": {
               "$ref": "#/components/schemas/Availability"
             }
@@ -4998,7 +5001,7 @@
           },
           "offset": {
             "type": "integer",
-            "description": "The break offset from the shift's start, in minutes. E.g., a break starting at 7:30 for a shift starting at 7:00 will have an offset of 30.",
+            "description": "The break's offset from the shift's start, in minutes. E.g., a break starting at 7:30 for a shift starting at 7:00 will have an offset of 30.",
             "format": "int32"
           },
           "paid": {
@@ -5173,7 +5176,7 @@
       },
       "LeaveType": {
         "type": "object",
-        "description": "A detailed description of a leave type.",
+        "description": "A detailed description of a time off type.",
         "properties": {
           "id": {
             "type": "string",
@@ -5182,20 +5185,20 @@
           },
           "name": {
             "type": "string",
-            "description": "The leave type's name."
+            "description": "The time off type's name."
           },
           "paid": {
             "type": "boolean",
-            "description": "If the leave type is paid."
+            "description": "If the time off type is paid."
           },
           "created_at": {
             "type": "string",
-            "description": "When the leave type was created.",
+            "description": "When the time off type was created.",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
-            "description": "When the leave type was last updated.",
+            "description": "When the time off type was last updated.",
             "format": "date-time"
           }
         }
@@ -5303,7 +5306,7 @@
       },
       "LeaveRequest": {
         "type": "object",
-        "description": "A detailed description of a leave request.",
+        "description": "A detailed description of a time off request.",
         "properties": {
           "id": {
             "type": "string",
@@ -5322,12 +5325,12 @@
           },
           "created_by": {
             "type": "string",
-            "description": "The leave request creator's id.",
+            "description": "The time off request creator's id.",
             "format": "uuid"
           },
           "justification": {
             "type": "string",
-            "description": "The leave request justification."
+            "description": "The time off request justification."
           },
           "leave_value": {
             "type": "integer",
@@ -5336,81 +5339,81 @@
           },
           "paid": {
             "type": "boolean",
-            "description": "If the leave request is paid."
+            "description": "If the time off request is paid."
           },
           "all_day": {
             "type": "boolean",
-            "description": "If the leave request is all day."
+            "description": "If the time off request is all day."
           },
           "multiple_days": {
             "type": "boolean",
-            "description": "If the leave request is multiple days."
+            "description": "If the time off request is multiple days."
           },
           "overlapping_shifts_count": {
             "type": "integer",
-            "description": "How many of the member's shifts overlap with the leave request.",
+            "description": "How many of the member's shifts overlap with the time off request.",
             "format": "int32"
           },
           "start_at": {
             "type": "string",
-            "description": "The time at which the leave request starts.",
+            "description": "The time at which the time off request starts.",
             "format": "date-time"
           },
           "start_date": {
             "type": "string",
-            "description": "The date at which the leave request starts.",
+            "description": "The date on which the leave request starts.",
             "format": "date"
           },
           "end_at": {
             "type": "string",
-            "description": "The time at which the leave request ends.",
+            "description": "The time at which the time off request ends.",
             "format": "date-time"
           },
           "end_date": {
             "type": "string",
-            "description": "The date at which the leave request ends.",
+            "description": "The date on which the leave request ends.",
             "format": "date"
           },
           "approved_by": {
             "type": "string",
-            "description": "The leave request's approver id."
+            "description": "The time off request's approver id."
           },
           "declined_by": {
             "type": "string",
-            "description": "The leave request's decliner's id."
+            "description": "The time off request's decliner's id."
           },
           "canceled_by": {
             "type": "string",
-            "description": "The leave request's canceler's id."
+            "description": "The time off request's canceler's id."
           },
           "approved_at": {
             "type": "string",
-            "description": "The time at which the leave request was approved.",
+            "description": "The time at which the time off request was approved.",
             "format": "date-time"
           },
           "declined_at": {
             "type": "string",
-            "description": "The time at which the leave request was declined.",
+            "description": "The time at which the time off request was declined.",
             "format": "date-time"
           },
           "canceled_at": {
             "type": "string",
-            "description": "The time at which the leave request was canceled.",
+            "description": "The time at which the time off request was canceled.",
             "format": "date-time"
           },
           "expired_at": {
             "type": "string",
-            "description": "The time at which the leave request expires.",
+            "description": "The time at which the time off request expires.",
             "format": "date-time"
           },
           "created_at": {
             "type": "string",
-            "description": "When the leave request was created.",
+            "description": "When the time off request was created.",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
-            "description": "When the leave request was last updated.",
+            "description": "When the time off request was last updated.",
             "format": "date-time"
           },
           "leave_type": {
@@ -5905,7 +5908,7 @@
           },
           "main_position_id": {
             "type": "string",
-            "description": "The unique identifier of the member's main position.",
+            "description": "The unique identifier of the member's primary position.",
             "format": "uuid"
           },
           "main_site_id": {
@@ -6072,7 +6075,7 @@
           },
           "default_leave_value": {
             "type": "integer",
-            "description": "The member's default leave value, in minutes. Overrides the organization's default leave value. Will only work if the member's hours are computed in days.",
+            "description": "The member's default time off value, in minutes. Overrides the organization's default time off value. Will only work if the member's hours are computed in days.",
             "format": "int32"
           },
           "profile": {
@@ -6262,11 +6265,11 @@
           },
           "time_zone_name": {
             "type": "string",
-            "description": "The organization timezone's name."
+            "description": "The organization time zone's name."
           },
           "availabilities_need_approval": {
             "type": "boolean",
-            "description": "If the availabilities need approvals or not."
+            "description": "If the availability needs approval or not."
           },
           "created_at": {
             "type": "string",
@@ -6463,11 +6466,11 @@
           },
           "only_time_offs": {
             "type": "boolean",
-            "description": "If the premium is only applied to time offs."
+            "description": "If the premium is only applied to time off."
           },
           "all_day": {
             "type": "boolean",
-            "description": "If the premium is applied to every hours of the day."
+            "description": "If the premium is applied to every hour of the day."
           },
           "all_week": {
             "type": "boolean",
@@ -6475,7 +6478,7 @@
           },
           "all_leave_types": {
             "type": "boolean",
-            "description": "If the premium is applied to all leave types."
+            "description": "If the premium is applied to all time off types."
           },
           "all_sites": {
             "type": "boolean",
@@ -6725,11 +6728,11 @@
           },
           "time_zone_name": {
             "type": "string",
-            "description": "The user's timezone name."
+            "description": "The user's time zone name."
           },
           "time_zone_identifier": {
             "type": "string",
-            "description": "The user's timezone identifier."
+            "description": "The user's time zone identifier."
           },
           "last_seen_at": {
             "type": "string",
@@ -6802,12 +6805,12 @@
           },
           "paid_break": {
             "type": "integer",
-            "description": "The amount of minutes of paid break in this shift.",
+            "description": "The number of minutes of paid break in this shift.",
             "format": "int32"
           },
           "unpaid_break": {
             "type": "string",
-            "description": "The amount of minutes of unpaid break in this shift."
+            "description": "The number of minutes of unpaid break in this shift."
           },
           "status": {
             "type": "string",
@@ -6845,12 +6848,12 @@
           },
           "leave_request_id": {
             "type": "string",
-            "description": "The unique identifier of the shift's leave request.",
+            "description": "The unique identifier of the shift's time off request.",
             "format": "uuid"
           },
           "leave_type_id": {
             "type": "string",
-            "description": "The unique identifier of the shift's leave type.",
+            "description": "The unique identifier of the shift's time off type.",
             "format": "uuid"
           },
           "shift_series_id": {
@@ -7152,7 +7155,7 @@
           },
           "leave_type_id": {
             "type": "string",
-            "description": "The time off bank's leave type id.",
+            "description": "The time off bank's time off type id.",
             "format": "uuid"
           },
           "created_at": {
@@ -7266,7 +7269,7 @@
           },
           "time_off_leave_type_id": {
             "type": "string",
-            "description": "The unique identifier of the leave type.",
+            "description": "The unique identifier of the time off type.",
             "format": "uuid"
           },
           "time_off_paid": {
@@ -7332,7 +7335,7 @@
           },
           "has_caller_phone_number": {
             "type": "boolean",
-            "description": "If the time entry has been clock in or out using a phone."
+            "description": "If the time entry has been clocked in or out using a phone."
           },
           "start_at_clock_caller_phone_number": {
             "type": "string",
@@ -7685,7 +7688,7 @@
           },
           "offset": {
             "type": "integer",
-            "description": "The break offset from the shift's start, in minutes. E.g., a break starting at 7:30 for a shift starting at 7:00 will have an offset of 30.",
+            "description": "The break's offset from the shift's start, in minutes. E.g., a break starting at 7:30 for a shift starting at 7:00 will have an offset of 30.",
             "format": "int32"
           },
           "paid": {
@@ -7708,7 +7711,7 @@
           },
           "offset": {
             "type": "integer",
-            "description": "The break offset from the shift's start, in minutes. E.g., a break starting at 7:30 for a shift starting at 7:00 will have an offset of 30.",
+            "description": "The break's offset from the shift's start, in minutes. E.g., a break starting at 7:30 for a shift starting at 7:00 will have an offset of 30.",
             "format": "int32"
           },
           "paid": {
@@ -8111,21 +8114,21 @@
           "end_at"
         ],
         "type": "object",
-        "description": "A detailed description of a leave request's creation input parameters.",
+        "description": "A detailed description of a time off request's creation input parameters.",
         "properties": {
           "start_at": {
             "type": "string",
-            "description": "The time at which the leave request starts.",
+            "description": "The time at which the time off request starts.",
             "format": "date-time"
           },
           "end_at": {
             "type": "string",
-            "description": "The time at which the leave request ends.",
+            "description": "The time at which the time off request ends.",
             "format": "date-time"
           },
           "justification": {
             "type": "string",
-            "description": "The leave request justification."
+            "description": "The time off request justification."
           },
           "leave_value": {
             "type": "integer",
@@ -8134,21 +8137,21 @@
           },
           "paid": {
             "type": "boolean",
-            "description": "If the leave request is paid."
+            "description": "If the time off request is paid."
           },
           "leave_type_id": {
             "type": "string",
-            "description": "The leave request's leave type id.",
+            "description": "The time off request's time off type id.",
             "format": "uuid"
           },
           "site_id": {
             "type": "string",
-            "description": "The leave request's site id.",
+            "description": "The time off request's site id.",
             "format": "uuid"
           },
           "position_id": {
             "type": "string",
-            "description": "The leave request's position id.",
+            "description": "The time off request's position id.",
             "format": "uuid"
           },
           "member_site_position_id": {
@@ -8158,7 +8161,7 @@
           },
           "resource_id": {
             "type": "string",
-            "description": "The leave request's resource id.",
+            "description": "The time off request's resource id.",
             "format": "uuid"
           },
           "member_id": {
@@ -8200,21 +8203,21 @@
       },
       "LeaveRequestUpdate": {
         "type": "object",
-        "description": "A detailed description of a leave request's update input parameters.",
+        "description": "A detailed description of a time off request's update input parameters.",
         "properties": {
           "start_at": {
             "type": "string",
-            "description": "The time at which the leave request starts.",
+            "description": "The time at which the time off request starts.",
             "format": "date-time"
           },
           "end_at": {
             "type": "string",
-            "description": "The time at which the leave request ends.",
+            "description": "The time at which the time off request ends.",
             "format": "date-time"
           },
           "justification": {
             "type": "string",
-            "description": "The leave request justification."
+            "description": "The time off request justification."
           },
           "leave_value": {
             "type": "integer",
@@ -8223,21 +8226,21 @@
           },
           "paid": {
             "type": "boolean",
-            "description": "If the leave request is paid."
+            "description": "If the time off request is paid."
           },
           "leave_type_id": {
             "type": "string",
-            "description": "The leave request's leave type id.",
+            "description": "The time off request's time off type id.",
             "format": "uuid"
           },
           "site_id": {
             "type": "string",
-            "description": "The leave request's site id.",
+            "description": "The time off request's site id.",
             "format": "uuid"
           },
           "position_id": {
             "type": "string",
-            "description": "The leave request's position id.",
+            "description": "The time off request's position id.",
             "format": "uuid"
           },
           "member_site_position_id": {
@@ -8247,7 +8250,7 @@
           },
           "resource_id": {
             "type": "string",
-            "description": "The leave request's resource id.",
+            "description": "The time off request's resource id.",
             "format": "uuid"
           },
           "time_off_payment_constraint_attributes": {
@@ -8261,37 +8264,37 @@
           "paid"
         ],
         "type": "object",
-        "description": "A detailed description of a leave type's creation input parameters.",
+        "description": "A detailed description of a time off type's creation input parameters.",
         "properties": {
           "keep_track_hours": {
             "type": "boolean",
-            "description": "If time clock is enabled for your organization, whether or not time offs with this leave type should impact the associated time bank."
+            "description": "If time clock is enabled for your organization, whether time off with this time off type should impact the associated time bank."
           },
           "name": {
             "type": "string",
-            "description": "The leave type's name."
+            "description": "The time off type's name."
           },
           "paid": {
             "type": "boolean",
-            "description": "If the leave type is paid."
+            "description": "If the time off type is paid."
           }
         }
       },
       "LeaveTypeUpdate": {
         "type": "object",
-        "description": "A detailed description of a leave type's update input parameters.",
+        "description": "A detailed description of a time off type's update input parameters.",
         "properties": {
           "keep_track_hours": {
             "type": "boolean",
-            "description": "If time clock is enabled for your organization, whether or not time offs with this leave type should impact the associated time bank."
+            "description": "If time clock is enabled for your organization, whether time off with this time off type should impact the associated time bank."
           },
           "name": {
             "type": "string",
-            "description": "The leave type's name."
+            "description": "The time off type's name."
           },
           "paid": {
             "type": "boolean",
-            "description": "If the leave type is paid."
+            "description": "If the time off type is paid."
           }
         }
       },
@@ -8302,7 +8305,7 @@
           "worked_days_type"
         ],
         "type": "object",
-        "description": "A detailed description of a leave value settings's creation input parameters.",
+        "description": "A detailed description of a time off value settings' creation input parameters.",
         "properties": {
           "interval_start": {
             "type": "string",
@@ -8332,7 +8335,7 @@
           "worked_days_type"
         ],
         "type": "object",
-        "description": "A detailed description of a leave value settings's update input parameters.",
+        "description": "A detailed description of a time off value settings' update input parameters.",
         "properties": {
           "interval_start": {
             "type": "string",
@@ -8797,7 +8800,7 @@
           },
           "main_position_id": {
             "type": "string",
-            "description": "The unique identifier of the member's main position.",
+            "description": "The unique identifier of the member's primary position.",
             "format": "uuid"
           },
           "main_site_id": {
@@ -8811,7 +8814,7 @@
           },
           "invite": {
             "type": "boolean",
-            "description": "If this member is been invited to join the organization."
+            "description": "If this member has been invited to join the organization."
           },
           "visible": {
             "type": "boolean",
@@ -8866,7 +8869,7 @@
           },
           "default_leave_value": {
             "type": "integer",
-            "description": "The member's default leave value, in minutes. Overrides the organization's default leave value. Will only work if the member's attendance is computed in days.",
+            "description": "The member's default time off value, in minutes. Overrides the organization's default time off value. Will only work if the member's attendance is computed in days.",
             "format": "int32"
           },
           "profile_attributes": {
@@ -9004,7 +9007,7 @@
           },
           "main_position_id": {
             "type": "string",
-            "description": "The unique identifier of the member's main position.",
+            "description": "The unique identifier of the member's primary position.",
             "format": "uuid"
           },
           "main_site_id": {
@@ -9018,7 +9021,7 @@
           },
           "invite": {
             "type": "boolean",
-            "description": "If this member is been invited to join the organization."
+            "description": "If this member has been invited to join the organization."
           },
           "visible": {
             "type": "boolean",
@@ -9073,7 +9076,7 @@
           },
           "default_leave_value": {
             "type": "integer",
-            "description": "The member's default leave value, in minutes. Overrides the organization's default leave value. Will only work if the member's attendance is computed in days.",
+            "description": "The member's default time off value, in minutes. Overrides the organization's default time off value. Will only work if the member's attendance is computed in days.",
             "format": "int32"
           },
           "profile_attributes": {
@@ -9377,7 +9380,7 @@
           },
           "has_custom_value": {
             "type": "boolean",
-            "description": "If the premium is applied to a specific amount of hours, otherwise it is applied to the shift's length."
+            "description": "If the premium is applied to a specific number of hours, otherwise it is applied to the shift's length."
           },
           "entry_minutes": {
             "type": "integer",
@@ -9400,7 +9403,7 @@
           },
           "has_custom_value": {
             "type": "boolean",
-            "description": "If the premium is applied to a specific amount of hours, otherwise it is applied to the shift's length."
+            "description": "If the premium is applied to a specific number of hours, otherwise it is applied to the shift's length."
           },
           "entry_minutes": {
             "type": "integer",
@@ -9502,7 +9505,7 @@
           },
           "minimum_paid_minutes_per_entry": {
             "type": "integer",
-            "description": "The minimum amount of paid minutes per entry on the resource.",
+            "description": "The minimum number of paid minutes per entry on the resource.",
             "format": "int32"
           },
           "document_ids": {
@@ -9568,7 +9571,7 @@
           },
           "minimum_paid_minutes_per_entry": {
             "type": "integer",
-            "description": "The minimum amount of paid minutes per entry on the resource.",
+            "description": "The minimum number of paid minutes per entry on the resource.",
             "format": "int32"
           },
           "document_ids": {
@@ -9822,7 +9825,7 @@
           },
           "leave_type_id": {
             "type": "string",
-            "description": "The unique identifier of the shift's leave type.",
+            "description": "The unique identifier of the shift's time off type.",
             "format": "uuid"
           },
           "leave_value": {
@@ -10069,7 +10072,7 @@
           },
           "leave_type_id": {
             "type": "string",
-            "description": "The unique identifier of the shift's leave type.",
+            "description": "The unique identifier of the shift's time off type.",
             "format": "uuid"
           },
           "leave_value": {
@@ -10286,7 +10289,7 @@
           },
           "time_off_leave_type_id": {
             "type": "string",
-            "description": "The unique identifier of the leave type.",
+            "description": "The unique identifier of the time off type.",
             "format": "uuid"
           },
           "time_off_paid": {
@@ -10415,7 +10418,7 @@
           },
           "time_off_leave_type_id": {
             "type": "string",
-            "description": "The unique identifier of the leave type.",
+            "description": "The unique identifier of the time off type.",
             "format": "uuid"
           },
           "time_off_paid": {
@@ -10500,12 +10503,12 @@
           },
           "overtime_1_minutes": {
             "type": "number",
-            "description": "The number of overtime minutes for level 1.",
+            "description": "The amount of overtime minutes for level 1.",
             "format": "float"
           },
           "overtime_2_minutes": {
             "type": "number",
-            "description": "The number of overtime minutes for level 2.",
+            "description": "The amount of overtime minutes for level 2.",
             "format": "float"
           }
         }
@@ -10525,7 +10528,7 @@
           },
           "time_zone_name": {
             "type": "string",
-            "description": "The user's timezone name."
+            "description": "The user's time zone name."
           },
           "email": {
             "type": "string",
@@ -10549,7 +10552,7 @@
           },
           "sms_notifications_phone_number": {
             "type": "string",
-            "description": "The phone number at which the user receives the sms notifications"
+            "description": "The phone number at which the user receives the SMS notifications"
           },
           "email_notifications": {
             "type": "boolean",
@@ -10583,7 +10586,7 @@
           },
           "role": {
             "type": "string",
-            "description": "The role required to see the file. Can either be member, supervisor, manager, or admin."
+            "description": "The role required to see the file. Can either be supervisor, manager, or admin."
           },
           "folder_id": {
             "type": "string",
@@ -10642,7 +10645,7 @@
           },
           "role": {
             "type": "string",
-            "description": "The role required to see the file. Can either be member, supervisor, manager, or admin."
+            "description": "The role required to see the file. Can either be supervisor, manager, or admin."
           },
           "folder_id": {
             "type": "string",
@@ -12090,8 +12093,18 @@
           }
         }
       },
+      "ForbiddenFailure": {
+        "description": "Error – Forbidden",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Errors"
+            }
+          }
+        }
+      },
       "InputParamsFailure": {
-        "description": "Input params error",
+        "description": "Input param error",
         "content": {
           "application/json": {
             "schema": {

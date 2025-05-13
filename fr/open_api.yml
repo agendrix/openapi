@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.10.0
+  version: 1.10.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -909,6 +909,8 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/EmptySuccess"
+        403:
+          "$ref": "#/components/responses/ForbiddenFailure"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
   "/member_time_bank_transactions":
@@ -3046,7 +3048,7 @@ components:
           format: date-time
         updated_at:
           type: string
-          description: Le dernier moment de modification de l'activité.
+          description: Moment de la dernière mise à jour de l'activité.
           format: date-time
         parameters:
           type: object
@@ -3617,19 +3619,19 @@ components:
           format: int32
         start_at:
           type: string
-          description: L'heure auquel le congé demandé débute.
+          description: L'heure où le congé demandé commence.
           format: date-time
         start_date:
           type: string
-          description: La date auquel le congé demandé débute.
+          description: La date où le congé demandé commence.
           format: date
         end_at:
           type: string
-          description: L'heure auquel le congé demandé se termine.
+          description: L'heure où le congé demandé se termine.
           format: date-time
         end_date:
           type: string
-          description: La date auquel le congé demandé se termine.
+          description: La date où le congé demandé se termine.
           format: date
         approved_by:
           type: string
@@ -4067,7 +4069,7 @@ components:
           format: uuid
         last_invitation_method:
           type: string
-          description: La dernière méthode utilisée pour inviter le membre, sms ou
+          description: La dernière méthode utilisée pour inviter le membre; SMS ou
             courriel.
         admin:
           type: boolean
@@ -4357,7 +4359,7 @@ components:
           description: Le nom du fuseau horaire de l'organization.
         availabilities_need_approval:
           type: boolean
-          description: Si les disponibilités ont besoin d'être approuvé ou non.
+          description: Si les disponibilités doivent être approuvées ou non.
         created_at:
           type: string
           description: Date de création de l'organization.
@@ -5816,11 +5818,11 @@ components:
       properties:
         start_at:
           type: string
-          description: Le moment auquel le congé demandé débute
+          description: L'heure où le congé demandé commence.
           format: date-time
         end_at:
           type: string
-          description: Le moment auquel le congé demandé se termine.
+          description: L'heure où le congé demandé se termine.
           format: date-time
         justification:
           type: string
@@ -5890,11 +5892,11 @@ components:
       properties:
         start_at:
           type: string
-          description: Le moment auquel le congé demandé débute
+          description: L'heure où le congé demandé commence.
           format: date-time
         end_at:
           type: string
-          description: Le moment auquel le congé demandé se termine.
+          description: L'heure où le congé demandé se termine.
           format: date-time
         justification:
           type: string
@@ -7790,8 +7792,8 @@ components:
           description: Vrai si le fichier est accessible à l'employé.
         role:
           type: string
-          description: Le rôle requis pour avoir accès au fichier. Peut être 'member',
-            'supervisor', 'manager' ou 'admin'.
+          description: Le rôle requis pour avoir accès au fichier. Peut être 'supervisor',
+            'manager' ou 'admin'.
         folder_id:
           type: string
           description: L'identifiant du dossier parent.
@@ -7841,8 +7843,8 @@ components:
           description: Vrai si le fichier est accessible à l'employé.
         role:
           type: string
-          description: Le rôle requis pour avoir accès au fichier. Peut être 'member',
-            'supervisor', 'manager' ou 'admin'.
+          description: Le rôle requis pour avoir accès au fichier. Peut être 'supervisor',
+            'manager' ou 'admin'.
         folder_id:
           type: string
           description: L'identifiant du dossier parent.
@@ -8758,6 +8760,12 @@ components:
             type: object
     NotFoundFailure:
       description: Erreur - Introuvable
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
+    ForbiddenFailure:
+      description: Erreur – Interdit
       content:
         application/json:
           schema:

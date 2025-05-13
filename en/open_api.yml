@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.10.0
+  version: 1.10.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -189,11 +189,11 @@ tags:
 - name: DriveSignatures
   description: Drive signatures operations
 - name: LeaveRequests
-  description: Leave requests operations
+  description: Time off requests operations
 - name: HRFields
   description: Human resource fields operations
 - name: LeaveTypes
-  description: Leave types operations
+  description: Time off types operations
 - name: MemberTimeBankTransactions
   description: Member time bank transactions operations
 - name: Members
@@ -238,7 +238,7 @@ tags:
   description: Time banks operations
 - name: TimeEntries
   description: The time entries are the finalized entries of an employee. They are
-    generated from shifts, leave requests, clock-in and clock-out, and so on.
+    generated from shifts, time off requests, clock-in and clock-out, and so on.
 - name: TransferRequests
   description: Transfer requests operations
 - name: Users
@@ -714,8 +714,8 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests/{id}/approve":
     put:
-      summary: Approve a leave request
-      description: Change a pending leave request status to approved
+      summary: Approve a time off request
+      description: Change a pending time off request status to approved
       tags:
       - LeaveRequests
       operationId: approve_leave_request
@@ -728,8 +728,8 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests/{id}/cancel":
     put:
-      summary: Cancel a leave request
-      description: Change a leave request status to canceled
+      summary: Cancel a time off request
+      description: Change a time off request status to canceled
       tags:
       - LeaveRequests
       operationId: cancel_leave_request
@@ -742,8 +742,8 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests":
     get:
-      summary: Get paginated leave requests.
-      description: Return paginated leave requests.
+      summary: Get paginated time off requests.
+      description: Return paginated time off requests.
       tags:
       - LeaveRequests
       operationId: index_leave_request
@@ -763,7 +763,7 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: The leave requests status. Valid values are approved, canceled,
+        description: The time off requests status. Valid values are approved, canceled,
           declined and pending.
         schema:
           type: string
@@ -773,8 +773,8 @@ paths:
         400:
           "$ref": "#/components/responses/QueryParamFailure"
     post:
-      summary: Create a leave request.
-      description: Create a leave request from the body.
+      summary: Create a time off request.
+      description: Create a time off request from the body.
       tags:
       - LeaveRequests
       operationId: create_leave_request
@@ -787,8 +787,8 @@ paths:
           "$ref": "#/components/responses/InputParamsFailure"
   "/leave_requests/{id}/decline":
     put:
-      summary: Decline a pending leave request
-      description: Change a leave request status to declined
+      summary: Decline a pending time off request
+      description: Change a time off request status to declined
       tags:
       - LeaveRequests
       operationId: decline_leave_request
@@ -801,8 +801,8 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests/{id}":
     get:
-      summary: Get one leave request.
-      description: Return the leave request's id holder.
+      summary: Get one time off request.
+      description: Return the time off request's id holder.
       tags:
       - LeaveRequests
       operationId: show_leave_request
@@ -814,8 +814,8 @@ paths:
         404:
           "$ref": "#/components/responses/NotFoundFailure"
     put:
-      summary: Update a leave request.
-      description: Update a leave request from the body.
+      summary: Update a time off request.
+      description: Update a time off request from the body.
       tags:
       - LeaveRequests
       operationId: update_leave_request
@@ -832,8 +832,8 @@ paths:
           "$ref": "#/components/responses/InputParamsFailure"
   "/leave_types":
     get:
-      summary: Get paginated leave types.
-      description: Return paginated leave types.
+      summary: Get paginated time off types.
+      description: Return paginated time off types.
       tags:
       - LeaveTypes
       operationId: index_leave_type
@@ -847,8 +847,8 @@ paths:
         400:
           "$ref": "#/components/responses/QueryParamFailure"
     post:
-      summary: Create a leave type.
-      description: Create a leave type from the body.
+      summary: Create a time off type.
+      description: Create a time off type from the body.
       tags:
       - LeaveTypes
       operationId: create_leave_type
@@ -861,8 +861,8 @@ paths:
           "$ref": "#/components/responses/InputParamsFailure"
   "/leave_types/{id}":
     get:
-      summary: Get one leave type.
-      description: Return the leave type's id holder.
+      summary: Get one time off type.
+      description: Return the time off type's id holder.
       tags:
       - LeaveTypes
       operationId: show_leave_type
@@ -874,8 +874,8 @@ paths:
         404:
           "$ref": "#/components/responses/NotFoundFailure"
     put:
-      summary: Update a leave type.
-      description: Update a leave type from the body.
+      summary: Update a time off type.
+      description: Update a time off type from the body.
       tags:
       - LeaveTypes
       operationId: update_leave_type
@@ -891,8 +891,8 @@ paths:
         400:
           "$ref": "#/components/responses/InputParamsFailure"
     delete:
-      summary: Delete a leave type.
-      description: Delete the leave type's id holder.
+      summary: Delete a time off type.
+      description: Delete the time off type's id holder.
       tags:
       - LeaveTypes
       operationId: delete_leave_type
@@ -901,6 +901,8 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/EmptySuccess"
+        403:
+          "$ref": "#/components/responses/ForbiddenFailure"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
   "/member_time_bank_transactions":
@@ -3081,7 +3083,7 @@ components:
           format: uuid
         availability_list_id:
           type: string
-          description: The availabitlity list request's availability list id.
+          description: The availability list request's availability list id.
           format: uuid
         expired_at:
           type: string
@@ -3149,7 +3151,7 @@ components:
           format: date-time
         availabilities:
           type: array
-          description: The availability list availabilities.
+          description: The availability in the availability list.
           items:
             "$ref": "#/components/schemas/Availability"
     BillboardTag:
@@ -3311,7 +3313,7 @@ components:
           format: int32
         offset:
           type: integer
-          description: The break offset from the shift's start, in minutes. E.g.,
+          description: The break's offset from the shift's start, in minutes. E.g.,
             a break starting at 7:30 for a shift starting at 7:00 will have an offset
             of 30.
           format: int32
@@ -3448,7 +3450,7 @@ components:
           format: date-time
     LeaveType:
       type: object
-      description: A detailed description of a leave type.
+      description: A detailed description of a time off type.
       properties:
         id:
           type: string
@@ -3456,17 +3458,17 @@ components:
           format: uuid
         name:
           type: string
-          description: The leave type's name.
+          description: The time off type's name.
         paid:
           type: boolean
-          description: If the leave type is paid.
+          description: If the time off type is paid.
         created_at:
           type: string
-          description: When the leave type was created.
+          description: When the time off type was created.
           format: date-time
         updated_at:
           type: string
-          description: When the leave type was last updated.
+          description: When the time off type was last updated.
           format: date-time
     Resource:
       type: object
@@ -3550,7 +3552,7 @@ components:
             format: date
     LeaveRequest:
       type: object
-      description: A detailed description of a leave request.
+      description: A detailed description of a time off request.
       properties:
         id:
           type: string
@@ -3566,76 +3568,76 @@ components:
           format: uuid
         created_by:
           type: string
-          description: The leave request creator's id.
+          description: The time off request creator's id.
           format: uuid
         justification:
           type: string
-          description: The leave request justification.
+          description: The time off request justification.
         leave_value:
           type: integer
           description: The length of the time off.
           format: int32
         paid:
           type: boolean
-          description: If the leave request is paid.
+          description: If the time off request is paid.
         all_day:
           type: boolean
-          description: If the leave request is all day.
+          description: If the time off request is all day.
         multiple_days:
           type: boolean
-          description: If the leave request is multiple days.
+          description: If the time off request is multiple days.
         overlapping_shifts_count:
           type: integer
-          description: How many of the member's shifts overlap with the leave request.
+          description: How many of the member's shifts overlap with the time off request.
           format: int32
         start_at:
           type: string
-          description: The time at which the leave request starts.
+          description: The time at which the time off request starts.
           format: date-time
         start_date:
           type: string
-          description: The date at which the leave request starts.
+          description: The date on which the leave request starts.
           format: date
         end_at:
           type: string
-          description: The time at which the leave request ends.
+          description: The time at which the time off request ends.
           format: date-time
         end_date:
           type: string
-          description: The date at which the leave request ends.
+          description: The date on which the leave request ends.
           format: date
         approved_by:
           type: string
-          description: The leave request's approver id.
+          description: The time off request's approver id.
         declined_by:
           type: string
-          description: The leave request's decliner's id.
+          description: The time off request's decliner's id.
         canceled_by:
           type: string
-          description: The leave request's canceler's id.
+          description: The time off request's canceler's id.
         approved_at:
           type: string
-          description: The time at which the leave request was approved.
+          description: The time at which the time off request was approved.
           format: date-time
         declined_at:
           type: string
-          description: The time at which the leave request was declined.
+          description: The time at which the time off request was declined.
           format: date-time
         canceled_at:
           type: string
-          description: The time at which the leave request was canceled.
+          description: The time at which the time off request was canceled.
           format: date-time
         expired_at:
           type: string
-          description: The time at which the leave request expires.
+          description: The time at which the time off request expires.
           format: date-time
         created_at:
           type: string
-          description: When the leave request was created.
+          description: When the time off request was created.
           format: date-time
         updated_at:
           type: string
-          description: When the leave request was last updated.
+          description: When the time off request was last updated.
           format: date-time
         leave_type:
           "$ref": "#/components/schemas/LeaveType"
@@ -4024,7 +4026,7 @@ components:
           description: When the member has been invited to Agendrix, in words.
         main_position_id:
           type: string
-          description: The unique identifier of the member's main position.
+          description: The unique identifier of the member's primary position.
           format: uuid
         main_site_id:
           type: string
@@ -4160,9 +4162,9 @@ components:
           description: The member's hr data.
         default_leave_value:
           type: integer
-          description: The member's default leave value, in minutes. Overrides the
-            organization's default leave value. Will only work if the member's hours
-            are computed in days.
+          description: The member's default time off value, in minutes. Overrides
+            the organization's default time off value. Will only work if the member's
+            hours are computed in days.
           format: int32
         profile:
           "$ref": "#/components/schemas/Profile"
@@ -4309,10 +4311,10 @@ components:
           description: The hour at which the organization working day ends.
         time_zone_name:
           type: string
-          description: The organization timezone's name.
+          description: The organization time zone's name.
         availabilities_need_approval:
           type: boolean
-          description: If the availabilities need approvals or not.
+          description: If the availability needs approval or not.
         created_at:
           type: string
           description: When the organization was created.
@@ -4465,16 +4467,16 @@ components:
             overlap the premium period.
         only_time_offs:
           type: boolean
-          description: If the premium is only applied to time offs.
+          description: If the premium is only applied to time off.
         all_day:
           type: boolean
-          description: If the premium is applied to every hours of the day.
+          description: If the premium is applied to every hour of the day.
         all_week:
           type: boolean
           description: If the premium is applied to every day of the week.
         all_leave_types:
           type: boolean
-          description: If the premium is applied to all leave types.
+          description: If the premium is applied to all time off types.
         all_sites:
           type: boolean
           description: If the premium is applied to all sites.
@@ -4667,10 +4669,10 @@ components:
           format: int32
         time_zone_name:
           type: string
-          description: The user's timezone name.
+          description: The user's time zone name.
         time_zone_identifier:
           type: string
-          description: The user's timezone identifier.
+          description: The user's time zone identifier.
         last_seen_at:
           type: string
           description: When the user was last seen doing an action.
@@ -4725,11 +4727,11 @@ components:
           format: date
         paid_break:
           type: integer
-          description: The amount of minutes of paid break in this shift.
+          description: The number of minutes of paid break in this shift.
           format: int32
         unpaid_break:
           type: string
-          description: The amount of minutes of unpaid break in this shift.
+          description: The number of minutes of unpaid break in this shift.
         status:
           type: string
           description: The shift's status, either draft or published.
@@ -4759,11 +4761,11 @@ components:
           format: uuid
         leave_request_id:
           type: string
-          description: The unique identifier of the shift's leave request.
+          description: The unique identifier of the shift's time off request.
           format: uuid
         leave_type_id:
           type: string
-          description: The unique identifier of the shift's leave type.
+          description: The unique identifier of the shift's time off type.
           format: uuid
         shift_series_id:
           type: string
@@ -4998,7 +5000,7 @@ components:
           format: float
         leave_type_id:
           type: string
-          description: The time off bank's leave type id.
+          description: The time off bank's time off type id.
           format: uuid
         created_at:
           type: string
@@ -5089,7 +5091,7 @@ components:
           format: int32
         time_off_leave_type_id:
           type: string
-          description: The unique identifier of the leave type.
+          description: The unique identifier of the time off type.
           format: uuid
         time_off_paid:
           type: boolean
@@ -5140,7 +5142,7 @@ components:
           description: If the time entry has notes.
         has_caller_phone_number:
           type: boolean
-          description: If the time entry has been clock in or out using a phone.
+          description: If the time entry has been clocked in or out using a phone.
         start_at_clock_caller_phone_number:
           type: string
           description: The phone number used for clocking in.
@@ -5405,7 +5407,7 @@ components:
           format: int32
         offset:
           type: integer
-          description: The break offset from the shift's start, in minutes. E.g.,
+          description: The break's offset from the shift's start, in minutes. E.g.,
             a break starting at 7:30 for a shift starting at 7:00 will have an offset
             of 30.
           format: int32
@@ -5424,7 +5426,7 @@ components:
           format: int32
         offset:
           type: integer
-          description: The break offset from the shift's start, in minutes. E.g.,
+          description: The break's offset from the shift's start, in minutes. E.g.,
             a break starting at 7:30 for a shift starting at 7:00 will have an offset
             of 30.
           format: int32
@@ -5739,37 +5741,37 @@ components:
       - start_at
       - end_at
       type: object
-      description: A detailed description of a leave request's creation input parameters.
+      description: A detailed description of a time off request's creation input parameters.
       properties:
         start_at:
           type: string
-          description: The time at which the leave request starts.
+          description: The time at which the time off request starts.
           format: date-time
         end_at:
           type: string
-          description: The time at which the leave request ends.
+          description: The time at which the time off request ends.
           format: date-time
         justification:
           type: string
-          description: The leave request justification.
+          description: The time off request justification.
         leave_value:
           type: integer
           description: The length of the time off.
           format: int32
         paid:
           type: boolean
-          description: If the leave request is paid.
+          description: If the time off request is paid.
         leave_type_id:
           type: string
-          description: The leave request's leave type id.
+          description: The time off request's time off type id.
           format: uuid
         site_id:
           type: string
-          description: The leave request's site id.
+          description: The time off request's site id.
           format: uuid
         position_id:
           type: string
-          description: The leave request's position id.
+          description: The time off request's position id.
           format: uuid
         member_site_position_id:
           type: string
@@ -5777,7 +5779,7 @@ components:
           format: uuid
         resource_id:
           type: string
-          description: The leave request's resource id.
+          description: The time off request's resource id.
           format: uuid
         member_id:
           type: string
@@ -5811,37 +5813,37 @@ components:
           format: uuid
     LeaveRequestUpdate:
       type: object
-      description: A detailed description of a leave request's update input parameters.
+      description: A detailed description of a time off request's update input parameters.
       properties:
         start_at:
           type: string
-          description: The time at which the leave request starts.
+          description: The time at which the time off request starts.
           format: date-time
         end_at:
           type: string
-          description: The time at which the leave request ends.
+          description: The time at which the time off request ends.
           format: date-time
         justification:
           type: string
-          description: The leave request justification.
+          description: The time off request justification.
         leave_value:
           type: integer
           description: The length of the time off.
           format: int32
         paid:
           type: boolean
-          description: If the leave request is paid.
+          description: If the time off request is paid.
         leave_type_id:
           type: string
-          description: The leave request's leave type id.
+          description: The time off request's time off type id.
           format: uuid
         site_id:
           type: string
-          description: The leave request's site id.
+          description: The time off request's site id.
           format: uuid
         position_id:
           type: string
-          description: The leave request's position id.
+          description: The time off request's position id.
           format: uuid
         member_site_position_id:
           type: string
@@ -5849,7 +5851,7 @@ components:
           format: uuid
         resource_id:
           type: string
-          description: The leave request's resource id.
+          description: The time off request's resource id.
           format: uuid
         time_off_payment_constraint_attributes:
           "$ref": "#/components/schemas/TimeOffPaymentConstraintUpdateAttributes"
@@ -5858,39 +5860,39 @@ components:
       - name
       - paid
       type: object
-      description: A detailed description of a leave type's creation input parameters.
+      description: A detailed description of a time off type's creation input parameters.
       properties:
         keep_track_hours:
           type: boolean
-          description: If time clock is enabled for your organization, whether or
-            not time offs with this leave type should impact the associated time bank.
+          description: If time clock is enabled for your organization, whether time
+            off with this time off type should impact the associated time bank.
         name:
           type: string
-          description: The leave type's name.
+          description: The time off type's name.
         paid:
           type: boolean
-          description: If the leave type is paid.
+          description: If the time off type is paid.
     LeaveTypeUpdate:
       type: object
-      description: A detailed description of a leave type's update input parameters.
+      description: A detailed description of a time off type's update input parameters.
       properties:
         keep_track_hours:
           type: boolean
-          description: If time clock is enabled for your organization, whether or
-            not time offs with this leave type should impact the associated time bank.
+          description: If time clock is enabled for your organization, whether time
+            off with this time off type should impact the associated time bank.
         name:
           type: string
-          description: The leave type's name.
+          description: The time off type's name.
         paid:
           type: boolean
-          description: If the leave type is paid.
+          description: If the time off type is paid.
     LeaveValueSettingCreateAttributes:
       required:
       - interval_start
       - interval_end
       - worked_days_type
       type: object
-      description: A detailed description of a leave value settings's creation input
+      description: A detailed description of a time off value settings' creation input
         parameters.
       properties:
         interval_start:
@@ -5916,7 +5918,7 @@ components:
       - interval_end
       - worked_days_type
       type: object
-      description: A detailed description of a leave value settings's update input
+      description: A detailed description of a time off value settings' update input
         parameters.
       properties:
         interval_start:
@@ -6290,7 +6292,7 @@ components:
           description: If the overtime is spread across multiple weeks for this member.
         main_position_id:
           type: string
-          description: The unique identifier of the member's main position.
+          description: The unique identifier of the member's primary position.
           format: uuid
         main_site_id:
           type: string
@@ -6301,7 +6303,7 @@ components:
           description: If the member is an administrator of the organization.
         invite:
           type: boolean
-          description: If this member is been invited to join the organization.
+          description: If this member has been invited to join the organization.
         visible:
           type: boolean
           description: If the member is hidden from the scheduler and timesheets.
@@ -6346,9 +6348,9 @@ components:
           description: If the member doesn't have to clock in.
         default_leave_value:
           type: integer
-          description: The member's default leave value, in minutes. Overrides the
-            organization's default leave value. Will only work if the member's attendance
-            is computed in days.
+          description: The member's default time off value, in minutes. Overrides
+            the organization's default time off value. Will only work if the member's
+            attendance is computed in days.
           format: int32
         profile_attributes:
           "$ref": "#/components/schemas/ProfileCreateAttributes"
@@ -6456,7 +6458,7 @@ components:
           description: If the overtime is spread across multiple weeks for this member.
         main_position_id:
           type: string
-          description: The unique identifier of the member's main position.
+          description: The unique identifier of the member's primary position.
           format: uuid
         main_site_id:
           type: string
@@ -6467,7 +6469,7 @@ components:
           description: If the member is an administrator of the organization.
         invite:
           type: boolean
-          description: If this member is been invited to join the organization.
+          description: If this member has been invited to join the organization.
         visible:
           type: boolean
           description: If the member is hidden from the scheduler and timesheets.
@@ -6512,9 +6514,9 @@ components:
           description: If the member doesn't have to clock in.
         default_leave_value:
           type: integer
-          description: The member's default leave value, in minutes. Overrides the
-            organization's default leave value. Will only work if the member's attendance
-            is computed in days.
+          description: The member's default time off value, in minutes. Overrides
+            the organization's default time off value. Will only work if the member's
+            attendance is computed in days.
           format: int32
         profile_attributes:
           "$ref": "#/components/schemas/ProfileUpdateAttributes"
@@ -6743,7 +6745,7 @@ components:
           format: uuid
         has_custom_value:
           type: boolean
-          description: If the premium is applied to a specific amount of hours, otherwise
+          description: If the premium is applied to a specific number of hours, otherwise
             it is applied to the shift's length.
         entry_minutes:
           type: integer
@@ -6761,7 +6763,7 @@ components:
           format: uuid
         has_custom_value:
           type: boolean
-          description: If the premium is applied to a specific amount of hours, otherwise
+          description: If the premium is applied to a specific number of hours, otherwise
             it is applied to the shift's length.
         entry_minutes:
           type: integer
@@ -6840,7 +6842,7 @@ components:
           format: float
         minimum_paid_minutes_per_entry:
           type: integer
-          description: The minimum amount of paid minutes per entry on the resource.
+          description: The minimum number of paid minutes per entry on the resource.
           format: int32
         document_ids:
           type: array
@@ -6889,7 +6891,7 @@ components:
           format: float
         minimum_paid_minutes_per_entry:
           type: integer
-          description: The minimum amount of paid minutes per entry on the resource.
+          description: The minimum number of paid minutes per entry on the resource.
           format: int32
         document_ids:
           type: array
@@ -7087,7 +7089,7 @@ components:
           format: int32
         leave_type_id:
           type: string
-          description: The unique identifier of the shift's leave type.
+          description: The unique identifier of the shift's time off type.
           format: uuid
         leave_value:
           type: integer
@@ -7278,7 +7280,7 @@ components:
           format: int32
         leave_type_id:
           type: string
-          description: The unique identifier of the shift's leave type.
+          description: The unique identifier of the shift's time off type.
           format: uuid
         leave_value:
           type: integer
@@ -7421,7 +7423,7 @@ components:
           format: int32
         time_off_leave_type_id:
           type: string
-          description: The unique identifier of the leave type.
+          description: The unique identifier of the time off type.
           format: uuid
         time_off_paid:
           type: boolean
@@ -7524,7 +7526,7 @@ components:
           format: int32
         time_off_leave_type_id:
           type: string
-          description: The unique identifier of the leave type.
+          description: The unique identifier of the time off type.
           format: uuid
         time_off_paid:
           type: boolean
@@ -7594,11 +7596,11 @@ components:
             entry.
         overtime_1_minutes:
           type: number
-          description: The number of overtime minutes for level 1.
+          description: The amount of overtime minutes for level 1.
           format: float
         overtime_2_minutes:
           type: number
-          description: The number of overtime minutes for level 2.
+          description: The amount of overtime minutes for level 2.
           format: float
     UserUpdate:
       type: object
@@ -7613,7 +7615,7 @@ components:
           format: int32
         time_zone_name:
           type: string
-          description: The user's timezone name.
+          description: The user's time zone name.
         email:
           type: string
           description: The user's email.
@@ -7631,7 +7633,7 @@ components:
           description: If the phone number's confirmation status, pending or confirmed.
         sms_notifications_phone_number:
           type: string
-          description: The phone number at which the user receives the sms notifications
+          description: The phone number at which the user receives the SMS notifications
         email_notifications:
           type: boolean
           description: If the user receives email notifications.
@@ -7656,7 +7658,7 @@ components:
           description: Set to true if the member can see this file.
         role:
           type: string
-          description: The role required to see the file. Can either be member, supervisor,
+          description: The role required to see the file. Can either be supervisor,
             manager, or admin.
         folder_id:
           type: string
@@ -7706,7 +7708,7 @@ components:
           description: Set to true if the member can see this file.
         role:
           type: string
-          description: The role required to see the file. Can either be member, supervisor,
+          description: The role required to see the file. Can either be supervisor,
             manager, or admin.
         folder_id:
           type: string
@@ -8626,8 +8628,14 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/Errors"
+    ForbiddenFailure:
+      description: Error – Forbidden
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/Errors"
     InputParamsFailure:
-      description: Input params error
+      description: Input param error
       content:
         application/json:
           schema:
