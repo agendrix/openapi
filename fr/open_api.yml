@@ -187,11 +187,11 @@ tags:
 - name: DriveSignatures
   description: Opérations sur les signatures
 - name: LeaveRequests
-  description: Opérations sur les demandes de congés
+  description: Opérations sur les demandes de congé
 - name: HRFields
   description: Opérations sur les champs de ressources humaines
 - name: LeaveTypes
-  description: Opérations sur les types de congé
+  description: Opérations sur les types de congés
 - name: MemberTimeBankTransactions
   description: Opérations sur les transactions d'une banque de temps d'un membre
 - name: Members
@@ -722,7 +722,7 @@ paths:
   "/leave_requests/{id}/approve":
     put:
       summary: Approuver une demande de congé
-      description: Change le statut de la demande pour approuvée
+      description: Change le statut de la demande de congé pour approuvée
       tags:
       - LeaveRequests
       operationId: approve_leave_request
@@ -736,7 +736,7 @@ paths:
   "/leave_requests/{id}/cancel":
     put:
       summary: Annuler une demande de congé
-      description: Change le statut de la demande pour annulée
+      description: Change le statut de la demande de congé pour annulée
       tags:
       - LeaveRequests
       operationId: cancel_leave_request
@@ -749,8 +749,8 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests":
     get:
-      summary: Obtenir les demandes de congé paginée.
-      description: Retourne les demandes de congé paginée.
+      summary: Obtenir les demandes de congé paginées.
+      description: Retourne les demandes de congé paginées.
       tags:
       - LeaveRequests
       operationId: index_leave_request
@@ -771,8 +771,8 @@ paths:
           type: string
       - name: search[status]
         in: query
-        description: Le statut de la requête. Les valeurs valides sont 'approved',
-          'canceled', 'declined' and 'pending'.
+        description: Le statut de la demande. Les valeurs valides sont 'approved',
+          'canceled', 'declined' et 'pending'.
         schema:
           type: string
       responses:
@@ -782,7 +782,7 @@ paths:
           "$ref": "#/components/responses/QueryParamFailure"
     post:
       summary: Créer une demande de congé.
-      description: Créer une demande de congé à partir du corps de la requête
+      description: Créer une demande de congé à partir du corps de la requête.
       tags:
       - LeaveRequests
       operationId: create_leave_request
@@ -796,7 +796,7 @@ paths:
   "/leave_requests/{id}/decline":
     put:
       summary: Décliner une demande de congé en attente
-      description: Change le statut de la demande pour déclinée
+      description: Change le statut de la demande de congé pour déclinée
       tags:
       - LeaveRequests
       operationId: decline_leave_request
@@ -840,8 +840,8 @@ paths:
           "$ref": "#/components/responses/InputParamsFailure"
   "/leave_types":
     get:
-      summary: Obtenir les types de congé paginé.
-      description: Retourne les types de congé paginé.
+      summary: Obtenir les types de congés paginés.
+      description: Retourne les types de congés paginés.
       tags:
       - LeaveTypes
       operationId: index_leave_type
@@ -856,7 +856,7 @@ paths:
           "$ref": "#/components/responses/QueryParamFailure"
     post:
       summary: Créer un type de congé.
-      description: Créer un type de congé à partir du corps de la requête.
+      description: Créer un type de congé à partir du corps de la demande.
       tags:
       - LeaveTypes
       operationId: create_leave_type
@@ -883,7 +883,7 @@ paths:
           "$ref": "#/components/responses/NotFoundFailure"
     put:
       summary: Modifier un type de congé.
-      description: Modifier un type de congé à partir du corps de la requête.
+      description: Modifier un type de congé à partir du corps de la demande.
       tags:
       - LeaveTypes
       operationId: update_leave_type
@@ -3490,11 +3490,11 @@ components:
           description: Si le type de congé est payé.
         created_at:
           type: string
-          description: La date et l'heure de création.
+          description: La date et l'heure de création du type de congé.
           format: date-time
         updated_at:
           type: string
-          description: La date et l'heure de la dernière modification.
+          description: La date et l'heure de la dernière modification du type de congé.
           format: date-time
     Resource:
       type: object
@@ -3615,7 +3615,7 @@ components:
           description: Si le congé demandé est sur plusieurs jours.
         overlapping_shifts_count:
           type: integer
-          description: Combien de quarts chevauche le congé demandé.
+          description: Combien de quarts chevauchent le congé demandé.
           format: int32
         start_at:
           type: string
@@ -3635,13 +3635,13 @@ components:
           format: date
         approved_by:
           type: string
-          description: L'identifiant de l'approbateur lié à la demande.
+          description: L'identifiant de l'approbateur lié à la demande de congé.
         declined_by:
           type: string
-          description: L'identifiant du déclinant(e) lié à la demande.
+          description: L'identifiant du déclinant lié à la demande de congé.
         canceled_by:
           type: string
-          description: L'identifiant de l'annulateur(e) lié à la demande.
+          description: L'identifiant de l'annulateur lié à la demande de congé.
         approved_at:
           type: string
           description: Le moment auquel la demande de congé a été approuvée.
@@ -3660,11 +3660,12 @@ components:
           format: date-time
         created_at:
           type: string
-          description: La date et l'heure de création.
+          description: La date et l'heure de création de la demande de congé.
           format: date-time
         updated_at:
           type: string
-          description: La date et l'heure de la dernière modification.
+          description: La date et l'heure de la dernière modification de la demande
+            de congé.
           format: date-time
         leave_type:
           "$ref": "#/components/schemas/LeaveType"
@@ -4356,7 +4357,7 @@ components:
           description: L'heure de fin de la journée de travail de l'organization.
         time_zone_name:
           type: string
-          description: Le nom du fuseau horaire de l'organization.
+          description: Le nom du fuseau horaire de l'organisation.
         availabilities_need_approval:
           type: boolean
           description: Si les disponibilités doivent être approuvées ou non.
@@ -4513,17 +4514,17 @@ components:
             superposé à la période de prime.
         only_time_offs:
           type: boolean
-          description: Si une prime s'applique uniquement sur un congé.
+          description: Si une prime s'applique uniquement à un congé.
         all_day:
           type: boolean
-          description: Si une prime s'applique sur toutes les heures travaillées de
-            la journée de travaille.
+          description: Si une prime s'applique à toutes les heures travaillées de
+            la journée de travail.
         all_week:
           type: boolean
           description: Si la prime est appliquée sur toute les jours de la semaine.
         all_leave_types:
           type: boolean
-          description: Si la prime s'applique sur tous les types de congés.
+          description: Si la prime s'applique à tous les types de congés.
         all_sites:
           type: boolean
           description: Si la prime s'applique sur toutes les succursales.
@@ -4781,11 +4782,11 @@ components:
           format: date
         paid_break:
           type: integer
-          description: Nombre de minutes de la pause payée du quart de travail.
+          description: Le nombre de minutes de pause payée du quart de travail.
           format: int32
         unpaid_break:
           type: string
-          description: Nombre de minutes non payée du quart de travail.
+          description: Le nombre de minutes de pause non payée du quart de travail.
         status:
           type: string
           description: Status du quart de travail, les valeurs possibles sont 'draft'
@@ -5057,7 +5058,7 @@ components:
           format: float
         leave_type_id:
           type: string
-          description: L'ID du type de congé de la banque de congés.
+          description: Identifiant du type de congé du de la banque de congés.
           format: uuid
         created_at:
           type: string
@@ -5202,7 +5203,7 @@ components:
           description: Si l'entrée de temps comporte des notes.
         has_caller_phone_number:
           type: boolean
-          description: Si l'heure a été entrée ou sortie à l'aide d'un téléphone.
+          description: Si l'heure d'entrée ou de sortie a été pointée par téléphone.
         start_at_clock_caller_phone_number:
           type: string
           description: Le numéro de téléphone utilisé pour pointer l'entrée.
@@ -5840,7 +5841,7 @@ components:
           format: uuid
         site_id:
           type: string
-          description: L'identifiant de la location liée au congé demandé.
+          description: L'identifiant de la succursale liée au congé demandé.
           format: uuid
         position_id:
           type: string
@@ -5852,7 +5853,7 @@ components:
           format: uuid
         resource_id:
           type: string
-          description: L'identifiant de la resource liée au congé demandé.
+          description: L'identifiant de la ressource liée au congé demandé.
           format: uuid
         member_id:
           type: string
@@ -5914,7 +5915,7 @@ components:
           format: uuid
         site_id:
           type: string
-          description: L'identifiant de la location liée au congé demandé.
+          description: L'identifiant de la succursale liée au congé demandé.
           format: uuid
         position_id:
           type: string
@@ -5926,7 +5927,7 @@ components:
           format: uuid
         resource_id:
           type: string
-          description: L'identifiant de la resource liée au congé demandé.
+          description: L'identifiant de la ressource liée au congé demandé.
           format: uuid
         time_off_payment_constraint_attributes:
           "$ref": "#/components/schemas/TimeOffPaymentConstraintUpdateAttributes"
@@ -5940,9 +5941,8 @@ components:
       properties:
         keep_track_hours:
           type: boolean
-          description: Si les entrées de temps sont activées pour votre organisation,
-            si les congés de ce type de congé doivent impacté les banques d'heures
-            associées.
+          description: Lorsque les entrées de temps sont activées pour votre organisation,
+            si les congés de ce type doivent affecter les banques d'heures associées.
         name:
           type: string
           description: Le nom du type de congé.
@@ -5956,9 +5956,8 @@ components:
       properties:
         keep_track_hours:
           type: boolean
-          description: Si les entrées de temps sont activées pour votre organisation,
-            si les congés de ce type de congé doivent impacté les banques d'heures
-            associées.
+          description: Lorsque les entrées de temps sont activées pour votre organisation,
+            si les congés de ce type doivent affecter les banques d'heures associées.
         name:
           type: string
           description: Le nom du type de congé.
@@ -6397,7 +6396,7 @@ components:
           description: Si le membre est un administrateur de l'organisation.
         invite:
           type: boolean
-          description: Si le membre est invité à rejoindre l'organisation.
+          description: Si le membre a été invité à rejoindre l'organisation.
         visible:
           type: boolean
           description: Si le membre est exclu du planificateur et des feuilles de
@@ -6571,7 +6570,7 @@ components:
           description: Si le membre est un administrateur de l'organisation.
         invite:
           type: boolean
-          description: Si le membre est invité à rejoindre l'organisation.
+          description: Si le membre a été invité à rejoindre l'organisation.
         visible:
           type: boolean
           description: Si le membre est exclu du planificateur et des feuilles de
@@ -6854,8 +6853,8 @@ components:
           format: uuid
         has_custom_value:
           type: boolean
-          description: Si la prime s'applique sur un nombre précis d'heure, sinon
-            s'applique sur le quart de travail complet.
+          description: Si la prime s'applique à un nombre précis d'heures, sinon,
+            s'applique au quart de travail complet.
         entry_minutes:
           type: integer
           description: Le nombre de minute que la prime s'applique.
@@ -6873,8 +6872,8 @@ components:
           format: uuid
         has_custom_value:
           type: boolean
-          description: Si la prime s'applique sur un nombre précis d'heure, sinon
-            s'applique sur le quart de travail complet.
+          description: Si la prime s'applique à un nombre précis d'heures, sinon,
+            s'applique au quart de travail complet.
         entry_minutes:
           type: integer
           description: Le nombre de minute que la prime s'applique.
@@ -6954,8 +6953,7 @@ components:
           format: float
         minimum_paid_minutes_per_entry:
           type: integer
-          description: Le montant minimum de minutes payées par enregistrement de
-            la ressource.
+          description: Le nombre minimum de minutes payées par entrée pour la ressource.
           format: int32
         document_ids:
           type: array
@@ -7004,8 +7002,7 @@ components:
           format: float
         minimum_paid_minutes_per_entry:
           type: integer
-          description: Le montant minimum de minutes payées par enregistrement de
-            la ressource.
+          description: Le nombre minimum de minutes payées par entrée pour la ressource.
           format: int32
         document_ids:
           type: array
@@ -7209,7 +7206,7 @@ components:
           format: int32
         leave_type_id:
           type: string
-          description: Identifiant unique du type de congé quart de travail.
+          description: Identifiant unique du type de congé du quart de travail.
           format: uuid
         leave_value:
           type: integer
@@ -7405,7 +7402,7 @@ components:
           format: int32
         leave_type_id:
           type: string
-          description: Identifiant unique du type de congé quart de travail.
+          description: Identifiant unique du type de congé du quart de travail.
           format: uuid
         leave_value:
           type: integer
@@ -7549,7 +7546,7 @@ components:
           format: int32
         time_off_leave_type_id:
           type: string
-          description: L'identifiant unique du type de congé.
+          description: Identifiant unique du type de congé.
           format: uuid
         time_off_paid:
           type: boolean
@@ -7653,7 +7650,7 @@ components:
           format: int32
         time_off_leave_type_id:
           type: string
-          description: L'identifiant unique du type de congé.
+          description: Identifiant unique du type de congé.
           format: uuid
         time_off_paid:
           type: boolean

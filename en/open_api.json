@@ -5361,7 +5361,7 @@
           },
           "start_date": {
             "type": "string",
-            "description": "The date on which the leave request starts.",
+            "description": "The date on which the time off request starts.",
             "format": "date"
           },
           "end_at": {
@@ -5371,7 +5371,7 @@
           },
           "end_date": {
             "type": "string",
-            "description": "The date on which the leave request ends.",
+            "description": "The date on which the time off request ends.",
             "format": "date"
           },
           "approved_by": {
@@ -10552,7 +10552,7 @@
           },
           "sms_notifications_phone_number": {
             "type": "string",
-            "description": "The phone number at which the user receives the SMS notifications"
+            "description": "The phone number at which the user receives the SMS notifications."
           },
           "email_notifications": {
             "type": "boolean",

@@ -49,7 +49,7 @@
     },
     {
       "name": "LeaveRequests",
-      "description": "Opérations sur les demandes de congés"
+      "description": "Opérations sur les demandes de congé"
     },
     {
       "name": "HRFields",
@@ -57,7 +57,7 @@
     },
     {
       "name": "LeaveTypes",
-      "description": "Opérations sur les types de congé"
+      "description": "Opérations sur les types de congés"
     },
     {
       "name": "MemberTimeBankTransactions",
@@ -900,7 +900,7 @@
     "/leave_requests/{id}/approve": {
       "put": {
         "summary": "Approuver une demande de congé",
-        "description": "Change le statut de la demande pour approuvée",
+        "description": "Change le statut de la demande de congé pour approuvée",
         "tags": [
           "LeaveRequests"
         ],
@@ -923,7 +923,7 @@
     "/leave_requests/{id}/cancel": {
       "put": {
         "summary": "Annuler une demande de congé",
-        "description": "Change le statut de la demande pour annulée",
+        "description": "Change le statut de la demande de congé pour annulée",
         "tags": [
           "LeaveRequests"
         ],
@@ -945,8 +945,8 @@
     },
     "/leave_requests": {
       "get": {
-        "summary": "Obtenir les demandes de congé paginée.",
-        "description": "Retourne les demandes de congé paginée.",
+        "summary": "Obtenir les demandes de congé paginées.",
+        "description": "Retourne les demandes de congé paginées.",
         "tags": [
           "LeaveRequests"
         ],
@@ -980,7 +980,7 @@
           {
             "name": "search[status]",
             "in": "query",
-            "description": "Le statut de la requête. Les valeurs valides sont 'approved', 'canceled', 'declined' and 'pending'.",
+            "description": "Le statut de la demande. Les valeurs valides sont 'approved', 'canceled', 'declined' et 'pending'.",
             "schema": {
               "type": "string"
             }
@@ -997,7 +997,7 @@
       },
       "post": {
         "summary": "Créer une demande de congé.",
-        "description": "Créer une demande de congé à partir du corps de la requête",
+        "description": "Créer une demande de congé à partir du corps de la requête.",
         "tags": [
           "LeaveRequests"
         ],
@@ -1018,7 +1018,7 @@
     "/leave_requests/{id}/decline": {
       "put": {
         "summary": "Décliner une demande de congé en attente",
-        "description": "Change le statut de la demande pour déclinée",
+        "description": "Change le statut de la demande de congé pour déclinée",
         "tags": [
           "LeaveRequests"
         ],
@@ -1090,8 +1090,8 @@
     },
     "/leave_types": {
       "get": {
-        "summary": "Obtenir les types de congé paginé.",
-        "description": "Retourne les types de congé paginé.",
+        "summary": "Obtenir les types de congés paginés.",
+        "description": "Retourne les types de congés paginés.",
         "tags": [
           "LeaveTypes"
         ],
@@ -1118,7 +1118,7 @@
       },
       "post": {
         "summary": "Créer un type de congé.",
-        "description": "Créer un type de congé à partir du corps de la requête.",
+        "description": "Créer un type de congé à partir du corps de la demande.",
         "tags": [
           "LeaveTypes"
         ],
@@ -1160,7 +1160,7 @@
       },
       "put": {
         "summary": "Modifier un type de congé.",
-        "description": "Modifier un type de congé à partir du corps de la requête.",
+        "description": "Modifier un type de congé à partir du corps de la demande.",
         "tags": [
           "LeaveTypes"
         ],
@@ -5193,12 +5193,12 @@
           },
           "created_at": {
             "type": "string",
-            "description": "La date et l'heure de création.",
+            "description": "La date et l'heure de création du type de congé.",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
-            "description": "La date et l'heure de la dernière modification.",
+            "description": "La date et l'heure de la dernière modification du type de congé.",
             "format": "date-time"
           }
         }
@@ -5351,7 +5351,7 @@
           },
           "overlapping_shifts_count": {
             "type": "integer",
-            "description": "Combien de quarts chevauche le congé demandé.",
+            "description": "Combien de quarts chevauchent le congé demandé.",
             "format": "int32"
           },
           "start_at": {
@@ -5376,15 +5376,15 @@
           },
           "approved_by": {
             "type": "string",
-            "description": "L'identifiant de l'approbateur lié à la demande."
+            "description": "L'identifiant de l'approbateur lié à la demande de congé."
           },
           "declined_by": {
             "type": "string",
-            "description": "L'identifiant du déclinant(e) lié à la demande."
+            "description": "L'identifiant du déclinant lié à la demande de congé."
           },
           "canceled_by": {
             "type": "string",
-            "description": "L'identifiant de l'annulateur(e) lié à la demande."
+            "description": "L'identifiant de l'annulateur lié à la demande de congé."
           },
           "approved_at": {
             "type": "string",
@@ -5408,12 +5408,12 @@
           },
           "created_at": {
             "type": "string",
-            "description": "La date et l'heure de création.",
+            "description": "La date et l'heure de création de la demande de congé.",
             "format": "date-time"
           },
           "updated_at": {
             "type": "string",
-            "description": "La date et l'heure de la dernière modification.",
+            "description": "La date et l'heure de la dernière modification de la demande de congé.",
             "format": "date-time"
           },
           "leave_type": {
@@ -6265,7 +6265,7 @@
           },
           "time_zone_name": {
             "type": "string",
-            "description": "Le nom du fuseau horaire de l'organization."
+            "description": "Le nom du fuseau horaire de l'organisation."
           },
           "availabilities_need_approval": {
             "type": "boolean",
@@ -6466,11 +6466,11 @@
           },
           "only_time_offs": {
             "type": "boolean",
-            "description": "Si une prime s'applique uniquement sur un congé."
+            "description": "Si une prime s'applique uniquement à un congé."
           },
           "all_day": {
             "type": "boolean",
-            "description": "Si une prime s'applique sur toutes les heures travaillées de la journée de travaille."
+            "description": "Si une prime s'applique à toutes les heures travaillées de la journée de travail."
           },
           "all_week": {
             "type": "boolean",
@@ -6478,7 +6478,7 @@
           },
           "all_leave_types": {
             "type": "boolean",
-            "description": "Si la prime s'applique sur tous les types de congés."
+            "description": "Si la prime s'applique à tous les types de congés."
           },
           "all_sites": {
             "type": "boolean",
@@ -6805,12 +6805,12 @@
           },
           "paid_break": {
             "type": "integer",
-            "description": "Nombre de minutes de la pause payée du quart de travail.",
+            "description": "Le nombre de minutes de pause payée du quart de travail.",
             "format": "int32"
           },
           "unpaid_break": {
             "type": "string",
-            "description": "Nombre de minutes non payée du quart de travail."
+            "description": "Le nombre de minutes de pause non payée du quart de travail."
           },
           "status": {
             "type": "string",
@@ -7155,7 +7155,7 @@
           },
           "leave_type_id": {
             "type": "string",
-            "description": "L'ID du type de congé de la banque de congés.",
+            "description": "Identifiant du type de congé du de la banque de congés.",
             "format": "uuid"
           },
           "created_at": {
@@ -7335,7 +7335,7 @@
           },
           "has_caller_phone_number": {
             "type": "boolean",
-            "description": "Si l'heure a été entrée ou sortie à l'aide d'un téléphone."
+            "description": "Si l'heure d'entrée ou de sortie a été pointée par téléphone."
           },
           "start_at_clock_caller_phone_number": {
             "type": "string",
@@ -8146,7 +8146,7 @@
           },
           "site_id": {
             "type": "string",
-            "description": "L'identifiant de la location liée au congé demandé.",
+            "description": "L'identifiant de la succursale liée au congé demandé.",
             "format": "uuid"
           },
           "position_id": {
@@ -8161,7 +8161,7 @@
           },
           "resource_id": {
             "type": "string",
-            "description": "L'identifiant de la resource liée au congé demandé.",
+            "description": "L'identifiant de la ressource liée au congé demandé.",
             "format": "uuid"
           },
           "member_id": {
@@ -8235,7 +8235,7 @@
           },
           "site_id": {
             "type": "string",
-            "description": "L'identifiant de la location liée au congé demandé.",
+            "description": "L'identifiant de la succursale liée au congé demandé.",
             "format": "uuid"
           },
           "position_id": {
@@ -8250,7 +8250,7 @@
           },
           "resource_id": {
             "type": "string",
-            "description": "L'identifiant de la resource liée au congé demandé.",
+            "description": "L'identifiant de la ressource liée au congé demandé.",
             "format": "uuid"
           },
           "time_off_payment_constraint_attributes": {
@@ -8268,7 +8268,7 @@
         "properties": {
           "keep_track_hours": {
             "type": "boolean",
-            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
+            "description": "Lorsque les entrées de temps sont activées pour votre organisation, si les congés de ce type doivent affecter les banques d'heures associées."
           },
           "name": {
             "type": "string",
@@ -8286,7 +8286,7 @@
         "properties": {
           "keep_track_hours": {
             "type": "boolean",
-            "description": "Si les entrées de temps sont activées pour votre organisation, si les congés de ce type de congé doivent impacté les banques d'heures associées."
+            "description": "Lorsque les entrées de temps sont activées pour votre organisation, si les congés de ce type doivent affecter les banques d'heures associées."
           },
           "name": {
             "type": "string",
@@ -8814,7 +8814,7 @@
           },
           "invite": {
             "type": "boolean",
-            "description": "Si le membre est invité à rejoindre l'organisation."
+            "description": "Si le membre a été invité à rejoindre l'organisation."
           },
           "visible": {
             "type": "boolean",
@@ -9021,7 +9021,7 @@
           },
           "invite": {
             "type": "boolean",
-            "description": "Si le membre est invité à rejoindre l'organisation."
+            "description": "Si le membre a été invité à rejoindre l'organisation."
           },
           "visible": {
             "type": "boolean",
@@ -9380,7 +9380,7 @@
           },
           "has_custom_value": {
             "type": "boolean",
-            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
+            "description": "Si la prime s'applique à un nombre précis d'heures, sinon, s'applique au quart de travail complet."
           },
           "entry_minutes": {
             "type": "integer",
@@ -9403,7 +9403,7 @@
           },
           "has_custom_value": {
             "type": "boolean",
-            "description": "Si la prime s'applique sur un nombre précis d'heure, sinon s'applique sur le quart de travail complet."
+            "description": "Si la prime s'applique à un nombre précis d'heures, sinon, s'applique au quart de travail complet."
           },
           "entry_minutes": {
             "type": "integer",
@@ -9505,7 +9505,7 @@
           },
           "minimum_paid_minutes_per_entry": {
             "type": "integer",
-            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
+            "description": "Le nombre minimum de minutes payées par entrée pour la ressource.",
             "format": "int32"
           },
           "document_ids": {
@@ -9571,7 +9571,7 @@
           },
           "minimum_paid_minutes_per_entry": {
             "type": "integer",
-            "description": "Le montant minimum de minutes payées par enregistrement de la ressource.",
+            "description": "Le nombre minimum de minutes payées par entrée pour la ressource.",
             "format": "int32"
           },
           "document_ids": {
@@ -9825,7 +9825,7 @@
           },
           "leave_type_id": {
             "type": "string",
-            "description": "Identifiant unique du type de congé quart de travail.",
+            "description": "Identifiant unique du type de congé du quart de travail.",
             "format": "uuid"
           },
           "leave_value": {
@@ -10072,7 +10072,7 @@
           },
           "leave_type_id": {
             "type": "string",
-            "description": "Identifiant unique du type de congé quart de travail.",
+            "description": "Identifiant unique du type de congé du quart de travail.",
             "format": "uuid"
           },
           "leave_value": {
@@ -10289,7 +10289,7 @@
           },
           "time_off_leave_type_id": {
             "type": "string",
-            "description": "L'identifiant unique du type de congé.",
+            "description": "Identifiant unique du type de congé.",
             "format": "uuid"
           },
           "time_off_paid": {
@@ -10418,7 +10418,7 @@
           },
           "time_off_leave_type_id": {
             "type": "string",
-            "description": "L'identifiant unique du type de congé.",
+            "description": "Identifiant unique du type de congé.",
             "format": "uuid"
           },
           "time_off_paid": {

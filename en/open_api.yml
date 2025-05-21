@@ -3596,7 +3596,7 @@ components:
           format: date-time
         start_date:
           type: string
-          description: The date on which the leave request starts.
+          description: The date on which the time off request starts.
           format: date
         end_at:
           type: string
@@ -3604,7 +3604,7 @@ components:
           format: date-time
         end_date:
           type: string
-          description: The date on which the leave request ends.
+          description: The date on which the time off request ends.
           format: date
         approved_by:
           type: string
@@ -7633,7 +7633,7 @@ components:
           description: If the phone number's confirmation status, pending or confirmed.
         sms_notifications_phone_number:
           type: string
-          description: The phone number at which the user receives the SMS notifications
+          description: The phone number at which the user receives the SMS notifications.
         email_notifications:
           type: boolean
           description: If the user receives email notifications.
