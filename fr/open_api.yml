@@ -3284,7 +3284,7 @@ components:
           description: Si la publication est un brouillon.
         sticky:
           type: boolean
-          description: Si la publication est collante.
+          description: Si la publication est épinglée.
         unread:
           type: boolean
           description: Si la publication n'a pas été lue par le membre courant.
@@ -5374,7 +5374,7 @@ components:
           description: Si la publication envoie une notification aux membres de l'organisation.
         sticky:
           type: boolean
-          description: Si la publication est collante.
+          description: Si la publication est épinglée.
         commentable:
           type: boolean
           description: Si la publication peut être commentée.
@@ -5431,7 +5431,7 @@ components:
           description: Si la publication envoie une notification aux membres de l'organisation.
         sticky:
           type: boolean
-          description: Si la publication est collante.
+          description: Si la publication est épinglée.
         commentable:
           type: boolean
           description: Si la publication peut être commentée.

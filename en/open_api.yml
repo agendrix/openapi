@@ -3260,7 +3260,7 @@ components:
           description: If the thread is a draft.
         sticky:
           type: boolean
-          description: If the thread is sticky.
+          description: If the thread is pinned.
         unread:
           type: boolean
           description: If the thread is unread by the current member.
@@ -5310,7 +5310,7 @@ components:
           description: If the action notifies the organization's members.
         sticky:
           type: boolean
-          description: If the thread is sticky.
+          description: If the thread is pinned.
         commentable:
           type: boolean
           description: If the thread is commentable.
@@ -5366,7 +5366,7 @@ components:
           description: If the action notifies the organization's members.
         sticky:
           type: boolean
-          description: If the thread is sticky.
+          description: If the thread is pinned.
         commentable:
           type: boolean
           description: If the thread is commentable.

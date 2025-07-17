@@ -4938,7 +4938,7 @@
           },
           "sticky": {
             "type": "boolean",
-            "description": "If the thread is sticky."
+            "description": "If the thread is pinned."
           },
           "unread": {
             "type": "boolean",
@@ -7551,7 +7551,7 @@
           },
           "sticky": {
             "type": "boolean",
-            "description": "If the thread is sticky."
+            "description": "If the thread is pinned."
           },
           "commentable": {
             "type": "boolean",
@@ -7627,7 +7627,7 @@
           },
           "sticky": {
             "type": "boolean",
-            "description": "If the thread is sticky."
+            "description": "If the thread is pinned."
           },
           "commentable": {
             "type": "boolean",
