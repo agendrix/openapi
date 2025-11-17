@@ -4899,7 +4899,7 @@ components:
             format: uuid
         drive_file_ids:
           type: array
-          description: The shift's team library file ids.
+          description: The shift's Shared document file ids.
           items:
             type: string
             format: uuid
@@ -5653,7 +5653,7 @@ components:
       properties:
         drive_file_id:
           type: string
-          description: The unique identifier of the file in the team library.
+          description: The unique identifier of the file in the Shared documents.
           format: uuid
     DriveFileShiftUpdateAttributes:
       required:
@@ -5663,7 +5663,7 @@ components:
       properties:
         drive_file_id:
           type: string
-          description: The unique identifier of the file in the team library.
+          description: The unique identifier of the file in the Shared documents.
           format: uuid
         id:
           type: string
@@ -7117,7 +7117,7 @@ components:
             "$ref": "#/components/schemas/ResourceShiftCreateAttributes"
         drive_file_shifts_attributes:
           type: array
-          description: The shift's team library files.
+          description: The shift's Shared document files.
           items:
             "$ref": "#/components/schemas/DriveFileShiftCreateAttributes"
         breaks_attributes:
@@ -7302,7 +7302,7 @@ components:
             - "$ref": "#/components/schemas/ResourceShiftCreateAttributes"
         drive_file_shifts_attributes:
           type: array
-          description: The shift's team library files.
+          description: The shift's Shared document files.
           items:
             oneOf:
             - "$ref": "#/components/schemas/DriveFileShiftUpdateAttributes"
@@ -7673,13 +7673,13 @@ components:
         site_ids:
           type: array
           description: The site ids for which the file is visible, if the file is
-            a Team library file.
+            a Shared document file.
           items:
             type: string
         position_ids:
           type: array
           description: The position ids for which the file is visible, if the file
-            is a Team library file.
+            is a Shared document file.
           items:
             type: string
         publish_action:
@@ -7689,7 +7689,7 @@ components:
             values are 'publish', 'publish_and_notify', or 'draft'.
         member_id:
           type: string
-          description: The file member's id. Leave blank to create a Team library
+          description: The file member's id. Leave blank to create a Shared document
             file.
           format: uuid
         file:
@@ -7723,13 +7723,13 @@ components:
         site_ids:
           type: array
           description: The site ids for which the file is visible, if the file is
-            a Team library file.
+            a Shared document file.
           items:
             type: string
         position_ids:
           type: array
           description: The position ids for which the file is visible, if the file
-            is a Team library file.
+            is a Shared document file.
           items:
             type: string
         publish_action:
@@ -7758,18 +7758,18 @@ components:
         site_ids:
           type: array
           description: The site ids for which the folder is visible, if the folder
-            is a Team library folder.
+            is a Shared document folder.
           items:
             type: string
         position_ids:
           type: array
           description: The position ids for which the folder is visible, if the folder
-            is a Team library folder.
+            is a Shared document folder.
           items:
             type: string
         member_id:
           type: string
-          description: The folder member's id. Leave blank to create a Team library
+          description: The folder member's id. Leave blank to create a Shared document
             folder.
           format: uuid
     DriveFolderUpdate:
@@ -7790,13 +7790,13 @@ components:
         site_ids:
           type: array
           description: The site ids for which the folder is visible, if the folder
-            is a Team library folder.
+            is a Shared document folder.
           items:
             type: string
         position_ids:
           type: array
           description: The position ids for which the folder is visible, if the folder
-            is a Team library folder.
+            is a Shared document folder.
           items:
             type: string
     DriveSignatureRequestCreate:
@@ -7814,7 +7814,7 @@ components:
           type: array
           description: The identifiers of the members who will need to sign. Between
             one and four members allowed. This parameter is ignored if the file is
-            a Team library file, as the file's audience is used instead.
+            a Shared document file, as the file's audience is used instead.
           items:
             type: string
             format: uuid

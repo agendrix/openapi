@@ -7025,7 +7025,7 @@
           },
           "drive_file_ids": {
             "type": "array",
-            "description": "The shift's team library file ids.",
+            "description": "The shift's Shared document file ids.",
             "items": {
               "type": "string",
               "format": "uuid"
@@ -7999,7 +7999,7 @@
         "properties": {
           "drive_file_id": {
             "type": "string",
-            "description": "The unique identifier of the file in the team library.",
+            "description": "The unique identifier of the file in the Shared documents.",
             "format": "uuid"
           }
         }
@@ -8013,7 +8013,7 @@
         "properties": {
           "drive_file_id": {
             "type": "string",
-            "description": "The unique identifier of the file in the team library.",
+            "description": "The unique identifier of the file in the Shared documents.",
             "format": "uuid"
           },
           "id": {
@@ -9859,7 +9859,7 @@
           },
           "drive_file_shifts_attributes": {
             "type": "array",
-            "description": "The shift's team library files.",
+            "description": "The shift's Shared document files.",
             "items": {
               "$ref": "#/components/schemas/DriveFileShiftCreateAttributes"
             }
@@ -10104,7 +10104,7 @@
           },
           "drive_file_shifts_attributes": {
             "type": "array",
-            "description": "The shift's team library files.",
+            "description": "The shift's Shared document files.",
             "items": {
               "oneOf": [
                 {
@@ -10603,14 +10603,14 @@
           },
           "site_ids": {
             "type": "array",
-            "description": "The site ids for which the file is visible, if the file is a Team library file.",
+            "description": "The site ids for which the file is visible, if the file is a Shared document file.",
             "items": {
               "type": "string"
             }
           },
           "position_ids": {
             "type": "array",
-            "description": "The position ids for which the file is visible, if the file is a Team library file.",
+            "description": "The position ids for which the file is visible, if the file is a Shared document file.",
             "items": {
               "type": "string"
             }
@@ -10621,7 +10621,7 @@
           },
           "member_id": {
             "type": "string",
-            "description": "The file member's id. Leave blank to create a Team library file.",
+            "description": "The file member's id. Leave blank to create a Shared document file.",
             "format": "uuid"
           },
           "file": {
@@ -10662,14 +10662,14 @@
           },
           "site_ids": {
             "type": "array",
-            "description": "The site ids for which the file is visible, if the file is a Team library file.",
+            "description": "The site ids for which the file is visible, if the file is a Shared document file.",
             "items": {
               "type": "string"
             }
           },
           "position_ids": {
             "type": "array",
-            "description": "The position ids for which the file is visible, if the file is a Team library file.",
+            "description": "The position ids for which the file is visible, if the file is a Shared document file.",
             "items": {
               "type": "string"
             }
@@ -10702,21 +10702,21 @@
           },
           "site_ids": {
             "type": "array",
-            "description": "The site ids for which the folder is visible, if the folder is a Team library folder.",
+            "description": "The site ids for which the folder is visible, if the folder is a Shared document folder.",
             "items": {
               "type": "string"
             }
           },
           "position_ids": {
             "type": "array",
-            "description": "The position ids for which the folder is visible, if the folder is a Team library folder.",
+            "description": "The position ids for which the folder is visible, if the folder is a Shared document folder.",
             "items": {
               "type": "string"
             }
           },
           "member_id": {
             "type": "string",
-            "description": "The folder member's id. Leave blank to create a Team library folder.",
+            "description": "The folder member's id. Leave blank to create a Shared document folder.",
             "format": "uuid"
           }
         }
@@ -10739,14 +10739,14 @@
           },
           "site_ids": {
             "type": "array",
-            "description": "The site ids for which the folder is visible, if the folder is a Team library folder.",
+            "description": "The site ids for which the folder is visible, if the folder is a Shared document folder.",
             "items": {
               "type": "string"
             }
           },
           "position_ids": {
             "type": "array",
-            "description": "The position ids for which the folder is visible, if the folder is a Team library folder.",
+            "description": "The position ids for which the folder is visible, if the folder is a Shared document folder.",
             "items": {
               "type": "string"
             }
@@ -10767,7 +10767,7 @@
           },
           "member_ids": {
             "type": "array",
-            "description": "The identifiers of the members who will need to sign. Between one and four members allowed. This parameter is ignored if the file is a Team library file, as the file's audience is used instead.",
+            "description": "The identifiers of the members who will need to sign. Between one and four members allowed. This parameter is ignored if the file is a Shared document file, as the file's audience is used instead.",
             "items": {
               "type": "string",
               "format": "uuid"
