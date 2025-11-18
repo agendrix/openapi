@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.10.5
+  version: 1.11.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2085,6 +2085,20 @@ paths:
           "$ref": "#/components/responses/ShiftSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+  "/shifts/publish":
+    post:
+      summary: Publish shifts.
+      description: Publish a list of shifts by their ids (Maximum of 100 shifts per
+        request). The operation is asynchronous and will returns the new publications
+        event if the shifts are not published yet.
+      tags:
+      - Shifts
+      operationId: publish_shifts
+      responses:
+        200:
+          "$ref": "#/components/responses/PublicationSuccessMany"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
   "/shifts/{id}/activities":
     get:
       summary: Get paginated activities.
@@ -7148,6 +7162,19 @@ components:
         publish:
           type: boolean
           description: If the shift should be published after its deletion.
+    ShiftPublish:
+      required:
+      - shift_ids
+      type: object
+      description: A detailed description of a shift publish input parameters.
+      properties:
+        shift_ids:
+          type: array
+          description: The list of shift ids to publish (maximum of 100 shifts per
+            request).
+          items:
+            type: string
+            format: uuid
     ShiftToggleTasksCompletion:
       required:
       - tasks_attributes

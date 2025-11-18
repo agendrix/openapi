@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.10.5
+  version: 1.11.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2102,6 +2102,20 @@ paths:
           "$ref": "#/components/responses/ShiftSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+  "/shifts/publish":
+    post:
+      summary: Publier des quarts.
+      description: Publier une liste de quarts par leur identifiants (Maximum de 100
+        quarts par requête). L'opération est asynchrone et retournera les nouvelles
+        publications même si les quarts ne sont pas encore publiés.
+      tags:
+      - Shifts
+      operationId: publish_shifts
+      responses:
+        200:
+          "$ref": "#/components/responses/PublicationSuccessMany"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
   "/shifts/{id}/activities":
     get:
       summary: Obtenir une liste paginée des activités.
@@ -7266,6 +7280,20 @@ components:
         publish:
           type: boolean
           description: Si le quart doit être publié après avoir été supprimé.
+    ShiftPublish:
+      required:
+      - shift_ids
+      type: object
+      description: Une description détaillée des paramètres d'entrée de publication
+        d'un quart.
+      properties:
+        shift_ids:
+          type: array
+          description: La liste des identifiants uniques des quarts à publier (maximum
+            de 100 quarts par requête).
+          items:
+            type: string
+            format: uuid
     ShiftToggleTasksCompletion:
       required:
       - tasks_attributes
