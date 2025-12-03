@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.11.0
+  version: 1.11.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2105,8 +2105,8 @@ paths:
   "/shifts/publish":
     post:
       summary: Publier des quarts.
-      description: Publier une liste de quarts par leur identifiants (Maximum de 100
-        quarts par requête). L'opération est asynchrone et retournera les nouvelles
+      description: Publier une liste de quarts par leur identifiant (maximum de 100
+        quarts par requête). Cette opération est asynchrone et retourne les nouvelles
         publications même si les quarts ne sont pas encore publiés.
       tags:
       - Shifts
@@ -4877,7 +4877,7 @@ components:
           description: Si le début et la fin du quart de travail sont la même date.
         hide_end_at:
           type: boolean
-          description: Si la fin du quart de travail est cachée aux membres.
+          description: Si l'heure de fin du quart est cachée aux membres.
         confirmed:
           type: boolean
           description: Si le quart de travail a été confirmer par ses membres.
@@ -5253,6 +5253,14 @@ components:
           type: string
           description: L'identifiant unique de la ressource associée.
           format: uuid
+        submitted_tip:
+          type: number
+          description: Le montant des pourboires soumis par l'employé.
+          format: float
+        received_tip:
+          type: number
+          description: Le montant des pourboires reçus par l'employé.
+          format: float
         created_at:
           type: string
           description: La date et l'heure de création.
@@ -7204,7 +7212,7 @@ components:
           description: Si le quart de travail est pointe automatiquement l'employé.
         hide_end_at:
           type: boolean
-          description: Si la fin du quart de travail est cachée aux membres.
+          description: Si l'heure de fin du quart est cachée aux membres.
         paid:
           type: boolean
           description: Si le quart de travail est est un congé payé.
@@ -7414,7 +7422,7 @@ components:
           description: Si le quart de travail est pointe automatiquement l'employé.
         hide_end_at:
           type: boolean
-          description: Si la fin du quart de travail est cachée aux membres.
+          description: Si l'heure de fin du quart est cachée aux membres.
         paid:
           type: boolean
           description: Si le quart de travail est est un congé payé.
@@ -7638,6 +7646,10 @@ components:
           type: string
           description: La date et l'heure du début de la pause.
           format: date-time
+        submitted_tip:
+          type: number
+          description: Le montant des pourboires soumis par l'employé.
+          format: float
         member_id:
           type: string
           description: ID de l'employé assigné à l'entrée de temps.
@@ -7742,6 +7754,10 @@ components:
           type: string
           description: La date et l'heure du début de la pause.
           format: date-time
+        submitted_tip:
+          type: number
+          description: Le montant des pourboires soumis par l'employé.
+          format: float
         override_overtime:
           type: boolean
           description: Si des heures supplémentaires personnalisées ont été spécifiées

@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.11.0
+  version: 1.11.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2088,9 +2088,9 @@ paths:
   "/shifts/publish":
     post:
       summary: Publish shifts.
-      description: Publish a list of shifts by their ids (Maximum of 100 shifts per
-        request). The operation is asynchronous and will returns the new publications
-        event if the shifts are not published yet.
+      description: Publish a list of shifts by id (maximum 100 shifts per request).
+        This operation is asynchronous and returns the new publications even if the
+        shifts are not published yet.
       tags:
       - Shifts
       operationId: publish_shifts
@@ -4820,7 +4820,7 @@ components:
           description: If the start and end of this shift are on the same date.
         hide_end_at:
           type: boolean
-          description: If the shift's end is hidden to members.
+          description: If the shift's end time is hidden from members.
         confirmed:
           type: boolean
           description: If the shift has been confirmed by its member.
@@ -5192,6 +5192,14 @@ components:
           type: string
           description: The unique identifier of the time off's resource.
           format: uuid
+        submitted_tip:
+          type: number
+          description: The tip amount submitted by the employee.
+          format: float
+        received_tip:
+          type: number
+          description: The tip amount distributed to the employee.
+          format: float
         created_at:
           type: string
           description: When the time entry was created.
@@ -7087,7 +7095,7 @@ components:
           description: If the shift is added automatically to the member's timesheet.
         hide_end_at:
           type: boolean
-          description: If the shift's end is hidden to members.
+          description: If the shift's end time is hidden from members.
         paid:
           type: boolean
           description: If the shift is a paid time off or not.
@@ -7170,8 +7178,7 @@ components:
       properties:
         shift_ids:
           type: array
-          description: The list of shift ids to publish (maximum of 100 shifts per
-            request).
+          description: The list of shift ids to publish (maximum 100 shifts per request).
           items:
             type: string
             format: uuid
@@ -7291,7 +7298,7 @@ components:
           description: If the shift is added automatically to the member's timesheet.
         hide_end_at:
           type: boolean
-          description: If the shift's end is hidden to members.
+          description: If the shift's end time is hidden from members.
         paid:
           type: boolean
           description: If the shift is a paid time off or not.
@@ -7514,6 +7521,10 @@ components:
           type: string
           description: The date time at which the time entry break started.
           format: date-time
+        submitted_tip:
+          type: number
+          description: The tip amount submitted by the employee.
+          format: float
         member_id:
           type: string
           description: The time entry's member id.
@@ -7617,6 +7628,10 @@ components:
           type: string
           description: The date time at which the time entry break started.
           format: date-time
+        submitted_tip:
+          type: number
+          description: The tip amount submitted by the employee.
+          format: float
         override_overtime:
           type: boolean
           description: If custom overtime values have been specified for the time
