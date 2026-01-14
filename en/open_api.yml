@@ -166,7 +166,7 @@ info:
     # Help
     ## Contact us
     If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.11.1
+  version: 1.12.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1161,6 +1161,28 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/MemberTimeBankSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/members/{id}/member_rates":
+    get:
+      summary: Get paginated member rates.
+      description: Return paginated member rates.
+      tags:
+      - Members
+      operationId: index_member_member_rates
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[only_active]
+        in: query
+        description: When set to true, only return active member rates.
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/MemberRateSuccessMany"
         400:
           "$ref": "#/components/responses/QueryParamFailure"
   "/members/{id}/positions":
@@ -3690,6 +3712,49 @@ components:
           type: string
           description: When the location was last updated.
           format: date-time
+    MemberRate:
+      type: object
+      description: A detailed description of a member rate.
+      properties:
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        position_id:
+          type: string
+          description: The position's unique identifier.
+          format: uuid
+        member_site_position_id:
+          type: string
+          description: The member site position's unique identifier.
+          format: uuid
+        start_date:
+          type: string
+          description: The date when this rate becomes effective.
+          format: date
+        value:
+          type: number
+          description: The member's rate for regular hours.
+          format: float
+        value_overtime:
+          type: number
+          description: The member's rate for overtime hours.
+          format: float
+        value_overtime_2:
+          type: number
+          description: The member's rate for level 2 overtime hours, if enabled.
+          format: float
+        description:
+          type: string
+          description: A description for this rate.
+        created_at:
+          type: string
+          description: When the member rate was created.
+          format: date-time
+        updated_at:
+          type: string
+          description: When the member rate was last updated.
+          format: date-time
     MemberShiftConflict:
       type: object
       description: A detailed description of a member's shift conflict.
@@ -3724,8 +3789,8 @@ components:
           format: float
         rate_overtime_2:
           type: number
-          description: The member's rate for overtime 2 hours in this position, if
-            enabled.
+          description: The member's rate for level 2 overtime hours in this position,
+            if enabled.
           format: float
         created_at:
           type: string
@@ -3766,6 +3831,7 @@ components:
           items:
             type: string
         rate_type:
+          deprecated: true
           type: string
           description: Whether the same rates are applied to all positions (single)
             or every position has their own rates (position).
@@ -4085,12 +4151,12 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: The member's custom day overtime 2 threshold, if multi-level
+          description: The member's custom day level 2 overtime threshold, if multi-level
             overtime is enabled.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: The member's custom week overtime 2 threshold, if multi-level
+          description: The member's custom week level 2 overtime threshold, if multi-level
             overtime is enabled.
           format: float
         comments_count:
@@ -5997,6 +6063,69 @@ components:
           type: boolean
           description: Set to true if you want to delete this object while updating
             its parent.
+    MemberRateCreateAttributes:
+      type: object
+      description: A detailed description of a member rate's creation input parameters.
+      properties:
+        value:
+          type: number
+          description: The member's rate for regular hours.
+          format: float
+        value_overtime:
+          type: number
+          description: The member's rate for overtime hours.
+          format: float
+        value_overtime_2:
+          type: number
+          description: The member's rate for level 2 overtime hours, if enabled.
+          format: float
+        start_date:
+          type: string
+          description: The date when this rate becomes effective.
+          format: date
+        description:
+          type: string
+          description: A description for this rate.
+        position_id:
+          type: string
+          description: The position's unique identifier.
+          format: uuid
+        member_site_position_id:
+          type: string
+          description: The member site position's unique identifier.
+          format: uuid
+    MemberRateUpdateAttributes:
+      required:
+      - id
+      type: object
+      description: A detailed description of a member rate's update input parameters.
+      properties:
+        value:
+          type: number
+          description: The member's rate for regular hours.
+          format: float
+        value_overtime:
+          type: number
+          description: The member's rate for overtime hours.
+          format: float
+        value_overtime_2:
+          type: number
+          description: The member's rate for level 2 overtime hours, if enabled.
+          format: float
+        start_date:
+          type: string
+          description: The date when this rate becomes effective.
+          format: date
+        description:
+          type: string
+          description: A description for this rate.
+        id:
+          type: string
+          description: Unique identifier for the object.
+          format: uuid
+        _destroy:
+          type: boolean
+          description: If set to true, the member rate will be deleted.
     MemberSitePositionCreateAttributes:
       required:
       - member_site_id
@@ -6014,17 +6143,20 @@ components:
           description: The position's unique identifier.
           format: uuid
         rate_base:
+          deprecated: true
           type: number
           description: The member's rate for regular hours in this position.
           format: float
         rate_overtime:
+          deprecated: true
           type: number
           description: The member's rate for overtime hours in this position.
           format: float
         rate_overtime_2:
+          deprecated: true
           type: number
-          description: The member's rate for overtime 2 hours in this position, if
-            enabled.
+          description: The member's rate for level 2 overtime hours in this position,
+            if enabled.
           format: float
     MemberSitePositionUpdateAttributes:
       required:
@@ -6042,17 +6174,20 @@ components:
           description: The position's unique identifier.
           format: uuid
         rate_base:
+          deprecated: true
           type: number
           description: The member's rate for regular hours in this position.
           format: float
         rate_overtime:
+          deprecated: true
           type: number
           description: The member's rate for overtime hours in this position.
           format: float
         rate_overtime_2:
+          deprecated: true
           type: number
-          description: The member's rate for overtime 2 hours in this position, if
-            enabled.
+          description: The member's rate for level 2 overtime hours in this position,
+            if enabled.
           format: float
         id:
           type: string
@@ -6121,21 +6256,25 @@ components:
           description: The role definition's unique identifier.
           format: uuid
         rate_single_base:
+          deprecated: true
           type: number
           description: The member's rate for regular hours for all positions in this
             site.
           format: float
         rate_single_overtime:
+          deprecated: true
           type: number
           description: The member's rate for overtime hours for all positions in this
             site.
           format: float
         rate_single_overtime_2:
+          deprecated: true
           type: number
-          description: The member's rate for overtime 2 hours for all positions in
-            this site, if enabled.
+          description: The member's rate for level 2 overtime hours for all positions
+            in this site, if enabled.
           format: float
         rate_type:
+          deprecated: true
           type: string
           description: Whether the same rates are applied to all positions (single)
             or every position has their own rates (position).
@@ -6168,21 +6307,25 @@ components:
           description: The role definition's unique identifier.
           format: uuid
         rate_single_base:
+          deprecated: true
           type: number
           description: The member's rate for regular hours for all positions in this
             site.
           format: float
         rate_single_overtime:
+          deprecated: true
           type: number
           description: The member's rate for overtime hours for all positions in this
             site.
           format: float
         rate_single_overtime_2:
+          deprecated: true
           type: number
-          description: The member's rate for overtime 2 hours for all positions in
-            this site, if enabled.
+          description: The member's rate for level 2 overtime hours for all positions
+            in this site, if enabled.
           format: float
         rate_type:
+          deprecated: true
           type: string
           description: Whether the same rates are applied to all positions (single)
             or every position has their own rates (position).
@@ -6301,12 +6444,12 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: The member's custom day overtime 2 threshold, if multi-level
+          description: The member's custom day level 2 overtime threshold, if multi-level
             overtime is enabled.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: The member's custom week overtime 2 threshold, if multi-level
+          description: The member's custom week level 2 overtime threshold, if multi-level
             overtime is enabled.
           format: float
         spread_overtime_enabled:
@@ -6381,6 +6524,11 @@ components:
           description: The member's sites.
           items:
             "$ref": "#/components/schemas/MemberSiteCreateAttributes"
+        rates_attributes:
+          type: array
+          description: The member's rates.
+          items:
+            "$ref": "#/components/schemas/MemberRateCreateAttributes"
     ProfileUpdateAttributes:
       type: object
       description: A detailed description of a profile's update input parameters.
@@ -6467,12 +6615,12 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: The member's custom day overtime 2 threshold, if multi-level
+          description: The member's custom day level 2 overtime threshold, if multi-level
             overtime is enabled.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: The member's custom week overtime 2 threshold, if multi-level
+          description: The member's custom week level 2 overtime threshold, if multi-level
             overtime is enabled.
           format: float
         spread_overtime_enabled:
@@ -6549,6 +6697,13 @@ components:
             oneOf:
             - "$ref": "#/components/schemas/MemberSiteUpdateAttributes"
             - "$ref": "#/components/schemas/MemberSiteCreateAttributes"
+        rates_attributes:
+          type: array
+          description: The member's rates.
+          items:
+            oneOf:
+            - "$ref": "#/components/schemas/MemberRateUpdateAttributes"
+            - "$ref": "#/components/schemas/MemberRateCreateAttributes"
     Errors:
       type: object
       properties:
@@ -8174,6 +8329,19 @@ components:
                 type: array
                 items:
                   "$ref": "#/components/schemas/MemberTimeBank"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    MemberRateSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/MemberRate"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
     HRPrivateDataSuccessOne:

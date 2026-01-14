@@ -164,7 +164,7 @@ info:
     # Aide
     ## Nous contacter
     N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
-  version: 1.11.1
+  version: 1.12.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1172,6 +1172,28 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/MemberTimeBankSuccessMany"
+        400:
+          "$ref": "#/components/responses/QueryParamFailure"
+  "/members/{id}/member_rates":
+    get:
+      summary: Obtenir les taux des membres paginés.
+      description: Retourne les taux des membres paginés.
+      tags:
+      - Members
+      operationId: index_member_member_rates
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      - "$ref": "#/components/parameters/QueryPage"
+      - "$ref": "#/components/parameters/QueryLimit"
+      - "$ref": "#/components/parameters/QueryPageSize"
+      - name: search[only_active]
+        in: query
+        description: Si 'true', retourne seulement les taux des membres actifs.
+        schema:
+          type: string
+      responses:
+        200:
+          "$ref": "#/components/responses/MemberRateSuccessMany"
         400:
           "$ref": "#/components/responses/QueryParamFailure"
   "/members/{id}/positions":
@@ -3718,6 +3740,50 @@ components:
           type: string
           description: La date et l'heure de la dernière modification.
           format: date-time
+    MemberRate:
+      type: object
+      description: Une description détaillée d'un taux de membre.
+      properties:
+        id:
+          type: string
+          description: L'identifiant unique de l'objet.
+          format: uuid
+        position_id:
+          type: string
+          description: L'identifiant unique de la position.
+          format: uuid
+        member_site_position_id:
+          type: string
+          description: L'identifiant unique de la position du membre dans la succursale.
+          format: uuid
+        start_date:
+          type: string
+          description: La date à laquelle ce taux entre en vigueur.
+          format: date
+        value:
+          type: number
+          description: Le taux du membre pour les heures régulières.
+          format: float
+        value_overtime:
+          type: number
+          description: Le taux du membre pour les heures supplémentaires.
+          format: float
+        value_overtime_2:
+          type: number
+          description: Le taux des heures supplémentaires de niveau 2 du membre, si
+            activées.
+          format: float
+        description:
+          type: string
+          description: Une description pour ce taux.
+        created_at:
+          type: string
+          description: Quand le taux du membre a été créé.
+          format: date-time
+        updated_at:
+          type: string
+          description: Quand le taux du membre a été mis à jour pour la dernière fois.
+          format: date-time
     MemberShiftConflict:
       type: object
       description: Une description détaillée d'un conflit de quart d'un membre.
@@ -3752,8 +3818,8 @@ components:
           format: float
         rate_overtime_2:
           type: number
-          description: Le taux horaire supplémentaire 2 du membre pour cette position,
-            si activé.
+          description: Le taux des heures supplémentaires de niveau 2 du membre pour
+            cette position, si activées.
           format: float
         created_at:
           type: string
@@ -3796,6 +3862,7 @@ components:
           items:
             type: string
         rate_type:
+          deprecated: true
           type: string
           description: Si les taux horaires sont appliqués à toutes les positions
             (simple), ou chaque position assignée a son propre taux horaire (position)
@@ -4113,7 +4180,7 @@ components:
           description: Si le membre possède des seuils d'heures supplémentaires personnalisés.
         multi_level_overtime:
           type: boolean
-          description: Si les heures supplémentaires multi-niveaux sont activées pour
+          description: Si les heures supplémentaires multiniveaux sont activées pour
             le membre.
         overtime_day_threshold:
           type: number
@@ -4127,13 +4194,15 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personnalisé 2 du
-            membre, si les heures supplémentaires multi-niveaux sont activées.
+          description: Le seuil quotidien personnalisé d'heures supplémentaires de
+            niveau 2 personnalisé du membre, si les heures supplémentaires multiniveaux
+            sont activées.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de semaine personnalisé 2
-            du membre, si les heures supplémentaires multi-niveaux sont activées.
+          description: Le seuil hebdomadaire personnalisé d'heures supplémentaires
+            de niveau 2 personnalisé du membre, si les heures supplémentaires multiniveaux
+            sont activées.
           format: float
         comments_count:
           type: integer
@@ -5259,7 +5328,7 @@ components:
           format: float
         received_tip:
           type: number
-          description: Le montant des pourboires reçus par l'employé.
+          description: La part des pourboires distribuée à l'employé.
           format: float
         created_at:
           type: string
@@ -6083,6 +6152,73 @@ components:
           type: boolean
           description: Mettre à 'true' pour supprimer cet objet lors de la modification
             de son parent.
+    MemberRateCreateAttributes:
+      type: object
+      description: Une description détaillée des paramètres de création de taux d'un
+        membre.
+      properties:
+        value:
+          type: number
+          description: Le taux du membre pour les heures régulières.
+          format: float
+        value_overtime:
+          type: number
+          description: Le taux du membre pour les heures supplémentaires.
+          format: float
+        value_overtime_2:
+          type: number
+          description: Le taux des heures supplémentaires de niveau 2 du membre, si
+            activées.
+          format: float
+        start_date:
+          type: string
+          description: La date à laquelle ce taux entre en vigueur.
+          format: date
+        description:
+          type: string
+          description: Une description pour ce taux.
+        position_id:
+          type: string
+          description: L'identifiant unique de la position.
+          format: uuid
+        member_site_position_id:
+          type: string
+          description: L'identifiant unique de la position du membre dans la succursale.
+          format: uuid
+    MemberRateUpdateAttributes:
+      required:
+      - id
+      type: object
+      description: Une description détaillée des paramètres de mise à jour de taux
+        de membre.
+      properties:
+        value:
+          type: number
+          description: Le taux du membre pour les heures régulières.
+          format: float
+        value_overtime:
+          type: number
+          description: Le taux du membre pour les heures supplémentaires.
+          format: float
+        value_overtime_2:
+          type: number
+          description: Le taux des heures supplémentaires de niveau 2 du membre, si
+            activées.
+          format: float
+        start_date:
+          type: string
+          description: La date à laquelle ce taux entre en vigueur.
+          format: date
+        description:
+          type: string
+          description: Une description pour ce taux.
+        id:
+          type: string
+          description: L'identifiant unique de l'objet.
+          format: uuid
+        _destroy:
+          type: boolean
+          description: Si 'true', supprimera le taux du membre.
     MemberSitePositionCreateAttributes:
       required:
       - member_site_id
@@ -6100,17 +6236,20 @@ components:
           description: L'identifiant unique de la position.
           format: uuid
         rate_base:
+          deprecated: true
           type: number
           description: Le taux horaire régulier du membre pour la position.
           format: float
         rate_overtime:
+          deprecated: true
           type: number
           description: Le taux horaire supplémentaire du membre pour la position.
           format: float
         rate_overtime_2:
+          deprecated: true
           type: number
-          description: Le taux horaire supplémentaire 2 du membre pour la position,
-            si activé.
+          description: Le taux des heures supplémentaires de niveau 2 du membre pour
+            cette position, si activées.
           format: float
     MemberSitePositionUpdateAttributes:
       required:
@@ -6128,17 +6267,20 @@ components:
           description: L'identifiant unique de la position.
           format: uuid
         rate_base:
+          deprecated: true
           type: number
           description: Le taux horaire régulier du membre pour la position.
           format: float
         rate_overtime:
+          deprecated: true
           type: number
           description: Le taux horaire supplémentaire du membre pour la position.
           format: float
         rate_overtime_2:
+          deprecated: true
           type: number
-          description: Le taux horaire supplémentaire 2 du membre pour la position,
-            si activé.
+          description: Le taux des heures supplémentaires de niveau 2 du membre pour
+            cette position, si activées.
           format: float
         id:
           type: string
@@ -6208,21 +6350,25 @@ components:
           description: L'identifiant unique de la définition de rôle.
           format: uuid
         rate_single_base:
+          deprecated: true
           type: number
           description: Le taux horaire régulier du membre pour toutes ses positions
             dans la succursale.
           format: float
         rate_single_overtime:
+          deprecated: true
           type: number
           description: Le taux horaire supplémentaire du membre pour toutes ses positions
             dans la succursale.
           format: float
         rate_single_overtime_2:
+          deprecated: true
           type: number
-          description: Le taux horaire supplémentaire 2 du membre pour toutes ses
-            positions dans la succursale, si activé.
+          description: Le taux des heures supplémentaires de niveau 2 du membre pour
+            toutes ses positions dans cette succursale, si activées.
           format: float
         rate_type:
+          deprecated: true
           type: string
           description: Si les taux horaires sont appliqués à toutes les positions
             (simple), ou chaque position assignée a son propre taux horaire (position).
@@ -6256,21 +6402,25 @@ components:
           description: L'identifiant unique de la définition de rôle.
           format: uuid
         rate_single_base:
+          deprecated: true
           type: number
           description: Le taux horaire régulier du membre pour toutes ses positions
             dans la succursale.
           format: float
         rate_single_overtime:
+          deprecated: true
           type: number
           description: Le taux horaire supplémentaire du membre pour toutes ses positions
             dans la succursale.
           format: float
         rate_single_overtime_2:
+          deprecated: true
           type: number
-          description: Le taux horaire supplémentaire 2 du membre pour toutes ses
-            positions dans la succursale, si activé.
+          description: Le taux des heures supplémentaires de niveau 2 du membre pour
+            toutes ses positions dans cette succursale, si activées.
           format: float
         rate_type:
+          deprecated: true
           type: string
           description: Si les taux horaires sont appliqués à toutes les positions
             (simple), ou chaque position assignée a son propre taux horaire (position).
@@ -6375,7 +6525,7 @@ components:
           description: Si le membre possède des seuils d'heures supplémentaires personnalisés.
         multi_level_overtime:
           type: boolean
-          description: Si les heures supplémentaires multi-niveaux sont activées pour
+          description: Si les heures supplémentaires multiniveaux sont activées pour
             le membre.
         override_spread_overtime:
           type: boolean
@@ -6393,13 +6543,14 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personnalisé 2 du
-            membre, si les heures supplémentaires multi-niveaux sont activées.
+          description: Le seuil quotidien personnalisé d'heures supplémentaires de
+            niveau 2 du membre, si les heures supplémentaires multiniveaux sont activées.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de semaine personnalisé 2
-            du membre, si les heures supplémentaires multi-niveaux sont activées.
+          description: Le seuil hebdomadaire personnalisé d'heures supplémentaires
+            de niveau 2 personnalisé du membre, si les heures supplémentaires multiniveaux
+            sont activées.
           format: float
         spread_overtime_enabled:
           type: boolean
@@ -6477,6 +6628,11 @@ components:
           description: Les sites du membre.
           items:
             "$ref": "#/components/schemas/MemberSiteCreateAttributes"
+        rates_attributes:
+          type: array
+          description: Les taux du membre.
+          items:
+            "$ref": "#/components/schemas/MemberRateCreateAttributes"
     ProfileUpdateAttributes:
       type: object
       description: Description détaillée des paramètres de mise à jour du profil.
@@ -6549,7 +6705,7 @@ components:
           description: Si le membre possède des seuils d'heures supplémentaires personnalisés.
         multi_level_overtime:
           type: boolean
-          description: Si les heures supplémentaires multi-niveaux sont activées pour
+          description: Si les heures supplémentaires multiniveaux sont activées pour
             le membre.
         override_spread_overtime:
           type: boolean
@@ -6567,13 +6723,14 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de jour personnalisé 2 du
-            membre, si les heures supplémentaires multi-niveaux sont activées.
+          description: Le seuil quotidien personnalisé d'heures supplémentaires de
+            niveau 2 du membre, si les heures supplémentaires multiniveaux sont activées.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: Le seuil d'heures supplémentaires de semaine personnalisé 2
-            du membre, si les heures supplémentaires multi-niveaux sont activées.
+          description: Le seuil hebdomadaire personnalisé d'heures supplémentaires
+            de niveau 2 personnalisé du membre, si les heures supplémentaires multiniveaux
+            sont activées.
           format: float
         spread_overtime_enabled:
           type: boolean
@@ -6653,6 +6810,13 @@ components:
             oneOf:
             - "$ref": "#/components/schemas/MemberSiteUpdateAttributes"
             - "$ref": "#/components/schemas/MemberSiteCreateAttributes"
+        rates_attributes:
+          type: array
+          description: Les taux du membre.
+          items:
+            oneOf:
+            - "$ref": "#/components/schemas/MemberRateUpdateAttributes"
+            - "$ref": "#/components/schemas/MemberRateCreateAttributes"
     Errors:
       type: object
       properties:
@@ -8309,6 +8473,19 @@ components:
                 type: array
                 items:
                   "$ref": "#/components/schemas/MemberTimeBank"
+              pagination:
+                "$ref": "#/components/schemas/CommonPagination"
+    MemberRateSuccessMany:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/MemberRate"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
     HRPrivateDataSuccessOne:
