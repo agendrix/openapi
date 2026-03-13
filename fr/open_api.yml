@@ -2,7 +2,7 @@
 openapi: 3.0.0
 info:
   title: Agendrix API
-  description: |2-
+  description: |2
 
     Cette page contient une description détaillée de l'API publique d'Agendrix. Ci-dessous, vous trouverez une section « Pour commencer » résumant les principales étapes  pour effectuer votre premier appel à l'API, ainsi qu'une section OAUth 2.0 décrivant le processus d'authentification nécessaire afin de récupérer un jeton d'accès obligatoire. Vous pouvez également accéder à l'information concernant les en-têtes, les réponses et les erreurs de l'API. Chaque point de terminaison est ensuite décrit, regroupé par leur modèle de base de données. Autorisations, paramètres, réponses, tout ce dont vous avez besoin est là. Profitez-en!
 
@@ -160,10 +160,6 @@ info:
 
     ## Erreur de paramètre de route - Code 400
     Ceci peut uniquement se produire pour les points de terminaison qui nécessitent des paramètres inhabituels dans leur route - i.e. la liste de disponibilité d'un membre affichée par date : `/members/{id}/availability_lists/{date}`.
-
-    # Aide
-    ## Nous contacter
-    N'hésitez pas à nous contacter  si vous ne trouvez pas les informations que vous cherchez dans ce guide : <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
   version: 1.12.0
 servers:
 - url: https://api.agendrix.com/v1

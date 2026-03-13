@@ -2,7 +2,7 @@
 openapi: 3.0.0
 info:
   title: Agendrix API
-  description: |2-
+  description: |2
 
     This page contains a detailed description of Agendrix's public API. Below, you will find a Get Started section resuming the main steps leading you to your first API call, as well as an OAuth 2.0 section, describing the authentication process necessary in order to retrieve a mandatory access token. You can also access information about the API headers, responses and errors. Each endpoint is then described, grouped by their database model. Authorizations, parameters, responses, everything you need is there. Enjoy!
 
@@ -162,10 +162,6 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-
-    # Help
-    ## Contact us
-    If you cannot find the information you are looking for in this guide, you can contact us at the following email address: <a href='mailto:api@agendrix.com'>api@agendrix.com</a>.
   version: 1.12.0
 servers:
 - url: https://api.agendrix.com/v1
@@ -3730,7 +3726,7 @@ components:
           format: uuid
         start_date:
           type: string
-          description: The date when this rate becomes effective.
+          description: This rate's effective date.
           format: date
         value:
           type: number
@@ -3789,8 +3785,8 @@ components:
           format: float
         rate_overtime_2:
           type: number
-          description: The member's rate for level 2 overtime hours in this position,
-            if enabled.
+          description: The member's rate for overtime 2 hours in this position, if
+            enabled.
           format: float
         created_at:
           type: string
@@ -4151,12 +4147,12 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: The member's custom day level 2 overtime threshold, if multi-level
+          description: The member's custom day overtime 2 threshold, if multi-level
             overtime is enabled.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: The member's custom week level 2 overtime threshold, if multi-level
+          description: The member's custom week overtime 2 threshold, if multi-level
             overtime is enabled.
           format: float
         comments_count:
@@ -5264,7 +5260,7 @@ components:
           format: float
         received_tip:
           type: number
-          description: The tip amount distributed to the employee.
+          description: The tip share distributed to the employee.
           format: float
         created_at:
           type: string
@@ -6081,7 +6077,7 @@ components:
           format: float
         start_date:
           type: string
-          description: The date when this rate becomes effective.
+          description: This rate's effective date.
           format: date
         description:
           type: string
@@ -6114,7 +6110,7 @@ components:
           format: float
         start_date:
           type: string
-          description: The date when this rate becomes effective.
+          description: This rate's effective date.
           format: date
         description:
           type: string
@@ -6155,8 +6151,8 @@ components:
         rate_overtime_2:
           deprecated: true
           type: number
-          description: The member's rate for level 2 overtime hours in this position,
-            if enabled.
+          description: The member's rate for overtime 2 hours in this position, if
+            enabled.
           format: float
     MemberSitePositionUpdateAttributes:
       required:
@@ -6186,8 +6182,8 @@ components:
         rate_overtime_2:
           deprecated: true
           type: number
-          description: The member's rate for level 2 overtime hours in this position,
-            if enabled.
+          description: The member's rate for overtime 2 hours in this position, if
+            enabled.
           format: float
         id:
           type: string
@@ -6270,8 +6266,8 @@ components:
         rate_single_overtime_2:
           deprecated: true
           type: number
-          description: The member's rate for level 2 overtime hours for all positions
-            in this site, if enabled.
+          description: The member's rate for overtime 2 hours for all positions in
+            this site, if enabled.
           format: float
         rate_type:
           deprecated: true
@@ -6321,8 +6317,8 @@ components:
         rate_single_overtime_2:
           deprecated: true
           type: number
-          description: The member's rate for level 2 overtime hours for all positions
-            in this site, if enabled.
+          description: The member's rate for overtime 2 hours for all positions in
+            this site, if enabled.
           format: float
         rate_type:
           deprecated: true
@@ -6444,12 +6440,12 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: The member's custom day level 2 overtime threshold, if multi-level
+          description: The member's custom day overtime 2 threshold, if multi-level
             overtime is enabled.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: The member's custom week level 2 overtime threshold, if multi-level
+          description: The member's custom week overtime 2 threshold, if multi-level
             overtime is enabled.
           format: float
         spread_overtime_enabled:
@@ -6615,12 +6611,12 @@ components:
           format: float
         overtime_2_day_threshold:
           type: number
-          description: The member's custom day level 2 overtime threshold, if multi-level
+          description: The member's custom day overtime 2 threshold, if multi-level
             overtime is enabled.
           format: float
         overtime_2_week_threshold:
           type: number
-          description: The member's custom week level 2 overtime threshold, if multi-level
+          description: The member's custom week overtime 2 threshold, if multi-level
             overtime is enabled.
           format: float
         spread_overtime_enabled:
