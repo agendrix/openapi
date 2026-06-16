@@ -162,7 +162,7 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-  version: 1.12.1
+  version: 1.13.0
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -3728,9 +3728,20 @@ components:
           type: string
           description: This rate's effective date.
           format: date
+        rate_type:
+          type: string
+          description: The type of rate. "hourly" — `value` is the rate per hour for
+            regular work. "salary" — `value` is the annual salary; the effective hourly
+            rate is `value / 52 / weekly_hours`.
+        weekly_hours:
+          type: number
+          description: For salary rates, the contractual weekly hours used to compute
+            the effective hourly rate. Null for hourly rates.
+          format: float
         value:
           type: number
-          description: The member's rate for regular hours.
+          description: For hourly rates, the member's rate for regular hours. For
+            salary rates, the annual salary.
           format: float
         value_overtime:
           type: number
@@ -4080,6 +4091,11 @@ components:
           type: string
           description: The highest hierarchical level associated to this user. Can
             either be member, supervisor or manager.
+        rate_type:
+          type: string
+          description: The member's rate type. "hourly" — pay is computed from worked
+            hours × rate. "salary" — fixed annual pay; timesheets are tracking-only
+            except for paid time off, which deducts from regular hours.
         visible_rates:
           type: boolean
           description: Whether this member can see rates and costs, depending on the
