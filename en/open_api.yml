@@ -162,7 +162,7 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-  version: 1.13.0
+  version: 1.13.1
 servers:
 - url: https://api.agendrix.com/v1
 security:

@@ -160,7 +160,7 @@ info:
 
     ## Erreur de paramètre de route - Code 400
     Ceci peut uniquement se produire pour les points de terminaison qui nécessitent des paramètres inhabituels dans leur route - i.e. la liste de disponibilité d'un membre affichée par date : `/members/{id}/availability_lists/{date}`.
-  version: 1.13.0
+  version: 1.13.1
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -3768,8 +3768,8 @@ components:
           format: float
         value:
           type: number
-          description: Pour les taux horaires, le taux du membre pour les heures régulières.
-            Pour les taux salariaux, le salaire annuel.
+          description: Pour les taux horaires, le taux horaire du membre pour les
+            heures régulières. Pour les salaires, le salaire annuel.
           format: float
         value_overtime:
           type: number
@@ -4129,8 +4129,8 @@ components:
             'member', 'supervisor' ou 'manager'.
         rate_type:
           type: string
-          description: Le type de taux du membre. "hourly" — la paye est calculée
-            à partir des heures travaillées × taux. "salary" — paye annuelle fixe;
+          description: Le type de taux du membre. "hourly" — la paie est calculée
+            à partir des heures travaillées × taux. "salary" — paie annuelle fixe;
             les feuilles de temps sont en mode suivi seulement sauf pour les congés
             payés, qui réduisent les heures régulières.
         visible_rates:
