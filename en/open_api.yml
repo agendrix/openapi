@@ -162,7 +162,7 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-  version: 1.13.1
+  version: 1.13.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1563,7 +1563,8 @@ paths:
   "/premiums":
     get:
       summary: Get paginated premiums.
-      description: Return paginated premiums.
+      description: Return paginated premiums. Every version of a premium is listed,
+        each under its own id.
       tags:
       - Premiums
       operationId: index_premium
@@ -1590,7 +1591,9 @@ paths:
   "/premiums/{id}":
     get:
       summary: Get one premium.
-      description: Return the premium's id holder.
+      description: Return the premium matching the given id. An id addresses one specific
+        version, so the id of a superseded version returns that past version; follow
+        original_version_id and new_version_id to walk the version chain.
       tags:
       - Premiums
       operationId: show_premium
@@ -4495,7 +4498,7 @@ components:
           format: uuid
         premium_id:
           type: string
-          description: The premium's unique identifier.
+          description: The id of the premium version applied to this entry.
           format: uuid
         entry_id:
           type: string
@@ -4586,6 +4589,25 @@ components:
           type: string
           description: When the premium was last updated.
           format: date-time
+        original_version_id:
+          type: string
+          description: The id of the first version in this premium's version chain,
+            or null when this premium is the first version.
+          format: uuid
+        new_version_id:
+          type: string
+          description: The id of the version that supersedes this one, or null when
+            this is the current version.
+          format: uuid
+        effective_from:
+          type: string
+          description: The date this premium version starts applying.
+          format: date
+        effective_to:
+          type: string
+          description: The date this premium version stops applying, or null when
+            it is still in effect.
+          format: date
     Publication:
       type: object
       description: A detailed description of a publication.

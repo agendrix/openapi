@@ -160,7 +160,7 @@ info:
 
     ## Erreur de paramètre de route - Code 400
     Ceci peut uniquement se produire pour les points de terminaison qui nécessitent des paramètres inhabituels dans leur route - i.e. la liste de disponibilité d'un membre affichée par date : `/members/{id}/availability_lists/{date}`.
-  version: 1.13.1
+  version: 1.13.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1576,7 +1576,8 @@ paths:
   "/premiums":
     get:
       summary: Obtenir les primes paginées.
-      description: Retournes les primes paginées.
+      description: Retourne les primes paginées. Chaque version d'une prime est listée,
+        chacune sous son propre id.
       tags:
       - Premiums
       operationId: index_premium
@@ -1602,7 +1603,10 @@ paths:
   "/premiums/{id}":
     get:
       summary: Obtenir une prime.
-      description: Retourne la prime correspondant à l'identifiant unique.
+      description: 'Retourne la prime correspondant à l''id fourni. Un id désigne
+        une version précise : l''id d''une version remplacée retourne cette version
+        passée; suivez original_version_id et new_version_id pour parcourir la chaîne
+        de versions.'
       tags:
       - Premiums
       operationId: show_premium
@@ -4545,7 +4549,7 @@ components:
           format: uuid
         premium_id:
           type: string
-          description: Identifiant unique d'une prime.
+          description: L'id de la version de la prime appliquée à cette entrée.
           format: uuid
         entry_id:
           type: string
@@ -4638,6 +4642,25 @@ components:
           type: string
           description: Moment de la dernière mise à jour de la prime.
           format: date-time
+        original_version_id:
+          type: string
+          description: L'id de la première version de la chaîne de versions de cette
+            prime, ou null si cette prime est elle-même la première version.
+          format: uuid
+        new_version_id:
+          type: string
+          description: L'id de la version qui remplace celle-ci, ou null s'il s'agit
+            de la version courante.
+          format: uuid
+        effective_from:
+          type: string
+          description: La date à partir de laquelle cette version de la prime s'applique.
+          format: date
+        effective_to:
+          type: string
+          description: La date à laquelle cette version de la prime cesse de s'appliquer,
+            ou null si elle est toujours en vigueur.
+          format: date
     Publication:
       type: object
       description: Description détaillée d'une publication.
