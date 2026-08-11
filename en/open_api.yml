@@ -47,16 +47,16 @@ info:
     demonstration of the process, use the OAuth 2.0 Playground.
 
     ## Prepare the Authorization Request
-    The first step is to prepare the authorization request using the Client ID and one of the redirect URIs defined for the application - or the client. Scopes default to read when not specified.
+    The first step is to prepare the authorization request using the Client ID and one of the redirect URIs defined for the application - or the client. Scopes default to read when not specified. We strongly recommend including a *state* parameter - a random, unguessable value tied to the user's session. The OAuth 2.0 server returns it untouched alongside the authorization code, which lets you verify that the response matches the request you initiated and protects your users against cross-site request forgery (CSRF) attacks.
     ```
-    https://app.agendrix.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=read+write
+    https://app.agendrix.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=read+write&state={STATE}
     ```
 
     ## Redirect the User
     Once the user is redirected to the authorization request, he needs to gives his approval sharing his data with the application, and choose the organization for which he wants to do so. The authorization request is then processed by the OAuth 2.0 server.
 
     ## Handle the OAuth 2.0 Server Response
-    If the authorization request is valid, the OAuth 2.0 server sends an authorization code to the redirect URI specified in the authorization request. This code can be used to prepare the request to retrieve the access and refresh tokens.
+    If the authorization request is valid, the OAuth 2.0 server sends an authorization code to the redirect URI specified in the authorization request, along with the *state* value when one was provided. Before going any further, verify that the returned *state* matches the one you generated - if it does not, reject the response. The code can then be used to prepare the request to retrieve the access and refresh tokens.
 
     ## Exchange the Authorization Code for Tokens
     The final step is simply to exchange the authorization code received against the tokens. The Client ID, the Client Secret, the redirect URI and the grant type - which is always *authorization_code* - need to be included in the request. The OAuth 2.0 server then sends the access and refresh token to the redirect URI defined.
@@ -141,7 +141,7 @@ info:
     When the token does not possess the required scope to perform the action.
 
     ## Rate Limiting Error - Code 429
-    When the rate limit of 180 requests per minute is not respected, a rate limit error is returned. The *RateLimit-Reset* header specifies how much time is left before another request can be made.
+    When the rate limit of 360 requests per minute is not respected, a rate limit error is returned. The *RateLimit-Reset* header specifies how much time is left before another request can be made.
 
     ## Internal Server Error - Code 500
     When an unexpected error occurs on the server, the API will return an internal server error.
@@ -162,7 +162,7 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-  version: 1.13.2
+  version: 1.14.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -708,6 +708,29 @@ paths:
           "$ref": "#/components/responses/DocumentSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+  "/documents/{id}/download":
+    get:
+      summary: Download a document's file.
+      description: Redirect to a short-lived pre-signed URL for the document's file.
+        Follow the redirect to retrieve the file's content. The URL expires after
+        5 minutes; do not store or log it.
+      tags:
+      - Documents
+      operationId: download_document
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        302:
+          description: A redirect to the file's short-lived download URL.
+          headers:
+            Location:
+              description: The short-lived pre-signed URL to download the file. Expires
+                after 5 minutes.
+              schema:
+                type: string
+                format: uri
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests/{id}/approve":
     put:
       summary: Approve a time off request
@@ -968,6 +991,18 @@ paths:
       - "$ref": "#/components/parameters/QueryPage"
       - "$ref": "#/components/parameters/QueryLimit"
       - "$ref": "#/components/parameters/QueryPageSize"
+      - name: sort[first_name]
+        in: query
+        description: Sorts the query by the profile's first_name value, which must
+          be 'asc' or 'desc', case insensitive.
+        schema:
+          type: string
+      - name: sort[last_name]
+        in: query
+        description: Sorts the query by the profile's last_name value, which must
+          be 'asc' or 'desc', case insensitive.
+        schema:
+          type: string
       - name: search[main_position_id]
         in: query
         description: The main_position_id used for the search applied on the query.
@@ -3479,6 +3514,11 @@ components:
         file_url:
           type: string
           description: The URL of the uploaded file.
+        download_url:
+          type: string
+          description: The API endpoint that redirects to a short-lived download URL
+            for the document's file.
+          format: uri
         created_at:
           type: string
           description: When the document was created.
@@ -3890,6 +3930,25 @@ components:
           type: string
           description: The unique identifier of this transaction's site.
           format: uuid
+        shift_id:
+          type: string
+          description: The unique identifier of the shift this transaction funds,
+            when time from the bank is used to pay a leave.
+          format: uuid
+        time_entry_id:
+          type: string
+          description: The unique identifier of the time entry this transaction funds,
+            when time from the bank is used to pay a leave.
+          format: uuid
+        adjusted_entry_id:
+          type: string
+          description: The unique identifier of the timesheet entry the banked time
+            was taken from, for transactions that deduct time from the timesheet (banked
+            overtime).
+          format: uuid
+        adjusted_entry_type:
+          type: string
+          description: The type of the adjusted entry. Can be TimeEntry or MemberTimeBankTransaction.
         'no':
           type: integer
           description: The unique sequential number of this transaction in the bank
@@ -7978,6 +8037,13 @@ components:
         name:
           type: string
           description: The name of the folder.
+        folder_id:
+          type: string
+          description: The id of the folder this folder is inside of. Leave blank
+            to place it at the root. A sub-folder always takes the access of the folder
+            that contains it, so member_viewable, role, site_ids and position_ids
+            are ignored when this is set. Folders can be nested up to 5 levels.
+          format: uuid
         member_viewable:
           type: boolean
           description: Set to true if the member can see this folder and all of its
@@ -8010,6 +8076,13 @@ components:
         name:
           type: string
           description: The name of the folder.
+        folder_id:
+          type: string
+          description: The id of the folder this folder is inside of. Leave blank
+            to place it at the root. A sub-folder always takes the access of the folder
+            that contains it, so member_viewable, role, site_ids and position_ids
+            are ignored when this is set. Folders can be nested up to 5 levels.
+          format: uuid
         member_viewable:
           type: boolean
           description: Set to true if the member can see this folder and all of its
@@ -9101,6 +9174,9 @@ components:
     DriveFileCreate:
       content:
         application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFileCreate"
+        multipart/form-data:
           schema:
             "$ref": "#/components/schemas/DriveFileCreate"
     DriveFileUpdate:

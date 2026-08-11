@@ -45,16 +45,16 @@ info:
     Agendrix utilise le protocole OAuth 2.0 pour l'autorisation. Dès qu'une application est créée, elle peut être utilisée pour demander des jetons d'accès et de rafraîchissement. Le jeton d'accès est valide pour une période de 2 heures et doit être rafraîchi par la suite avec le jeton de rafraîchissement. Le jeton d'accès peut ensuite être utilisé pour effectuer des appels à l'API. Pour une démonstration intéractive du processus, veuillez utiliser l'aire de jeux OAuth 2.0.
 
     ## Préparer la requête d'autorisation
-    La première étape consiste à préparer la requête d'autorisation en utilisant le Client ID et l'un des URIs de redirection définis pour l'application - ou le client. Les portées sont « read » par défaut lorsqu'elles ne sont pas spécifiées.
+    La première étape consiste à préparer la requête d'autorisation en utilisant le Client ID et l'un des URIs de redirection définis pour l'application - ou le client. Les portées sont « read » par défaut lorsqu'elles ne sont pas spécifiées. Nous vous recommandons fortement d'inclure un paramètre *state* - une valeur aléatoire impossible à deviner, liée à la session de l'utilisateur. Le serveur OAuth 2.0 le retourne tel quel avec le code d'autorisation, ce qui vous permet de vérifier que la réponse correspond bien à la requête que vous avez initiée et de protéger vos utilisateurs contre les attaques de type CSRF (cross-site request forgery).
     ```
-    https://app.agendrix.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=read+write
+    https://app.agendrix.com/oauth/authorize?client_id={CLIENT_ID}&redirect_uri={REDIRECT_URI}&response_type=code&scope=read+write&state={STATE}
     ```
 
     ## Rediriger l'utilisateur
     Une fois que l'utilisateur est redirigé à la requête d'autorisation, il doit donner son approbation pour partager ses données avec l'application et choisir l'organisation pour laquelle il souhaite le faire. La requête d'autorisation est ensuite traitée par le serveur OAuth 2.0.
 
     ## Gérer la réponse du serveur OAuth 2.0
-    Si la requête d'autorisation est valide, le serveur OAuth 2.0 envoie un code d'autorisation à l'URI de redirection spécifié dans la requête. Ce code peut être utilisé pour préparer la requête visant à récupérer les jetons d'accès et de rafraîchissement.
+    Si la requête d'autorisation est valide, le serveur OAuth 2.0 envoie un code d'autorisation à l'URI de redirection spécifié dans la requête, accompagné de la valeur *state* si elle a été fournie. Avant d'aller plus loin, vérifiez que la valeur *state* retournée correspond à celle que vous avez générée - si ce n'est pas le cas, rejetez la réponse. Le code peut ensuite être utilisé pour préparer la requête visant à récupérer les jetons d'accès et de rafraîchissement.
 
     ## Échanger le code d'autorisation pour des jetons
     La dernière étape consiste simplement à échanger le code d'autorisation reçu contre les jetons. Le Client ID, le Client Secret, l'URI de redirection et le type de contribution - qui est toujours *authorization_code* - doivent être inclus dans la requête. Le serveur OAuth 2.0 envoie ensuite le jeton d'accès et de rafraîchissement à l'URI de redirection défini.
@@ -139,7 +139,7 @@ info:
     Lorsque le jeton ne possède pas la portée requise pour effectuer l'action.
 
     ## Erreur de taux limite - Code 429
-    Lorsque la limite de fréquence de 180 requêtes par minute n'est pas respectée, une erreur de limite de fréquence est retournée. L'en-tête *RateLimit-Reset* spécifie combien de temps il reste avant qu'une autre demande puisse être effectuée.
+    Lorsque la limite de fréquence de 360 requêtes par minute n'est pas respectée, une erreur de limite de fréquence est retournée. L'en-tête *RateLimit-Reset* spécifie combien de temps il reste avant qu'une autre demande puisse être effectuée.
 
     ## Erreur interne du serveur - Code 500
     WLorsqu'une erreur inattendue survient sur le serveur, l'API renvoie une erreur interne du serveur.
@@ -160,7 +160,7 @@ info:
 
     ## Erreur de paramètre de route - Code 400
     Ceci peut uniquement se produire pour les points de terminaison qui nécessitent des paramètres inhabituels dans leur route - i.e. la liste de disponibilité d'un membre affichée par date : `/members/{id}/availability_lists/{date}`.
-  version: 1.13.2
+  version: 1.14.2
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -715,6 +715,30 @@ paths:
           "$ref": "#/components/responses/DocumentSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+  "/documents/{id}/download":
+    get:
+      summary: Télécharger le fichier d'un document.
+      description: Redirige vers une URL présignée à courte durée de vie pour le fichier
+        relié au document. Suivez la redirection pour obtenir le contenu du fichier.
+        L'URL expire après 5 minutes et ne doit pas être stockée ni journalisée.
+      tags:
+      - Documents
+      operationId: download_document
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        302:
+          description: Une redirection vers l'URL de téléchargement à courte durée
+            de vie du fichier.
+          headers:
+            Location:
+              description: L'URL présignée à courte durée de vie pour télécharger
+                le fichier. Expire après 5 minutes.
+              schema:
+                type: string
+                format: uri
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/leave_requests/{id}/approve":
     put:
       summary: Approuver une demande de congé
@@ -978,6 +1002,18 @@ paths:
       - "$ref": "#/components/parameters/QueryPage"
       - "$ref": "#/components/parameters/QueryLimit"
       - "$ref": "#/components/parameters/QueryPageSize"
+      - name: sort[first_name]
+        in: query
+        description: Trie la requête par la valeur 'first_name' du profil, qui doit
+          être 'asc' ou 'desc', insensible à la case.
+        schema:
+          type: string
+      - name: sort[last_name]
+        in: query
+        description: Trie la requête par la valeur 'last_name' du profil, qui doit
+          être 'asc' ou 'desc', insensible à la case.
+        schema:
+          type: string
       - name: search[main_position_id]
         in: query
         description: Filtre selon l'identifiant unique du la position princiaple.
@@ -3506,6 +3542,11 @@ components:
         file_url:
           type: string
           description: Le lien pour accéder au fichier.
+        download_url:
+          type: string
+          description: Le point d'accès de l'API qui redirige vers une URL de téléchargement
+            à courte durée de vie pour le fichier relié au document.
+          format: uri
         created_at:
           type: string
           description: Date et heure de création du document.
@@ -3923,6 +3964,25 @@ components:
           type: string
           description: L'identifiant unique de la succursale de la transaction.
           format: uuid
+        shift_id:
+          type: string
+          description: L'identifiant unique du quart que cette transaction finance,
+            lorsque du temps de la banque est utilisé pour payer un congé.
+          format: uuid
+        time_entry_id:
+          type: string
+          description: L'identifiant unique de l'entrée de temps que cette transaction
+            finance, lorsque du temps de la banque est utilisé pour payer un congé.
+          format: uuid
+        adjusted_entry_id:
+          type: string
+          description: L'identifiant unique de l'entrée de la feuille de temps d'où
+            provient le temps banqué, pour les transactions qui déduisent du temps
+            de la feuille de temps (temps supplémentaire banqué).
+          format: uuid
+        adjusted_entry_type:
+          type: string
+          description: Le type de l'entrée ajustée. Peut être TimeEntry ou MemberTimeBankTransaction.
         'no':
           type: integer
           description: Le numéro séquentiel unique de la transaction dans la banque
@@ -8124,6 +8184,14 @@ components:
         name:
           type: string
           description: Le nom du dossier.
+        folder_id:
+          type: string
+          description: L'identifiant du dossier dans lequel se trouve ce dossier.
+            Laisser vide pour le placer à la racine. Un sous-dossier prend toujours
+            les accès du dossier qui le contient, donc 'member_viewable', 'role',
+            'site_ids' et 'position_ids' sont ignorés lorsque ce champ est fourni.
+            Les dossiers peuvent être imbriqués sur 5 niveaux au maximum.
+          format: uuid
         member_viewable:
           type: boolean
           description: Vrai si le dossier et son contenu est accessible à l'employé.
@@ -8156,6 +8224,14 @@ components:
         name:
           type: string
           description: Le nom du dossier.
+        folder_id:
+          type: string
+          description: L'identifiant du dossier dans lequel se trouve ce dossier.
+            Laisser vide pour le placer à la racine. Un sous-dossier prend toujours
+            les accès du dossier qui le contient, donc 'member_viewable', 'role',
+            'site_ids' et 'position_ids' sont ignorés lorsque ce champ est fourni.
+            Les dossiers peuvent être imbriqués sur 5 niveaux au maximum.
+          format: uuid
         member_viewable:
           type: boolean
           description: Vrai si le dossier et son contenu est accessible à l'employé.
@@ -9248,6 +9324,9 @@ components:
     DriveFileCreate:
       content:
         application/json:
+          schema:
+            "$ref": "#/components/schemas/DriveFileCreate"
+        multipart/form-data:
           schema:
             "$ref": "#/components/schemas/DriveFileCreate"
     DriveFileUpdate:
