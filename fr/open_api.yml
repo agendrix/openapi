@@ -160,7 +160,7 @@ info:
 
     ## Erreur de paramètre de route - Code 400
     Ceci peut uniquement se produire pour les points de terminaison qui nécessitent des paramètres inhabituels dans leur route - i.e. la liste de disponibilité d'un membre affichée par date : `/members/{id}/availability_lists/{date}`.
-  version: 1.14.2
+  version: 1.14.3
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -718,9 +718,9 @@ paths:
   "/documents/{id}/download":
     get:
       summary: Télécharger le fichier d'un document.
-      description: Redirige vers une URL présignée à courte durée de vie pour le fichier
-        relié au document. Suivez la redirection pour obtenir le contenu du fichier.
-        L'URL expire après 5 minutes et ne doit pas être stockée ni journalisée.
+      description: Redirige vers une URL temporaire présignée pour le fichier relié
+        au document. Suivez la redirection pour obtenir le contenu du fichier. L'URL
+        expire après 5 minutes et ne doit pas être stockée ni journalisée.
       tags:
       - Documents
       operationId: download_document
@@ -728,12 +728,12 @@ paths:
       - "$ref": "#/components/parameters/PathId"
       responses:
         302:
-          description: Une redirection vers l'URL de téléchargement à courte durée
-            de vie du fichier.
+          description: Une redirection vers l'URL de téléchargement temporaire du
+            fichier.
           headers:
             Location:
-              description: L'URL présignée à courte durée de vie pour télécharger
-                le fichier. Expire après 5 minutes.
+              description: L'URL temporaire présignée pour télécharger le fichier.
+                Expire après 5 minutes.
               schema:
                 type: string
                 format: uri
@@ -1005,13 +1005,13 @@ paths:
       - name: sort[first_name]
         in: query
         description: Trie la requête par la valeur 'first_name' du profil, qui doit
-          être 'asc' ou 'desc', insensible à la case.
+          être 'asc' ou 'desc' (insensible à la casse).
         schema:
           type: string
       - name: sort[last_name]
         in: query
         description: Trie la requête par la valeur 'last_name' du profil, qui doit
-          être 'asc' ou 'desc', insensible à la case.
+          être 'asc' ou 'desc' (insensible à la casse).
         schema:
           type: string
       - name: search[main_position_id]
@@ -1277,10 +1277,50 @@ paths:
           "$ref": "#/components/responses/PositionSuccessMany"
         400:
           "$ref": "#/components/responses/QueryParamFailure"
+  "/members/{id}/hr/data":
+    get:
+      summary: Obtenir les données de ressources humaines.
+      description: Retourne les données de ressources humaines du membre. Seuls les
+        champs visibles pour le rôle du demandeur sont retournés.
+      tags:
+      - Members
+      operationId: show_member_hr_data
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      responses:
+        200:
+          "$ref": "#/components/responses/HRDataSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+    put:
+      summary: Mettre à jour les données de ressources humaines.
+      description: Met à jour les données de ressources humaines du membre. L'objet
+        `data` du body utilise les ids de champs de ressources humaines comme clés;
+        les ids de champs invalides sont ignorés. Seuls les champs visibles pour le
+        rôle du demandeur peuvent être mis à jour et sont retournés. Nécessite la
+        permission de mettre à jour le membre.
+      tags:
+      - Members
+      operationId: update_member_hr_data
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/MemberHRDataUpdate"
+      responses:
+        200:
+          "$ref": "#/components/responses/HRDataSuccessOne"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
   "/members/{id}/hr/private_data":
     get:
       summary: Obtenir les données privées de ressources humaines.
       description: Retourne les données privées de ressources humaines du membre.
+        Nécessite que le demandeur ait accès aux données sensibles ou soit le membre.
       tags:
       - Members
       operationId: show_member_hr_private_data
@@ -1289,6 +1329,30 @@ paths:
       responses:
         200:
           "$ref": "#/components/responses/HRPrivateDataSuccessOne"
+        404:
+          "$ref": "#/components/responses/NotFoundFailure"
+    put:
+      summary: Mettre à jour les données privées de ressources humaines.
+      description: Met à jour les données privées de ressources humaines du membre.
+        L'objet `private_data` du body utilise les ids de champs de ressources humaines
+        comme clés; les ids de champs invalides sont ignorés. Nécessite la permission
+        de mettre à jour le membre, ainsi que l'accès aux données sensibles à moins
+        que le demandeur soit le membre.
+      tags:
+      - Members
+      operationId: update_member_hr_private_data
+      parameters:
+      - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/MemberHRPrivateDataUpdate"
+      responses:
+        200:
+          "$ref": "#/components/responses/HRPrivateDataSuccessOne"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
   "/members/{id}/sites":
@@ -3545,7 +3609,7 @@ components:
         download_url:
           type: string
           description: Le point d'accès de l'API qui redirige vers une URL de téléchargement
-            à courte durée de vie pour le fichier relié au document.
+            temporaire pour le fichier relié au document.
           format: uri
         created_at:
           type: string
@@ -3967,22 +4031,22 @@ components:
         shift_id:
           type: string
           description: L'identifiant unique du quart que cette transaction finance,
-            lorsque du temps de la banque est utilisé pour payer un congé.
+            lorsque du temps est déduit de la banque pour payer un congé.
           format: uuid
         time_entry_id:
           type: string
           description: L'identifiant unique de l'entrée de temps que cette transaction
-            finance, lorsque du temps de la banque est utilisé pour payer un congé.
+            finance, lorsque du temps est déduit de la banque pour payer un congé.
           format: uuid
         adjusted_entry_id:
           type: string
           description: L'identifiant unique de l'entrée de la feuille de temps d'où
-            provient le temps banqué, pour les transactions qui déduisent du temps
-            de la feuille de temps (temps supplémentaire banqué).
+            provient le temps en banque, pour les transactions qui déduisent du temps
+            de la feuille de temps (temps supplémentaire en banque).
           format: uuid
         adjusted_entry_type:
           type: string
-          description: Le type de l'entrée ajustée. Peut être TimeEntry ou MemberTimeBankTransaction.
+          description: Le type de l'entrée ajustée. Peut être 'TimeEntry' ou 'MemberTimeBankTransaction'.
         'no':
           type: integer
           description: Le numéro séquentiel unique de la transaction dans la banque
@@ -4363,7 +4427,8 @@ components:
           format: date-time
         hr_data:
           type: object
-          description: Le hr_data du membre.
+          description: Les données de ressources humaines du membre. Seuls les champs
+            visibles pour le rôle du demandeur sont retournés.
         default_leave_value:
           type: integer
           description: La valeur de congé par défaut du membre, en minutes. Elle remplace
@@ -4626,6 +4691,10 @@ components:
           type: integer
           description: Nombre de minutes d'extra ajoutées à la prime.
           format: int32
+        dollar_amount:
+          type: number
+          description: Le montant total ajouté par la prime.
+          format: float
         manual:
           type: boolean
           description: Si la prime est manuelle.
@@ -4660,6 +4729,15 @@ components:
         multiplier:
           type: number
           description: Le multiplicateur de la prime.
+          format: float
+        value_type:
+          type: string
+          description: 'Le mode de paiement de la prime : des heures avec multiplicateur,
+            un montant par heure, ou un montant forfaitaire.'
+        dollar_value:
+          type: number
+          description: 'Le montant versé par la prime : par heure applicable pour
+            un taux horaire, ou une seule fois pour un montant forfaitaire.'
           format: float
         default_value:
           type: integer
@@ -6729,6 +6807,26 @@ components:
           description: Les taux du membre.
           items:
             "$ref": "#/components/schemas/MemberRateCreateAttributes"
+    MemberHRDataUpdate:
+      type: object
+      description: Une description détaillée des paramètres d'entrée de la mise à
+        jour des données de ressources humaines d'un membre.
+      properties:
+        data:
+          type: object
+          description: Les données de ressources humaines du membre, avec les ids
+            de champs de ressources humaines comme clés. Les ids de champs invalides
+            sont ignorés.
+    MemberHRPrivateDataUpdate:
+      type: object
+      description: Une description détaillée des paramètres d'entrée de la mise à
+        jour des données privées de ressources humaines d'un membre.
+      properties:
+        private_data:
+          type: object
+          description: Les données privées de ressources humaines du membre, avec
+            les ids de champs de ressources humaines comme clés. Les ids de champs
+            invalides sont ignorés.
     ProfileUpdateAttributes:
       type: object
       description: Description détaillée des paramètres de mise à jour du profil.
@@ -7500,10 +7598,12 @@ components:
         publish:
           type: boolean
           description: Si le quart doit être publié après sa création.
+          default: false
         assign_position_to_member:
           type: boolean
           description: Si la position spécifiée doit être assignée au membre lorsqu'elle
             ne l'est pas déjà.
+          default: false
         member_id:
           type: string
           description: L'identifiant unique du membre du quart. Requis si 'open' est
@@ -7548,6 +7648,7 @@ components:
         publish:
           type: boolean
           description: Si le quart doit être publié après avoir été supprimé.
+          default: false
     ShiftPublish:
       required:
       - shift_ids
@@ -7591,6 +7692,7 @@ components:
         publish:
           type: boolean
           description: Si le quart devrait être publié après son transfert.
+          default: false
     TaskUpdateAttributes:
       required:
       - id
@@ -7711,6 +7813,7 @@ components:
           type: boolean
           description: Si le quart doit être publié après avoir été mis à jour, s'il
             a généré une nouvelle version en brouillon.
+          default: false
         resource_shifts_attributes:
           type: array
           description: Resources du quart de travail.
@@ -8186,11 +8289,11 @@ components:
           description: Le nom du dossier.
         folder_id:
           type: string
-          description: L'identifiant du dossier dans lequel se trouve ce dossier.
-            Laisser vide pour le placer à la racine. Un sous-dossier prend toujours
-            les accès du dossier qui le contient, donc 'member_viewable', 'role',
-            'site_ids' et 'position_ids' sont ignorés lorsque ce champ est fourni.
-            Les dossiers peuvent être imbriqués sur 5 niveaux au maximum.
+          description: L'identifiant du dossier qui contient ce dossier. Laisser vide
+            pour le placer à la racine. Un sous-dossier hérite des droits d'accès
+            du dossier qui le contient, donc 'member_viewable', 'role', 'site_ids'
+            et 'position_ids' seront ignorés si ce champ est rempli. Les dossiers
+            peuvent être imbriqués sur un maximum de 5 niveaux.
           format: uuid
         member_viewable:
           type: boolean
@@ -8226,11 +8329,11 @@ components:
           description: Le nom du dossier.
         folder_id:
           type: string
-          description: L'identifiant du dossier dans lequel se trouve ce dossier.
-            Laisser vide pour le placer à la racine. Un sous-dossier prend toujours
-            les accès du dossier qui le contient, donc 'member_viewable', 'role',
-            'site_ids' et 'position_ids' sont ignorés lorsque ce champ est fourni.
-            Les dossiers peuvent être imbriqués sur 5 niveaux au maximum.
+          description: L'identifiant du dossier qui contient ce dossier. Laisser vide
+            pour le placer à la racine. Un sous-dossier hérite des droits d'accès
+            du dossier qui le contient, donc 'member_viewable', 'role', 'site_ids'
+            et 'position_ids' seront ignorés si ce champ est rempli. Les dossiers
+            peuvent être imbriqués sur un maximum de 5 niveaux.
           format: uuid
         member_viewable:
           type: boolean
@@ -8600,6 +8703,15 @@ components:
                   "$ref": "#/components/schemas/MemberRate"
               pagination:
                 "$ref": "#/components/schemas/CommonPagination"
+    HRDataSuccessOne:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: object
     HRPrivateDataSuccessOne:
       description: Success
       content:
