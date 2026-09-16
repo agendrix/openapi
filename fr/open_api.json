@@ -1833,7 +1833,7 @@
       },
       "put": {
         "summary": "Mettre à jour les données de ressources humaines.",
-        "description": "Met à jour les données de ressources humaines du membre. L'objet `data` du body utilise les ids de champs de ressources humaines comme clés; les ids de champs invalides sont ignorés. Seuls les champs visibles pour le rôle du demandeur peuvent être mis à jour et sont retournés. Nécessite la permission de mettre à jour le membre.",
+        "description": "Met à jour les données de ressources humaines du membre. L'objet 'data' du body utilise les ids de champs de ressources humaines comme clés; les ids de champs invalides sont ignorés. Seuls les champs visibles pour le rôle du demandeur peuvent être mis à jour et sont retournés. Nécessite la permission de mettre à jour le membre.",
         "tags": [
           "Members"
         ],
@@ -1868,7 +1868,7 @@
     "/members/{id}/hr/private_data": {
       "get": {
         "summary": "Obtenir les données privées de ressources humaines.",
-        "description": "Retourne les données privées de ressources humaines du membre. Nécessite que le demandeur ait accès aux données sensibles ou soit le membre.",
+        "description": "Retourne les données privées de ressources humaines du membre. Nécessite que le demandeur ait accès aux données sensibles ou soit le membre concerné.",
         "tags": [
           "Members"
         ],
@@ -1889,7 +1889,7 @@
       },
       "put": {
         "summary": "Mettre à jour les données privées de ressources humaines.",
-        "description": "Met à jour les données privées de ressources humaines du membre. L'objet `private_data` du body utilise les ids de champs de ressources humaines comme clés; les ids de champs invalides sont ignorés. Nécessite la permission de mettre à jour le membre, ainsi que l'accès aux données sensibles à moins que le demandeur soit le membre.",
+        "description": "Met à jour les données privées de ressources humaines du membre. L'objet 'private_data' du body utilise les ids de champs de ressources humaines comme clés; les ids de champs invalides sont ignorés. Nécessite la permission de mettre à jour le membre, ainsi que l'accès aux données sensibles à moins que le demandeur soit le membre concerné.",
         "tags": [
           "Members"
         ],

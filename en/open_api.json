@@ -1833,7 +1833,7 @@
       },
       "put": {
         "summary": "Update human resource data.",
-        "description": "Update the member's human resource data. The body's `data` object is keyed by human resource field id; invalid field ids are ignored. Only the fields visible to the requester's role can be updated and are returned. Requires permission to update the member.",
+        "description": "Update the member's human resource data. The body's 'data' object is keyed by human resource field id; invalid field ids are ignored. Only the fields visible to the requester's role can be updated and are returned. Requires permission to update the member.",
         "tags": [
           "Members"
         ],
@@ -1868,7 +1868,7 @@
     "/members/{id}/hr/private_data": {
       "get": {
         "summary": "Get human resource private data.",
-        "description": "Return the member's human resource private data. Requires the requester to have access to sensitive data, or to be the member.",
+        "description": "Return the member's human resource private data. Requires the requester to have access to sensitive data or to be that member themselves.",
         "tags": [
           "Members"
         ],
@@ -1889,7 +1889,7 @@
       },
       "put": {
         "summary": "Update human resource private data.",
-        "description": "Update the member's human resource private data. The body's `private_data` object is keyed by human resource field id; invalid field ids are ignored. Requires permission to update the member, and access to sensitive data unless the requester is the member.",
+        "description": "Update the member's human resource private data. The body's 'private_data' object is keyed by human resource field id; invalid field ids are ignored. Requires permission to update the member and access to sensitive data, unless the requester is that member themselves.",
         "tags": [
           "Members"
         ],
