@@ -162,7 +162,7 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-  version: 1.14.3
+  version: 1.14.4
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2192,7 +2192,8 @@ paths:
   "/shifts/{id}/toggle_tasks_completion":
     put:
       summary: Toggle task completion.
-      description: Toggle task completion for a shift (if the Plus plan is enabled).
+      description: Toggle task completion for a shift (if your plan includes shift
+        tasks).
       tags:
       - ShiftTasks
       operationId: toggle_shift_tasks
@@ -2284,7 +2285,7 @@ paths:
           "$ref": "#/components/responses/QueryParamFailure"
   "/shifts/{id}/tasks":
     get:
-      summary: Get paginated tasks (if the Plus plan is enabled).
+      summary: Get paginated tasks (if your plan includes shift tasks).
       description: Return paginated tasks.
       tags:
       - Shifts
@@ -7493,7 +7494,7 @@ components:
             "$ref": "#/components/schemas/BreakCreateAttributes"
         tasks_attributes:
           type: array
-          description: The shift's tasks (if the Plus plan is enabled).
+          description: The shift's tasks (if your plan includes shift tasks).
           items:
             "$ref": "#/components/schemas/TaskCreateAttributes"
         time_off_payment_constraint_attributes:
@@ -7532,7 +7533,7 @@ components:
       - tasks_attributes
       type: object
       description: A detailed description of the input parameters for toggling the
-        completion of a shift's tasks (if the Plus plan is enabled).
+        completion of a shift's tasks (if your plan includes shift tasks).
       properties:
         tasks_attributes:
           type: array
@@ -7697,7 +7698,7 @@ components:
             - "$ref": "#/components/schemas/BreakCreateAttributes"
         tasks_attributes:
           type: array
-          description: The shift's tasks (if the Plus plan is enabled).
+          description: The shift's tasks (if your plan includes shift tasks).
           items:
             oneOf:
             - "$ref": "#/components/schemas/TaskUpdateAttributes"
