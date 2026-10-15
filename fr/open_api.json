@@ -3276,7 +3276,7 @@
     "/shifts/{id}/toggle_tasks_completion": {
       "put": {
         "summary": "Faire basculer l'état de complétion d'une tâche.",
-        "description": "Faire basculer l'état de complétion d'une tâche pour un quart (si votre plan inclut les tâches de quart).",
+        "description": "Faire basculer l'état de complétion d'une tâche pour un quart (si votre plan inclut les tâches de quarts).",
         "tags": [
           "ShiftTasks"
         ],
@@ -3428,7 +3428,7 @@
     },
     "/shifts/{id}/tasks": {
       "get": {
-        "summary": "Obtenir une liste paginée des tâches (si votre plan inclut les tâches de quart).",
+        "summary": "Obtenir une liste paginée des tâches (si votre plan inclut les tâches de quarts).",
         "description": "Retourne une liste paginée des tâches.",
         "tags": [
           "Shifts"
@@ -10084,7 +10084,7 @@
           },
           "hours": {
             "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
+            "description": "Nombre d'heures à l'horaire.",
             "format": "float"
           },
           "site_id": {
@@ -10110,7 +10110,7 @@
           },
           "hours": {
             "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
+            "description": "Nombre d'heures à l'horaire.",
             "format": "float"
           }
         }
@@ -10130,7 +10130,7 @@
           },
           "hours": {
             "type": "number",
-            "description": "Nombre d'heures prévues à l'horaire.",
+            "description": "Nombre d'heures à l'horaire.",
             "format": "float"
           },
           "site_id": {
@@ -10344,7 +10344,7 @@
           },
           "tasks_attributes": {
             "type": "array",
-            "description": "Les tâches du quart (si votre plan inclut les tâches de quart).",
+            "description": "Les tâches du quart (si votre plan inclut les tâches de quarts).",
             "items": {
               "$ref": "#/components/schemas/TaskCreateAttributes"
             }
@@ -10400,7 +10400,7 @@
           "tasks_attributes"
         ],
         "type": "object",
-        "description": "Une description détaillée des paramètres d'entrée pour faire basculer l'état de complétion des tâches d'un quart (si votre plan inclut les tâches de quart).",
+        "description": "Une description détaillée des paramètres d'entrée pour faire basculer l'état de complétion des tâches d'un quart (si votre plan inclut les tâches de quarts).",
         "properties": {
           "tasks_attributes": {
             "type": "array",
@@ -10623,7 +10623,7 @@
           },
           "tasks_attributes": {
             "type": "array",
-            "description": "Les tâches du quart (si votre plan inclut les tâches de quart).",
+            "description": "Les tâches du quart (si votre plan inclut les tâches de quarts).",
             "items": {
               "oneOf": [
                 {

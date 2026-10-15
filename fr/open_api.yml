@@ -2214,7 +2214,7 @@ paths:
     put:
       summary: Faire basculer l'état de complétion d'une tâche.
       description: Faire basculer l'état de complétion d'une tâche pour un quart (si
-        votre plan inclut les tâches de quart).
+        votre plan inclut les tâches de quarts).
       tags:
       - ShiftTasks
       operationId: toggle_shift_tasks
@@ -2311,7 +2311,7 @@ paths:
   "/shifts/{id}/tasks":
     get:
       summary: Obtenir une liste paginée des tâches (si votre plan inclut les tâches
-        de quart).
+        de quarts).
       description: Retourne une liste paginée des tâches.
       tags:
       - Shifts
@@ -7414,7 +7414,7 @@ components:
           format: float
         hours:
           type: number
-          description: Nombre d'heures prévues à l'horaire.
+          description: Nombre d'heures à l'horaire.
           format: float
         site_id:
           type: string
@@ -7436,7 +7436,7 @@ components:
           format: float
         hours:
           type: number
-          description: Nombre d'heures prévues à l'horaire.
+          description: Nombre d'heures à l'horaire.
           format: float
     SchedulerProjectionUpdateForBulk:
       required:
@@ -7452,7 +7452,7 @@ components:
           format: float
         hours:
           type: number
-          description: Nombre d'heures prévues à l'horaire.
+          description: Nombre d'heures à l'horaire.
           format: float
         site_id:
           type: string
@@ -7628,7 +7628,7 @@ components:
             "$ref": "#/components/schemas/BreakCreateAttributes"
         tasks_attributes:
           type: array
-          description: Les tâches du quart (si votre plan inclut les tâches de quart).
+          description: Les tâches du quart (si votre plan inclut les tâches de quarts).
           items:
             "$ref": "#/components/schemas/TaskCreateAttributes"
         time_off_payment_constraint_attributes:
@@ -7671,7 +7671,7 @@ components:
       type: object
       description: Une description détaillée des paramètres d'entrée pour faire basculer
         l'état de complétion des tâches d'un quart (si votre plan inclut les tâches
-        de quart).
+        de quarts).
       properties:
         tasks_attributes:
           type: array
@@ -7840,7 +7840,7 @@ components:
             - "$ref": "#/components/schemas/BreakCreateAttributes"
         tasks_attributes:
           type: array
-          description: Les tâches du quart (si votre plan inclut les tâches de quart).
+          description: Les tâches du quart (si votre plan inclut les tâches de quarts).
           items:
             oneOf:
             - "$ref": "#/components/schemas/TaskUpdateAttributes"
