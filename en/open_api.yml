@@ -162,7 +162,7 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-  version: 1.14.4
+  version: 1.14.5
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -177,7 +177,7 @@ tags:
 - name: BillboardThreads
   description: Billboard threads operations
 - name: ClockLogs
-  description: Clock logs operations
+  description: Clock log operations
 - name: Comments
   description: Comments operations
 - name: DriveSignatureRequests
@@ -538,8 +538,8 @@ paths:
           "$ref": "#/components/responses/QueryParamFailure"
   "/clock_logs":
     get:
-      summary: Get paginated clock logs.
-      description: Return paginated clock logs.
+      summary: Get paginated clock log entries.
+      description: Return paginated clock log entries.
       tags:
       - ClockLogs
       operationId: index_clock_log
@@ -3643,7 +3643,7 @@ components:
           format: int32
         clock_logs_count:
           type: integer
-          description: The number of clock logs on the resource.
+          description: The number of clock log entries on the resource.
           format: int32
         public_comments_count:
           type: integer
