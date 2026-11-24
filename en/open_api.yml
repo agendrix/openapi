@@ -162,7 +162,7 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-  version: 1.14.5
+  version: 1.14.6
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -1105,11 +1105,15 @@ paths:
       operationId: restore_member
       parameters:
       - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        "$ref": "#/components/requestBodies/MemberRestore"
       responses:
         200:
           "$ref": "#/components/responses/MemberSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
   "/members/{id}/availability_lists/{date}":
     get:
       summary: Get one availability list.
@@ -1377,11 +1381,15 @@ paths:
       operationId: approve_open_shift_request
       parameters:
       - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        "$ref": "#/components/requestBodies/OpenShiftRequestApprove"
       responses:
         200:
           "$ref": "#/components/responses/OpenShiftRequestSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
   "/open_shift_requests/{id}/cancel":
     put:
       summary: Cancel an open shift request
@@ -2199,11 +2207,15 @@ paths:
       operationId: toggle_shift_tasks
       parameters:
       - "$ref": "#/components/parameters/PathId"
+      requestBody:
+        "$ref": "#/components/requestBodies/ShiftToggleTasksCompletion"
       responses:
         200:
           "$ref": "#/components/responses/ShiftSuccessOne"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
+        400:
+          "$ref": "#/components/responses/InputParamsFailure"
   "/shifts/publish":
     post:
       summary: Publish shifts.
@@ -2213,6 +2225,8 @@ paths:
       tags:
       - Shifts
       operationId: publish_shifts
+      requestBody:
+        "$ref": "#/components/requestBodies/ShiftPublish"
       responses:
         200:
           "$ref": "#/components/responses/PublicationSuccessMany"
@@ -3176,7 +3190,7 @@ components:
           format: uuid
         day:
           type: integer
-          description: The day of the scheduler week for the organization.
+          description: The weekday, from 0 for Sunday to 6 for Saturday.
           format: int32
         start_at:
           type: string
@@ -6717,6 +6731,16 @@ components:
           type: object
           description: The member's human resource private data, keyed by human resource
             field id. Invalid field ids are ignored.
+    MemberRestore:
+      type: object
+      description: A detailed description of a member's restore input parameters.
+      properties:
+        invite:
+          type: boolean
+          description: If the member should be invited to join the organization after
+            their restoration. A member with no email address and no mobile phone
+            number is not invited.
+          default: false
     ProfileUpdateAttributes:
       type: object
       description: A detailed description of a profile's update input parameters.
@@ -6999,6 +7023,8 @@ components:
         member_ids:
           type: array
           description: The identifiers of the employees selected for this open shift.
+            At least one must belong to a member of the organization. Identifiers
+            that belong to no member of the organization are ignored.
           items:
             type: string
     PayrollUpdate:
@@ -9175,11 +9201,21 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/MemberCreate"
+    MemberRestore:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/MemberRestore"
     MemberUpdate:
       content:
         application/json:
           schema:
             "$ref": "#/components/schemas/MemberUpdate"
+    OpenShiftRequestApprove:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/OpenShiftRequestApprove"
     PayrollUpdate:
       content:
         application/json:
@@ -9255,6 +9291,16 @@ components:
         application/json:
           schema:
             "$ref": "#/components/schemas/ShiftTransfer"
+    ShiftToggleTasksCompletion:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/ShiftToggleTasksCompletion"
+    ShiftPublish:
+      content:
+        application/json:
+          schema:
+            "$ref": "#/components/schemas/ShiftPublish"
     SiteCreate:
       content:
         application/json:
