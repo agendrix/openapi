@@ -162,7 +162,7 @@ info:
 
     ## Path Param Error - Code 400
     It can only happen for endpoints that require uncommon parameters in their path - i.e. the availability list of a member shown by date: `/members/{id}/availability_lists/{date}`.
-  version: 1.14.7
+  version: 1.14.8
 servers:
 - url: https://api.agendrix.com/v1
 security:
@@ -2211,7 +2211,7 @@ paths:
         "$ref": "#/components/requestBodies/ShiftToggleTasksCompletion"
       responses:
         200:
-          "$ref": "#/components/responses/ShiftSuccessOne"
+          "$ref": "#/components/responses/TaskSuccessManyWithoutPagination"
         404:
           "$ref": "#/components/responses/NotFoundFailure"
         400:
@@ -8833,6 +8833,17 @@ components:
             properties:
               data:
                 "$ref": "#/components/schemas/Shift"
+    TaskSuccessManyWithoutPagination:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              data:
+                type: array
+                items:
+                  "$ref": "#/components/schemas/Task"
     ActivitySuccessMany:
       description: Success
       content:
